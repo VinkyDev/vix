@@ -7,9 +7,9 @@ const md = markdownit({ breaks: true, html: true });
 
 const renderMarkdown: BubbleProps["messageRender"] = (content) => {
   return (
-    <Typography>
+    <Typography.Paragraph>
       <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
-    </Typography>
+    </Typography.Paragraph>
   );
 };
 
