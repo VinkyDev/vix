@@ -1,9 +1,9 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Bubble, Sender, useXAgent, useXChat } from "@ant-design/x";
-import { Flex, type GetProp } from "antd";
-import React, { useRef } from "react";
+import { Flex, type GetProp, GetRef } from "antd";
+import React, { useEffect, useRef } from "react";
 
-import MarkdownRender from "../components/MarkdownRender";
+import MarkdownRender from "@/components/MarkdownRender";
 
 const BASE_URL =
   "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
@@ -28,13 +28,15 @@ const roles: GetProp<typeof Bubble.List, "roles"> = {
   },
 };
 
-const App = () => {
+const App = ({ visible }: { visible: boolean }) => {
   const [content, setContent] = React.useState("");
   const [agent] = useXAgent<MessageType>({
     baseURL: BASE_URL,
     dangerouslyApiKey: API_KEY,
     model: MODEL,
   });
+
+  const senderRef = useRef<GetRef<typeof Sender>>(null);
   const abortController = useRef<AbortController | null>(null);
 
   const { messages, onRequest } = useXChat({
@@ -93,8 +95,16 @@ const App = () => {
       };
     },
   });
+
+  // 自动聚焦
+  useEffect(() => {
+    if (senderRef.current && visible) {
+      senderRef.current.focus();
+    }
+  }, [visible]);
+
   return (
-    <Flex gap="middle" vertical>
+    <Flex gap="middle" style={{ height: "100%" }} vertical>
       <Bubble.List
         items={messages.map(({ id, message }) => ({
           content: message.content,
@@ -102,9 +112,10 @@ const App = () => {
           role: message.role,
         }))}
         roles={roles}
-        style={{ maxHeight: 300 }}
+        style={{ height: "100%" }}
       />
       <Sender
+        autoSize={{ maxRows: 4, minRows: 1 }}
         loading={agent.isRequesting()}
         onCancel={() => {
           abortController?.current?.abort?.();
@@ -120,6 +131,7 @@ const App = () => {
           });
           setContent("");
         }}
+        ref={senderRef}
         value={content}
       />
     </Flex>
