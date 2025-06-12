@@ -34,4 +34,11 @@ export default defineConfig(async () => ({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/styles/variables.scss" as *;`, // 全局注入变量
+      },
+    },
+  },
 }));
