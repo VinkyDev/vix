@@ -1,10 +1,12 @@
 import {
+  Attachments,
   Bubble,
   BubbleProps,
   Sender,
   useXAgent,
   useXChat,
 } from "@ant-design/x";
+import { Attachment } from "@ant-design/x/es/attachments";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
 import React, { useEffect, useRef } from "react";
@@ -14,9 +16,20 @@ import { MessageType, useMessageStore } from "@/store/messageStore";
 import { useModelStore } from "@/store/model";
 
 import ActionBar from "./components/ActionBar";
+import AttachmentHeader from "./components/AttachmentHeader";
 import MessageAction from "./components/MessageAction";
+
 const App = ({ visible }: { visible: boolean }) => {
   const [content, setContent] = React.useState("");
+  const [attachmentsOpen, setAttachmentsOpen] = React.useState(false);
+  const [attachmentItems, setAttachmentItems] = React.useState<Attachment[]>(
+    []
+  );
+  // 存储文件处理后的内容
+  const [fileContents, setFileContents] = React.useState<
+    Record<string, string>
+  >({});
+
   const { model, useThinking } = useModelStore();
   const [agent] = useXAgent<MessageType>({
     baseURL: model.baseURL,
@@ -25,6 +38,7 @@ const App = ({ visible }: { visible: boolean }) => {
   });
 
   const senderRef = useRef<GetRef<typeof Sender>>(null);
+  const attachmentsRef = useRef<GetRef<typeof Attachments>>(null);
   const abortController = useRef<AbortController | null>(null);
   const messageStore = useMessageStore();
 
@@ -117,24 +131,80 @@ const App = ({ visible }: { visible: boolean }) => {
         roles={roles}
         style={{ height: "100%" }}
       />
-      <ActionBar />
       <Sender
+        actions={false}
         autoSize={{ maxRows: 4, minRows: 1 }}
+        footer={({ components }) => {
+          const { LoadingButton, SendButton } = components;
+          return (
+            <Flex align="center" justify="space-between">
+              <ActionBar
+                attachmentsOpen={attachmentsOpen}
+                setAttachmentsOpen={setAttachmentsOpen}
+              />
+              {agent.isRequesting() ? (
+                <LoadingButton type="default" />
+              ) : (
+                <SendButton type="primary" />
+              )}
+            </Flex>
+          );
+        }}
+        header={
+          <AttachmentHeader
+            attachmentItems={attachmentItems}
+            attachmentsOpen={attachmentsOpen}
+            attachmentsRef={attachmentsRef}
+            fileContents={fileContents}
+            senderRef={senderRef}
+            setAttachmentItems={setAttachmentItems}
+            setAttachmentsOpen={setAttachmentsOpen}
+            setFileContents={setFileContents}
+          />
+        }
         loading={agent.isRequesting()}
         onCancel={() => {
           abortController?.current?.abort?.();
         }}
         onChange={setContent}
-        onSubmit={(nextContent) => {
+        onPasteFile={(_, files) => {
+          for (const file of files) {
+            attachmentsRef.current?.upload(file);
+          }
+          setAttachmentsOpen(true);
+        }}
+        onSubmit={async (nextContent) => {
+          let finalContent = nextContent;
+
+          if (attachmentItems.length > 0) {
+            const processedContents: string[] = [];
+
+            attachmentItems.forEach((item) => {
+              const content = fileContents[item.uid];
+              if (content) {
+                processedContents.push(
+                  `\n\n--- 文件: ${item.name} ---\n${content}`
+                );
+              }
+            });
+
+            if (processedContents.length > 0) {
+              finalContent = `${nextContent}${processedContents.join("\n")}`;
+            }
+          }
+
           onRequest({
             enable_thinking: useThinking,
             message: {
-              content: nextContent,
+              content: finalContent,
               role: "user",
             },
             stream: true,
           });
           setContent("");
+          setAttachmentItems([]);
+          setFileContents({});
+          setAttachmentsOpen(false);
         }}
         ref={senderRef}
         value={content}

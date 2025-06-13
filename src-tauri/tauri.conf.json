@@ -13,8 +13,9 @@
     "macOSPrivateApi": true,
     "windows": [
       {
+        "label": "main",
         "title": "vix",
-        "visible": false,
+        "visible": true,
         "decorations": false,
         "resizable": true,
         "center": true,

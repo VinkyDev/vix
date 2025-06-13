@@ -18,7 +18,7 @@ function App() {
     setVisible(visible);
   });
 
-  useHideOnBlur();
+  useHideOnBlur(false);
 
   return (
     <XProvider {...config}>
