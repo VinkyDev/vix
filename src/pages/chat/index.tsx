@@ -1,45 +1,36 @@
 import {
-  Actions,
   Bubble,
   BubbleProps,
   Sender,
   useXAgent,
   useXChat,
 } from "@ant-design/x";
-import { ActionItem } from "@ant-design/x/es/actions/interface";
-import { MessageInfo } from "@ant-design/x/es/use-x-chat";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
 import React, { useEffect, useRef } from "react";
 
-import { actionItems, roles } from "@/constants/chat";
-import { localStorageUtils } from "@/utils/storage";
+import { roles } from "@/constants/chat";
+import { MessageType, useMessageStore } from "@/store/messageStore";
+import { useModelStore } from "@/store/model";
 
-const BASE_URL =
-  "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
-const MODEL = "qwen-turbo-latest";
-const API_KEY = import.meta.env.VITE_DASHSCOPE_API_KEY;
-
-type MessageType = {
-  role: string;
-  content: string;
-};
-
+import ActionBar from "./components/ActionBar";
+import MessageAction from "./components/MessageAction";
 const App = ({ visible }: { visible: boolean }) => {
   const [content, setContent] = React.useState("");
+  const { model, useThinking } = useModelStore();
   const [agent] = useXAgent<MessageType>({
-    baseURL: BASE_URL,
-    dangerouslyApiKey: API_KEY,
-    model: MODEL,
+    baseURL: model.baseURL,
+    dangerouslyApiKey: model.apiKey,
+    model: model.id,
   });
 
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const abortController = useRef<AbortController | null>(null);
+  const messageStore = useMessageStore();
 
   const { messages, onRequest } = useXChat({
     agent,
-    defaultMessages:
-      localStorageUtils.getItem<MessageInfo<MessageType>[]>("messages") || [],
+    defaultMessages: messageStore.messages,
     requestFallback: (_, { error }) => {
       if (error.name === "AbortError") {
         return {
@@ -95,17 +86,6 @@ const App = ({ visible }: { visible: boolean }) => {
     },
   });
 
-  const handleAction = (item: ActionItem, content: string) => {
-    const { key } = item;
-    switch (key) {
-      case "copy":
-        navigator.clipboard.writeText(
-          content.replace(/<think>[\s\S]*?<\/think>/g, "")
-        );
-        break;
-    }
-  };
-
   // 自动聚焦
   useEffect(() => {
     if (senderRef.current && visible) {
@@ -116,13 +96,9 @@ const App = ({ visible }: { visible: boolean }) => {
   // 历史记录存储
   useDebounceEffect(
     () => {
-      // 保存最近 10 条
-      localStorageUtils.setItem<MessageInfo<MessageType>[]>(
-        "messages",
-        messages.slice(-10)
-      );
+      messageStore.setMessages(messages);
     },
-    [messages],
+    [messages, messageStore],
     { wait: 1000 }
   );
 
@@ -133,12 +109,7 @@ const App = ({ visible }: { visible: boolean }) => {
           ({ id, message }) =>
             ({
               content: message.content,
-              footer: (content) => (
-                <Actions
-                  items={actionItems}
-                  onClick={(item) => handleAction(item, content)}
-                />
-              ),
+              footer: (content) => <MessageAction content={content} />,
               key: id,
               role: message.role,
             } as BubbleProps)
@@ -146,6 +117,7 @@ const App = ({ visible }: { visible: boolean }) => {
         roles={roles}
         style={{ height: "100%" }}
       />
+      <ActionBar />
       <Sender
         autoSize={{ maxRows: 4, minRows: 1 }}
         loading={agent.isRequesting()}
@@ -155,7 +127,7 @@ const App = ({ visible }: { visible: boolean }) => {
         onChange={setContent}
         onSubmit={(nextContent) => {
           onRequest({
-            enable_thinking: true,
+            enable_thinking: useThinking,
             message: {
               content: nextContent,
               role: "user",

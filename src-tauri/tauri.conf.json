@@ -16,7 +16,7 @@
         "title": "vix",
         "visible": false,
         "decorations": false,
-        "resizable": false,
+        "resizable": true,
         "center": true,
         "skipTaskbar": true,
         "alwaysOnTop": true,
