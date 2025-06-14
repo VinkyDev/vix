@@ -9,23 +9,25 @@ import {
 import { Attachment } from "@ant-design/x/es/attachments";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 
 import { roles } from "@/constants/chat";
+import { ShortcutAction } from "@/constants/shortcut";
+import { useShortcut } from "@/hooks";
 import { MessageType, useMessageStore } from "@/store/messageStore";
 import { useModelStore } from "@/store/model";
+import { toggleWindow } from "@/utils";
 
 import ActionBar from "./components/ActionBar";
 import AttachmentHeader from "./components/AttachmentHeader";
 import MessageAction from "./components/MessageAction";
 
-const App = ({ visible }: { visible: boolean }) => {
+const Chat = () => {
   const [content, setContent] = React.useState("");
   const [attachmentsOpen, setAttachmentsOpen] = React.useState(false);
   const [attachmentItems, setAttachmentItems] = React.useState<Attachment[]>(
     []
   );
-  // 存储文件处理后的内容
   const [fileContents, setFileContents] = React.useState<
     Record<string, string>
   >({});
@@ -41,6 +43,13 @@ const App = ({ visible }: { visible: boolean }) => {
   const attachmentsRef = useRef<GetRef<typeof Attachments>>(null);
   const abortController = useRef<AbortController | null>(null);
   const messageStore = useMessageStore();
+
+  useShortcut(ShortcutAction.TOGGLE_WINDOW, async () => {
+    const visiable = await toggleWindow();
+    if (senderRef?.current && visiable) {
+      senderRef.current.focus();
+    }
+  });
 
   const { messages, onRequest } = useXChat({
     agent,
@@ -99,13 +108,6 @@ const App = ({ visible }: { visible: boolean }) => {
       };
     },
   });
-
-  // 自动聚焦
-  useEffect(() => {
-    if (senderRef.current && visible) {
-      senderRef.current.focus();
-    }
-  }, [visible]);
 
   // 历史记录存储
   useDebounceEffect(
@@ -213,4 +215,4 @@ const App = ({ visible }: { visible: boolean }) => {
   );
 };
 
-export default App;
+export default Chat;

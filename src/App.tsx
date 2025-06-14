@@ -1,30 +1,50 @@
 import "./App.scss";
 
 import { XProvider, XProviderProps } from "@ant-design/x";
-import { useState } from "react";
+import { AnimatePresence } from "motion/react";
+import {
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 
-import { ShortcutAction } from "./constants/shortcut";
-import { useHideOnBlur, useShortcut } from "./hooks";
-import Demo from "./pages/chat";
-import { toggleWindow } from "./utils";
-
+import FadeWrapper from "./components/FadeWrapper";
+import { useHideOnBlur } from "./hooks";
+import Chat from "./pages/chat";
+import Setting from "./pages/setting";
 const config: XProviderProps = {};
 
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="popLayout">
+      <Routes key={location.pathname} location={location}>
+        <Route
+          element={
+            <FadeWrapper>
+              <Chat />
+            </FadeWrapper>
+          }
+          path="/"
+        />
+        <Route element={<Setting />} path="/setting" />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 function App() {
-  const [visible, setVisible] = useState(false);
-
-  useShortcut(ShortcutAction.TOGGLE_WINDOW, async () => {
-    const visible = await toggleWindow();
-    setVisible(visible);
-  });
-
   useHideOnBlur(false);
 
   return (
     <XProvider {...config}>
-      <div className="app-container" data-tauri-drag-region>
-        <Demo visible={visible} />
-      </div>
+      <Router>
+        <div className="app-container" data-tauri-drag-region>
+          <AnimatedRoutes />
+        </div>
+      </Router>
     </XProvider>
   );
 }

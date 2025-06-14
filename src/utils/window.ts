@@ -9,5 +9,5 @@ export async function hideWindow() {
 }
 
 export async function toggleWindow() {
- return await invoke<boolean>("toggle_window");
+  return await invoke<boolean>("toggle_window");
 }

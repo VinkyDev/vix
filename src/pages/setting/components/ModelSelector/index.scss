@@ -1,0 +1,136 @@
+.model-selector {
+  .model-selector-header {
+    margin-bottom: 20px;
+
+    .ant-typography {
+      margin-bottom: 4px !important;
+    }
+  }
+
+  .model-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .model-card {
+    border: 2px solid transparent;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    background: #ffffff;
+
+    &:hover {
+      border-color: #1890ff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(24, 144, 255, 0.12);
+    }
+
+    &.selected {
+      border-color: #1890ff;
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f4ff 100%);
+      box-shadow: 0 4px 16px rgba(24, 144, 255, 0.15);
+
+      .ant-card-body {
+        background: transparent;
+      }
+    }
+
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .model-info {
+      flex: 1;
+
+      .model-description {
+        font-size: 13px;
+        margin-top: 4px;
+        display: block;
+        line-height: 1.4;
+      }
+    }
+
+    .selected-icon {
+      color: #1890ff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+
+  .thinking-toggle {
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #1890ff;
+      background: #f0f8ff;
+    }
+
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .ant-switch {
+      &.ant-switch-checked {
+        background-color: #1890ff;
+      }
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .model-selector {
+    .model-card {
+      background: #1f1f1f;
+      border-color: #404040;
+
+      &:hover {
+        border-color: #1890ff;
+        background: #262626;
+      }
+
+      &.selected {
+        background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+        border-color: #1890ff;
+      }
+    }
+
+    .thinking-toggle {
+      background: #1f1f1f;
+      border-color: #404040;
+
+      &:hover {
+        background: #262626;
+        border-color: #1890ff;
+      }
+    }
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .model-selector {
+    .model-card {
+      .ant-card-body {
+        padding: 12px;
+      }
+
+      .model-info {
+        .model-description {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .thinking-toggle {
+      .ant-card-body {
+        padding: 12px;
+      }
+    }
+  }
+}

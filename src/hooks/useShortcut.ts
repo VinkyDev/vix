@@ -10,5 +10,5 @@ export function useShortcut(action: ShortcutAction, callback: () => unknown) {
     return () => {
       handle.unregister();
     };
-  }, [action, callback]);
+  }, []);
 }
