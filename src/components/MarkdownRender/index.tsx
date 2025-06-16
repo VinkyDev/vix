@@ -20,6 +20,16 @@ const md = markdownit({ breaks: true, html: true })
       }
     },
   })
+  .use(container, "divider", {
+    render(tokens: Token[], idx: number) {
+      const token = tokens[idx];
+      if (token.nesting === 1) {
+        return `<div class="divider">\n`;
+      } else {
+        return `</div>\n`;
+      }
+    },
+  })
   .use((md) => {
     md.options.highlight = (str, lang) => {
       if (lang && hljs.getLanguage(lang)) {

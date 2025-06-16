@@ -38,7 +38,7 @@ export const useMessageStore = create<MessageStore>()(
         const dividerMessage: Omit<MessageInfo<MessageType>, "id"> = {
           message: {
             role: "system",
-            content: "上下文已清除",
+            content: ":::divider\n上下文已清除\n:::\n",
             type: "divider",
           },
           status: "success",

@@ -1,5 +1,9 @@
-import { CloseOutlined } from "@ant-design/icons";
-import { Button, Divider } from "antd";
+import {
+  CloseOutlined,
+  RobotOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import { Button, Space, Tabs } from "antd";
 import { motion } from "motion/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +18,29 @@ const Setting: React.FC = () => {
   const handleClose = () => {
     navigate("/");
   };
+
+  const tabItems = [
+    {
+      key: "basic",
+      label: (
+        <Space>
+          <SettingOutlined />
+          <span>基础配置</span>
+        </Space>
+      ),
+      children: <BasicSettings />,
+    },
+    {
+      key: "models",
+      label: (
+        <Space>
+          <RobotOutlined />
+          <span>模型配置</span>
+        </Space>
+      ),
+      children: <ModelSelector />,
+    },
+  ];
 
   return (
     <motion.div
@@ -40,9 +67,13 @@ const Setting: React.FC = () => {
           type="text"
         />
         <div className="setting-content">
-          <BasicSettings />
-          <Divider className="section-divider" />
-          <ModelSelector />
+          <Tabs
+            className="setting-tabs"
+            defaultActiveKey="basic"
+            items={tabItems}
+            size="small"
+            type="card"
+          />
         </div>
       </div>
     </motion.div>

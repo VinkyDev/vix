@@ -1,4 +1,3 @@
-import { RobotOutlined } from "@ant-design/icons";
 import { Empty, Spin, Typography } from "antd";
 import { groupBy } from "lodash-es";
 import { motion } from "motion/react";
@@ -9,7 +8,7 @@ import { type Model, useModelStore } from "@/store";
 import ProviderCard from "../ProviderCard";
 import "./index.scss";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const ModelSelector: React.FC = () => {
   const { getCurrentModel, modelList, setCurrentModelId, loading } =
@@ -44,10 +43,6 @@ const ModelSelector: React.FC = () => {
 
   return (
     <div className="model-selector">
-      <Title className="section-title" level={5}>
-        <RobotOutlined />
-        模型配置
-      </Title>
       <div className="providers-container">
         {Object.entries(modelsByProvider).map(
           ([providerId, providerModels], index) => (

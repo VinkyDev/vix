@@ -5,6 +5,32 @@
   font-size: 14px;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+  width: 60vw;
+  text-align: center;
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    border-top: 1px solid #ddd;
+    transform: translateY(-5px);
+  }
+
+  &::before {
+    margin-right: 0.75em;
+  }
+
+  &::after {
+    margin-left: 0.75em;
+  }
+}
+
 .system-content {
   position: absolute;
   left: 50%;

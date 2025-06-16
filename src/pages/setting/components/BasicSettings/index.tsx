@@ -1,16 +1,9 @@
 import {
   ClearOutlined,
   InfoCircleOutlined,
-  SettingOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  Card,
-  InputNumber,
-  message,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Button, Card, InputNumber, message, Tooltip, Typography } from "antd";
 import { motion } from "motion/react";
 import React from "react";
 
@@ -72,12 +65,9 @@ const BasicSettings: React.FC = () => {
       <Card className="basic-settings-card">
         <div className="basic-settings-header">
           <Title className="settings-title" level={5}>
-            <SettingOutlined />
-            基础配置
+            <MessageOutlined />
+            消息配置
           </Title>
-          <Text className="settings-desc" type="secondary">
-            管理对话上下文和历史记录设置
-          </Text>
         </div>
 
         <div className="settings-content">
