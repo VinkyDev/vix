@@ -1,9 +1,10 @@
 import { CloseOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import { motion } from "motion/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import BasicSettings from "./components/BasicSettings";
 import ModelSelector from "./components/ModelSelector";
 import "./index.scss";
 
@@ -39,6 +40,8 @@ const Setting: React.FC = () => {
           type="text"
         />
         <div className="setting-content">
+          <BasicSettings />
+          <Divider className="section-divider" />
           <ModelSelector />
         </div>
       </div>

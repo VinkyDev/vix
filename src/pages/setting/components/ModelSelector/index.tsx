@@ -44,7 +44,10 @@ const ModelSelector: React.FC = () => {
 
   return (
     <div className="model-selector">
-      <Title level={4}>模型选择</Title>
+      <Title className="section-title" level={5}>
+        <RobotOutlined />
+        模型配置
+      </Title>
       <div className="providers-container">
         {Object.entries(modelsByProvider).map(
           ([providerId, providerModels], index) => (

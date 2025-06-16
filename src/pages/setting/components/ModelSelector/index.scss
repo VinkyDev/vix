@@ -4,13 +4,6 @@
   flex-direction: column;
   padding: 0;
 
-  .ant-typography h4 {
-    margin-bottom: 16px !important;
-    font-size: 18px;
-    color: #1f2937;
-    font-weight: 600;
-  }
-
   .model-selector-loading {
     display: flex;
     flex-direction: column;
@@ -92,11 +85,6 @@
 // 针对小窗口的额外优化
 @media (max-width: 400px) {
   .model-selector {
-    .ant-typography h4 {
-      font-size: 16px !important;
-      margin-bottom: 12px !important;
-    }
-
     .providers-container {
       padding-right: 2px;
     }

@@ -52,4 +52,24 @@
 .setting-content {
   flex: 1;
   overflow-y: auto;
+  padding-right: 4px;
+  .section-divider {
+    margin: 16px 0;
+    border-color: #f0f0f0;
+  }
+
+  .section-title {
+    margin-bottom: 12px !important;
+    color: #1f2937;
+    font-weight: 600;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .anticon {
+      color: #1890ff;
+      font-size: 14px;
+    }
+  }
 }

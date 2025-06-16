@@ -6,6 +6,7 @@ import { persist } from "zustand/middleware";
 export type MessageType = {
   role: string;
   content: string;
+  type?: 'normal' | 'divider';
 };
 
 interface MessageStore {
@@ -14,11 +15,12 @@ interface MessageStore {
   messages: Omit<MessageInfo<MessageType>, "id">[];
   setMaxMessages: (maxMessages: number) => void;
   setMessages: (messages: MessageInfo<MessageType>[]) => void;
+  addContextDivider: () => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       clearMessages: () => set({ messages: [] }),
       maxMessages: 10,
       messages: [],
@@ -30,6 +32,21 @@ export const useMessageStore = create<MessageStore>()(
             ...omit(message, "id"),
           })),
         })),
+
+      addContextDivider: () => {
+        const state = get();
+        const dividerMessage: Omit<MessageInfo<MessageType>, "id"> = {
+          message: {
+            role: "system",
+            content: "上下文已清除",
+            type: "divider"
+          },
+          status: "success"
+        };
+        set({
+          messages: [...state.messages, dividerMessage]
+        });
+      },
     }),
     {
       name: "message-storage",

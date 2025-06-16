@@ -2,9 +2,9 @@ import { Actions } from "@ant-design/x";
 import { ActionItem } from "@ant-design/x/es/actions/interface";
 import { message } from "antd";
 
-import { actionItems } from "@/constants/chat";
+import { actionItems } from "@/pages/chat/constants";
 
-const Action = ({ content }: { content: string }) => {
+const MessageAction = ({ content }: { content: string }) => {
   const handleAction = (item: ActionItem, content: string) => {
     const { key } = item;
     switch (key) {
@@ -29,4 +29,4 @@ const Action = ({ content }: { content: string }) => {
   );
 };
 
-export default Action;
+export default MessageAction;

@@ -4,3 +4,14 @@
   color: $think;
   font-size: 14px;
 }
+
+.system-content {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: transparent !important;
+}
+
+.system-avatar {
+  display: none;
+}

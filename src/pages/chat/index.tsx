@@ -7,13 +7,14 @@ import {
   useXChat,
 } from "@ant-design/x";
 import { Attachment } from "@ant-design/x/es/attachments";
+import { MessageInfo } from "@ant-design/x/es/use-x-chat";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
 import React, { useRef } from "react";
 
-import { roles } from "@/constants/chat";
 import { ShortcutAction } from "@/constants/shortcut";
 import { useShortcut } from "@/hooks";
+import { roles } from "@/pages/chat/constants";
 import {
   type MessageType,
   useApiKeyStore,
@@ -26,7 +27,6 @@ import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
 import AttachmentHeader from "./components/AttachmentHeader";
-import MessageAction from "./components/MessageAction";
 
 const Chat = () => {
   const [content, setContent] = React.useState("");
@@ -40,7 +40,7 @@ const Chat = () => {
 
   const { getCurrentModel } = useModelStore();
   const { getApiKey } = useApiKeyStore();
-  const { useThinking } = useUserSettingsStore();
+  const { useThinking, contextWindowSize } = useUserSettingsStore();
 
   const { baseURL, modelId, providerId, thinkingId } = getCurrentModel();
 
@@ -61,6 +61,25 @@ const Chat = () => {
       senderRef.current.focus();
     }
   });
+
+  // 计算有效的上下文消息
+  const getEffectiveMessages = (messages: MessageInfo<MessageType>[]) => {
+    // 找到最后一个分割线的位置
+    let lastDividerIndex = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].message?.type === "divider") {
+        lastDividerIndex = i;
+        break;
+      }
+    }
+
+    // 如果有分割线，从分割线后开始截取
+    const startIndex = lastDividerIndex === -1 ? 0 : lastDividerIndex + 1;
+    const contextMessages = messages.slice(startIndex);
+
+    // 根据上下文窗口大小限制消息数量
+    return contextMessages.slice(-contextWindowSize);
+  };
 
   const { messages, onRequest } = useXChat({
     agent,
@@ -136,7 +155,6 @@ const Chat = () => {
           ({ id, message }) =>
             ({
               content: message.content,
-              footer: (content) => <MessageAction content={content} />,
               key: id,
               role: message.role,
             } as BubbleProps)
@@ -207,13 +225,24 @@ const Chat = () => {
             }
           }
 
+          // 获取有效的上下文消息用于发送请求
+          const effectiveMessages = getEffectiveMessages(messages);
+
+          const message = {
+            content: finalContent,
+            role: "user",
+          };
+
           onRequest({
             enable_thinking: useThinking,
-            message: {
-              content: finalContent,
-              role: "user",
-            },
+            message,
             stream: true,
+            messages: effectiveMessages
+              .map((msg) => ({
+                ...msg.message,
+              }))
+              .filter((msg) => msg.role !== "system")
+              .concat(message),
           });
           setContent("");
           setAttachmentItems([]);
