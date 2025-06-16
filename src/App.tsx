@@ -1,7 +1,9 @@
 import "./App.scss";
 
 import { XProvider, XProviderProps } from "@ant-design/x";
+import { Spin } from "antd";
 import { AnimatePresence } from "motion/react";
+import { useEffect } from "react";
 import {
   Route,
   BrowserRouter as Router,
@@ -13,6 +15,8 @@ import FadeWrapper from "./components/FadeWrapper";
 import { useHideOnBlur } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
+import { useModelStore } from "./store";
+
 const config: XProviderProps = {};
 
 function AnimatedRoutes() {
@@ -36,13 +40,24 @@ function AnimatedRoutes() {
 }
 
 function App() {
+  const { fetchModelList, loading } = useModelStore();
+
+  useEffect(() => {
+    fetchModelList();
+  }, [fetchModelList]);
   useHideOnBlur(false);
 
   return (
     <XProvider {...config}>
       <Router>
         <div className="app-container" data-tauri-drag-region>
-          <AnimatedRoutes />
+          {loading ? (
+            <div className="app-loading">
+              <Spin />
+            </div>
+          ) : (
+            <AnimatedRoutes />
+          )}
         </div>
       </Router>
     </XProvider>

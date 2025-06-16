@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 import "./index.scss";
 
-import { useModelStore } from "@/store/model";
+import { useModelStore, useUserSettingsStore } from "@/store";
 
 export interface ActionBarItem {
   className?: string;
@@ -27,7 +27,8 @@ const ActionBar = ({
   attachmentsOpen: boolean;
   setAttachmentsOpen: (open: boolean) => void;
 }) => {
-  const { model, setUseThinking, useThinking } = useModelStore();
+  const { getCurrentModel } = useModelStore();
+  const { setUseThinking, useThinking } = useUserSettingsStore();
   const navigate = useNavigate();
 
   const actionItems = useMemo<ActionBarItem[]>(() => {
@@ -52,12 +53,12 @@ const ActionBar = ({
         key: "thinking",
         label: "深度思考",
         onClick: () => setUseThinking(!useThinking),
-        show: model.thinking,
+        show: getCurrentModel().thinking || false,
       },
     ];
   }, [
     useThinking,
-    model.thinking,
+    getCurrentModel,
     setUseThinking,
     attachmentsOpen,
     setAttachmentsOpen,

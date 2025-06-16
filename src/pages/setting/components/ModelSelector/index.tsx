@@ -1,67 +1,85 @@
-import { CheckOutlined, ThunderboltOutlined } from "@ant-design/icons";
-import { Card, Flex, Tag, Typography } from "antd";
+import { RobotOutlined } from "@ant-design/icons";
+import { Empty, Spin, Typography } from "antd";
+import { groupBy } from "lodash-es";
+import { motion } from "motion/react";
 import React from "react";
 
-import { type Model, MODEL_LIST, useModelStore } from "@/store/model";
+import { type Model, useModelStore } from "@/store";
 
+import ProviderCard from "../ProviderCard";
 import "./index.scss";
 
 const { Text, Title } = Typography;
 
-interface ModelSelectorProps {
-  className?: string;
-}
-
-const ModelSelector: React.FC<ModelSelectorProps> = ({ className }) => {
-  const { model, setModel } = useModelStore();
+const ModelSelector: React.FC = () => {
+  const { getCurrentModel, modelList, setCurrentModelId, loading } =
+    useModelStore();
+  const modelsByProvider = groupBy(modelList, "providerId");
 
   const handleModelSelect = (selectedModel: Model) => {
-    setModel(selectedModel);
+    setCurrentModelId(selectedModel.modelId);
   };
 
+  if (loading) {
+    return (
+      <div className="model-selector-loading">
+        <Spin size="large" />
+        <Text style={{ marginTop: 16 }} type="secondary">
+          正在加载模型列表...
+        </Text>
+      </div>
+    );
+  }
+
+  if (!modelList.length) {
+    return (
+      <div className="model-selector-empty">
+        <Empty
+          description="暂无可用模型"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={`model-selector ${className || ""}`}>
-      <div className="model-selector-header">
-        <Title level={4} style={{ margin: 0 }}>
-          模型选择
-        </Title>
-        <Text type="secondary">选择您偏好的AI模型</Text>
+    <div className="model-selector">
+      <Title level={4}>模型选择</Title>
+      <div className="providers-container">
+        {Object.entries(modelsByProvider).map(
+          ([providerId, providerModels], index) => (
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              key={providerId}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
+            >
+              <ProviderCard
+                currentModelId={getCurrentModel().modelId}
+                models={providerModels}
+                onModelSelect={handleModelSelect}
+                providerId={providerId}
+              />
+            </motion.div>
+          )
+        )}
       </div>
 
-      <div className="model-list">
-        {MODEL_LIST.map((item) => (
-          <Card
-            className={`model-card ${model.id === item.id ? "selected" : ""}`}
-            hoverable
-            key={item.id}
-            onClick={() => handleModelSelect(item)}
-            size="small"
-          >
-            <Flex align="center" justify="space-between">
-              <div className="model-info">
-                <Flex align="center" gap={8}>
-                  <Text strong>{item.name}</Text>
-                  {item.thinking && (
-                    <Tag
-                      color="blue"
-                      icon={<ThunderboltOutlined />}
-                      style={{ margin: 0 }}
-                    >
-                      推理
-                    </Tag>
-                  )}
-                </Flex>
-                <Text className="model-description" type="secondary">
-                  {item.description}
-                </Text>
-              </div>
-              {model.id === item.id && (
-                <CheckOutlined className="selected-icon" />
-              )}
-            </Flex>
-          </Card>
-        ))}
-      </div>
+      <motion.div
+        animate={{ opacity: 1 }}
+        className="model-selector-footer"
+        initial={{ opacity: 0 }}
+        transition={{ delay: 0.8, duration: 0.5 }}
+      >
+        <Text className="footer-text" type="secondary">
+          <RobotOutlined style={{ marginRight: 4 }} />
+          当前选择: <Text strong>{getCurrentModel().name}</Text>
+        </Text>
+      </motion.div>
     </div>
   );
 };

@@ -14,9 +14,15 @@ import React, { useRef } from "react";
 import { roles } from "@/constants/chat";
 import { ShortcutAction } from "@/constants/shortcut";
 import { useShortcut } from "@/hooks";
-import { MessageType, useMessageStore } from "@/store/messageStore";
-import { useModelStore } from "@/store/model";
+import {
+  type MessageType,
+  useApiKeyStore,
+  useMessageStore,
+  useModelStore,
+  useUserSettingsStore,
+} from "@/store";
 import { toggleWindow } from "@/utils";
+import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
 import AttachmentHeader from "./components/AttachmentHeader";
@@ -32,11 +38,16 @@ const Chat = () => {
     Record<string, string>
   >({});
 
-  const { model, useThinking } = useModelStore();
+  const { getCurrentModel } = useModelStore();
+  const { getApiKey } = useApiKeyStore();
+  const { useThinking } = useUserSettingsStore();
+
+  const { baseURL, modelId, providerId, thinkingId } = getCurrentModel();
+
   const [agent] = useXAgent<MessageType>({
-    baseURL: model.baseURL,
-    dangerouslyApiKey: model.apiKey,
-    model: model.id,
+    baseURL,
+    dangerouslyApiKey: getApiKey(providerId),
+    model: useThinking && thinkingId ? thinkingId : modelId,
   });
 
   const senderRef = useRef<GetRef<typeof Sender>>(null);
@@ -62,7 +73,7 @@ const Chat = () => {
         };
       }
       return {
-        content: "请求失败，请重试！",
+        content: getErrorMessage(error),
         role: "assistant",
       };
     },
@@ -136,6 +147,7 @@ const Chat = () => {
       <Sender
         actions={false}
         autoSize={{ maxRows: 4, minRows: 1 }}
+        disabled={!getApiKey(providerId)}
         footer={({ components }) => {
           const { LoadingButton, SendButton } = components;
           return (
@@ -208,6 +220,7 @@ const Chat = () => {
           setFileContents({});
           setAttachmentsOpen(false);
         }}
+        placeholder={!getApiKey(providerId) ? "请先设置API Key" : "请输入内容"}
         ref={senderRef}
         value={content}
       />
