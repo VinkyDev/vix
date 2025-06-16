@@ -10,7 +10,7 @@ import { Attachment } from "@ant-design/x/es/attachments";
 import { MessageInfo } from "@ant-design/x/es/use-x-chat";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
-import React, { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { ShortcutAction } from "@/constants/shortcut";
 import { useShortcut } from "@/hooks";
@@ -29,14 +29,10 @@ import ActionBar from "./components/ActionBar";
 import AttachmentHeader from "./components/AttachmentHeader";
 
 const Chat = () => {
-  const [content, setContent] = React.useState("");
-  const [attachmentsOpen, setAttachmentsOpen] = React.useState(false);
-  const [attachmentItems, setAttachmentItems] = React.useState<Attachment[]>(
-    []
-  );
-  const [fileContents, setFileContents] = React.useState<
-    Record<string, string>
-  >({});
+  const [content, setContent] = useState("");
+  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [attachmentItems, setAttachmentItems] = useState<Attachment[]>([]);
+  const [fileContents, setFileContents] = useState<Record<string, string>>({});
 
   const { getCurrentModel } = useModelStore();
   const { getApiKey } = useApiKeyStore();

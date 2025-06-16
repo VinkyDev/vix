@@ -19,7 +19,7 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
       useThinking: false,
       setUseThinking: (useThinking) => set({ useThinking }),
 
-      contextWindowSize: 10,
+      contextWindowSize: 4,
       setContextWindowSize: (size) => set({ contextWindowSize: size }),
     }),
     {

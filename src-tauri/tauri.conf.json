@@ -23,7 +23,8 @@
         "alwaysOnTop": true,
         "transparent": true,
         "width": 350,
-        "height": 550
+        "height": 550,
+        "dragDropEnabled": false
       }
     ],
     "security": {

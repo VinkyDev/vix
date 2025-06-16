@@ -26,8 +26,9 @@ import {
 import { motion } from "motion/react";
 import React, { useState } from "react";
 
+import type { Model } from "@/store/modelStore";
+
 import { useApiKeyStore } from "@/store/apiKeyStore";
-import { type Model } from "@/store/modelStore";
 
 import "./index.scss";
 
@@ -52,9 +53,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [tempApiKey, setTempApiKey] = useState("");
   const [activePanel, setActivePanel] = useState<string | string[]>([]);
-
   const currentApiKey = getApiKey(providerId);
-  const providerInfo = models[0]; // 所有模型共享同一个provider信息
+  const providerInfo = models[0];
 
   const handleEditApiKey = () => {
     setTempApiKey(currentApiKey || "");

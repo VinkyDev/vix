@@ -1,6 +1,5 @@
 import {
   ClearOutlined,
-  HistoryOutlined,
   InfoCircleOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
@@ -9,7 +8,6 @@ import {
   Card,
   InputNumber,
   message,
-  Space,
   Tooltip,
   Typography,
 } from "antd";
@@ -24,11 +22,19 @@ const { Text, Title } = Typography;
 
 const BasicSettings: React.FC = () => {
   const { contextWindowSize, setContextWindowSize } = useUserSettingsStore();
-  const { addContextDivider, messages } = useMessageStore();
+  const { addContextDivider, messages, maxMessages, setMaxMessages } =
+    useMessageStore();
 
   const handleContextWindowSizeChange = (value: number | null) => {
     if (value && value >= 1 && value <= 100) {
       setContextWindowSize(value);
+      message.success(`设置成功`);
+    }
+  };
+
+  const handleMaxMessagesChange = (value: number | null) => {
+    if (value && value >= 1 && value <= 100) {
+      setMaxMessages(value);
       message.success(`设置成功`);
     }
   };
@@ -51,10 +57,10 @@ const BasicSettings: React.FC = () => {
         ? totalMessages
         : totalMessages - lastDividerIndex - 1;
 
-    return { totalMessages, currentContextSize };
+    return { currentContextSize };
   };
 
-  const { totalMessages, currentContextSize } = getContextStats();
+  const { currentContextSize } = getContextStats();
 
   return (
     <motion.div
@@ -88,7 +94,7 @@ const BasicSettings: React.FC = () => {
             </div>
             <div className="setting-control">
               <InputNumber
-                addonAfter="条消息"
+                addonAfter="条"
                 className="context-size-input"
                 max={100}
                 min={1}
@@ -102,23 +108,24 @@ const BasicSettings: React.FC = () => {
           {/* 当前上下文状态 */}
           <div className="setting-item">
             <div className="setting-label">
-              <Text strong>当前上下文状态</Text>
+              <Text strong>历史记录保存条数</Text>
               <Tooltip
                 placement="top"
-                title="显示当前有效的上下文消息数量和历史记录总数"
+                title="设置历史记录保存条数，超过该条数后，历史记录将被清除。"
               >
                 <InfoCircleOutlined className="info-icon" />
               </Tooltip>
             </div>
             <div className="setting-control">
-              <Space direction="vertical" size={2}>
-                <Text className="context-stats" type="secondary">
-                  <HistoryOutlined /> 当前上下文: {currentContextSize} 条消息
-                </Text>
-                <Text className="context-stats" type="secondary">
-                  历史记录总数: {totalMessages} 条消息
-                </Text>
-              </Space>
+              <InputNumber
+                addonAfter="条"
+                className="context-size-input"
+                max={100}
+                min={1}
+                onChange={handleMaxMessagesChange}
+                size="small"
+                value={maxMessages}
+              />
             </div>
           </div>
 

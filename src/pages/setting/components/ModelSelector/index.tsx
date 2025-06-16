@@ -71,18 +71,6 @@ const ModelSelector: React.FC = () => {
           )
         )}
       </div>
-
-      <motion.div
-        animate={{ opacity: 1 }}
-        className="model-selector-footer"
-        initial={{ opacity: 0 }}
-        transition={{ delay: 0.8, duration: 0.5 }}
-      >
-        <Text className="footer-text" type="secondary">
-          <RobotOutlined style={{ marginRight: 4 }} />
-          当前选择: <Text strong>{getCurrentModel().name}</Text>
-        </Text>
-      </motion.div>
     </div>
   );
 };
