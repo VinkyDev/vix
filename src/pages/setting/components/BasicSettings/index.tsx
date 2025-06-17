@@ -1,5 +1,6 @@
 import {
   ClearOutlined,
+  DeleteOutlined,
   InfoCircleOutlined,
   MessageOutlined,
 } from "@ant-design/icons";
@@ -15,8 +16,13 @@ const { Text, Title } = Typography;
 
 const BasicSettings: React.FC = () => {
   const { contextWindowSize, setContextWindowSize } = useUserSettingsStore();
-  const { addContextDivider, messages, maxMessages, setMaxMessages } =
-    useMessageStore();
+  const {
+    addContextDivider,
+    messages,
+    maxMessages,
+    setMaxMessages,
+    setMessages,
+  } = useMessageStore();
 
   const handleContextWindowSizeChange = (value: number | null) => {
     if (value && value >= 1 && value <= 100) {
@@ -35,6 +41,11 @@ const BasicSettings: React.FC = () => {
   const handleClearContext = () => {
     addContextDivider();
     message.success("已清除当前上下文");
+  };
+
+  const handleClearHistory = () => {
+    setMessages([]);
+    message.success("已清除历史记录");
   };
 
   const getContextStats = () => {
@@ -95,7 +106,31 @@ const BasicSettings: React.FC = () => {
             </div>
           </div>
 
-          {/* 当前上下文状态 */}
+          {/* 清除上下文按钮 */}
+          <div className="setting-item">
+            <div className="setting-label">
+              <Text strong>上下文管理</Text>
+              <Tooltip
+                placement="top"
+                title="添加分割线清除当前上下文，但保留历史记录。新的对话将从分割线后重新开始计算上下文。"
+              >
+                <InfoCircleOutlined className="info-icon" />
+              </Tooltip>
+            </div>
+            <div className="setting-control">
+              <Button
+                className="clear-context-btn"
+                disabled={currentContextSize === 0}
+                icon={<ClearOutlined />}
+                onClick={handleClearContext}
+                size="small"
+              >
+                清除当前上下文
+              </Button>
+            </div>
+          </div>
+
+          {/* 历史记录保存条数 */}
           <div className="setting-item">
             <div className="setting-label">
               <Text strong>历史记录保存条数</Text>
@@ -119,26 +154,20 @@ const BasicSettings: React.FC = () => {
             </div>
           </div>
 
-          {/* 清除上下文按钮 */}
+          {/* 清除历史记录按钮 */}
           <div className="setting-item">
             <div className="setting-label">
-              <Text strong>上下文管理</Text>
-              <Tooltip
-                placement="top"
-                title="添加分割线清除当前上下文，但保留历史记录。新的对话将从分割线后重新开始计算上下文。"
-              >
-                <InfoCircleOutlined className="info-icon" />
-              </Tooltip>
+              <Text strong>清除历史记录</Text>
             </div>
             <div className="setting-control">
               <Button
                 className="clear-context-btn"
-                disabled={currentContextSize === 0}
-                icon={<ClearOutlined />}
-                onClick={handleClearContext}
+                disabled={messages.length === 0}
+                icon={<DeleteOutlined />}
+                onClick={handleClearHistory}
                 size="small"
               >
-                清除当前上下文
+                清除历史记录
               </Button>
             </div>
           </div>

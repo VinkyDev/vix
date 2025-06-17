@@ -27,6 +27,7 @@ import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
 import AttachmentHeader from "./components/AttachmentHeader";
+import Welcome from "./components/Welcome";
 
 const Chat = () => {
   const [content, setContent] = useState("");
@@ -146,6 +147,7 @@ const Chat = () => {
 
   return (
     <Flex gap="middle" style={{ height: "100%" }} vertical>
+      {messages.length === 0 && <Welcome />}
       <Bubble.List
         items={messages.map(
           ({ id, message }) =>
