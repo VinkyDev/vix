@@ -1,0 +1,146 @@
+.basic-settings {
+  margin-bottom: 16px;
+
+  .basic-settings-card {
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+
+  .basic-settings-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f5f5f5;
+
+    .settings-title {
+      margin: 0 0 4px 0 !important;
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 16px !important;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .anticon {
+        color: #1890ff;
+      }
+    }
+
+    .settings-desc {
+      font-size: 12px;
+      color: #8c8c8c;
+      line-height: 1.4;
+    }
+  }
+
+  .settings-content {
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: linear-gradient(135deg, #fafbff 0%, #f8f9fa 100%);
+      border-radius: 8px;
+      border: 1px solid #f0f0f0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .setting-label {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 16px;
+
+        .ant-typography {
+          color: #1f2937;
+          font-size: 13px;
+          margin: 0;
+        }
+
+        .info-icon {
+          color: #8c8c8c;
+          font-size: 12px;
+          cursor: help;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: #1890ff;
+          }
+        }
+      }
+
+      .setting-control {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+
+        .context-size-input {
+          width: 100px;
+
+          .ant-input-number-input {
+            font-size: 12px;
+          }
+
+          .ant-input-number-group-addon {
+            font-size: 11px;
+            color: #8c8c8c;
+          }
+        }
+
+        .context-stats {
+          font-size: 11px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+
+          .anticon {
+            color: #1890ff;
+            font-size: 10px;
+          }
+        }
+
+        .clear-context-btn {
+          background: linear-gradient(135deg, #ff7875 0%, #ff4d4f 100%);
+          border: none;
+          color: white;
+          border-radius: 6px;
+          font-size: 12px;
+          height: 28px;
+          padding: 0 12px;
+          transition: all 0.3s ease;
+
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ff4d4f 0%, #f5222d 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+          }
+
+          &:disabled {
+            background: #f5f5f5;
+            color: #bfbfbf;
+            cursor: not-allowed;
+          }
+
+          .anticon {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}

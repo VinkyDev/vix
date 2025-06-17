@@ -97,20 +97,8 @@ export default [
           order: 'asc'
         }
       ],
-      'perfectionist/sort-interfaces': [
-        'error',
-        {
-          type: 'natural',
-          order: 'asc'
-        }
-      ],
-      'perfectionist/sort-objects': [
-        'error',
-        {
-          type: 'natural',
-          order: 'asc'
-        }
-      ],
+      'perfectionist/sort-interfaces': 'off',
+      'perfectionist/sort-objects': 'off',
       'perfectionist/sort-jsx-props': [
         'error',
         {
