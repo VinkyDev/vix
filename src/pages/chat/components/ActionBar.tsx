@@ -1,11 +1,10 @@
-import { LinkOutlined, SettingOutlined } from "@ant-design/icons";
+import { BulbOutlined, LinkOutlined, SettingOutlined } from "@ant-design/icons";
 import { Button, Flex } from "antd";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./index.scss";
 
-import { Icon } from "@/components/Icon";
 import { useModelStore, useUserSettingsStore } from "@/store";
 
 export interface ActionBarItem {
@@ -46,7 +45,7 @@ const ActionBar = ({
       },
       {
         className: useThinking ? "thinking-active" : "thinking",
-        icon: <Icon style={{ fontSize: 16 }} type="icon-deep-thinking" />,
+        icon: <BulbOutlined />,
         key: "thinking",
         label: "推理",
         onClick: () => setUseThinking(!useThinking),
