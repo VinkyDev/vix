@@ -10,10 +10,8 @@ import { Attachment } from "@ant-design/x/es/attachments";
 import { MessageInfo } from "@ant-design/x/es/use-x-chat";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { ShortcutAction } from "@/constants/shortcut";
-import { useShortcut } from "@/hooks";
 import { roles } from "@/pages/chat/constants";
 import {
   type MessageType,
@@ -22,7 +20,7 @@ import {
   useModelStore,
   useUserSettingsStore,
 } from "@/store";
-import { toggleWindow } from "@/utils";
+import { emitter } from "@/utils";
 import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
@@ -51,13 +49,6 @@ const Chat = () => {
   const attachmentsRef = useRef<GetRef<typeof Attachments>>(null);
   const abortController = useRef<AbortController | null>(null);
   const messageStore = useMessageStore();
-
-  useShortcut(ShortcutAction.TOGGLE_WINDOW, async () => {
-    const visiable = await toggleWindow();
-    if (senderRef?.current && visiable) {
-      senderRef.current.focus();
-    }
-  });
 
   // 计算有效的上下文消息
   const getEffectiveMessages = (messages: MessageInfo<MessageType>[]) => {
@@ -144,6 +135,15 @@ const Chat = () => {
     [messages, messageStore],
     { wait: 1000 }
   );
+
+  // 自动聚焦
+  useEffect(() => {
+    emitter.on("toggle-window", (visiable) => {
+      if (senderRef?.current && visiable) {
+        senderRef.current.focus();
+      }
+    });
+  }, []);
 
   return (
     <Flex gap="middle" style={{ height: "100%" }} vertical>

@@ -27,6 +27,7 @@
     "mammoth": "^1.9.1",
     "markdown-it": "^14.1.0",
     "markdown-it-container": "^4.0.0",
+    "mitt": "^3.0.1",
     "motion": "^12.17.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
