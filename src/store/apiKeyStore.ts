@@ -17,7 +17,7 @@ export const useApiKeyStore = create<ApiKeyStore>()(
 
       getApiKey: (providerId) => {
         const state = get();
-        return `Bearer ${state.userApiKeys?.[providerId]}`;
+        return state.userApiKeys?.[providerId];
       },
 
       setApiKey: (providerId, apiKey) =>

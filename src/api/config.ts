@@ -1,4 +1,5 @@
 export interface ProviderConfig {
+  providerName: string;
   baseURL: string;
   getApiKeyUrl: string;
   providerId: string;

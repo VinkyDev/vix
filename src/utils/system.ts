@@ -7,4 +7,4 @@ export const isIOS = platform() === "ios";
 export const isAndroid = platform() === "android";
 
 export const isDesktop = !isIOS && !isAndroid;
-export const isMobile = isIOS || isAndroid;
+export const isMobile = !isDesktop;

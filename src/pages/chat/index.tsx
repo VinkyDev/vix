@@ -41,7 +41,7 @@ const Chat = () => {
 
   const [agent] = useXAgent<MessageType>({
     baseURL,
-    dangerouslyApiKey: getApiKey(providerId),
+    dangerouslyApiKey: `Bearer ${getApiKey(providerId)}`,
     model: useThinking && thinkingId ? thinkingId : modelId,
   });
 
@@ -233,6 +233,7 @@ const Chat = () => {
 
           onRequest({
             enable_thinking: useThinking,
+            thinking: { type: useThinking ? "enabled" : "disabled" },
             message,
             stream: true,
             messages: effectiveMessages
@@ -247,7 +248,9 @@ const Chat = () => {
           setFileContents({});
           setAttachmentsOpen(false);
         }}
-        placeholder={!getApiKey(providerId) ? "请先设置API Key" : "请输入内容"}
+        placeholder={
+          !getApiKey(providerId) ? "请前往模型配置设置API Key" : "请输入内容..."
+        }
         ref={senderRef}
         value={content}
       />

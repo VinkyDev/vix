@@ -1,7 +1,7 @@
 import "./App.scss";
 
 import { XProvider, XProviderProps } from "@ant-design/x";
-import { Spin } from "antd";
+import { Flex, Spin } from "antd";
 import { AnimatePresence } from "motion/react";
 import { useEffect } from "react";
 import {
@@ -44,11 +44,15 @@ function AnimatedRoutes() {
 function App() {
   const { fetchModelList, loading } = useModelStore();
 
+  // 获取模型列表
   useEffect(() => {
     fetchModelList();
   }, [fetchModelList]);
+
+  // 失去焦点隐藏
   useHideOnBlur(false);
 
+  // 快捷键注册
   useShortcut(ShortcutAction.TOGGLE_WINDOW, async () => {
     const visiable = await toggleWindow();
     emitter.emit("toggle-window", visiable);
@@ -59,9 +63,9 @@ function App() {
       <Router>
         <div className="app-container" data-tauri-drag-region>
           {loading ? (
-            <div className="app-loading">
+            <Flex align="center" className="app-loading" justify="center">
               <Spin />
-            </div>
+            </Flex>
           ) : (
             <AnimatedRoutes />
           )}

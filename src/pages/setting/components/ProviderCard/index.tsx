@@ -1,5 +1,6 @@
 import {
   CheckOutlined,
+  CopyOutlined,
   EditOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
@@ -76,7 +77,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   const apiKeyMenuItems = [
     {
       key: "view",
-      label: "查看 API Key",
+      label: `${showApiKey ? "隐藏" : "查看"} API Key`,
       icon: showApiKey ? <EyeInvisibleOutlined /> : <EyeOutlined />,
       onClick: () => setShowApiKey(!showApiKey),
       disabled: !currentApiKey,
@@ -158,7 +159,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         <div className="provider-header">
           <div className="provider-info">
             <Title className="provider-name" level={5}>
-              {providerId}
+              {providerInfo.providerName}
             </Title>
             <Text className="provider-desc" type="secondary">
               {models.length} 个模型
@@ -208,6 +209,21 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
               prefix={<KeyOutlined style={{ color: "#1890ff" }} />}
               readOnly
               size="small"
+              suffix={
+                <CopyOutlined
+                  onClick={() =>
+                    navigator.clipboard
+                      .writeText(currentApiKey)
+                      .then(() => {
+                        message.success("复制成功");
+                      })
+                      .catch(() => {
+                        message.error("复制失败");
+                      })
+                  }
+                  style={{ color: "#1890ff" }}
+                />
+              }
               value={currentApiKey}
             />
           </motion.div>
@@ -244,7 +260,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         title={
           <Space>
             <KeyOutlined />
-            编辑 {providerId} API Key
+            编辑 {providerInfo.providerName} API Key
           </Space>
         }
         width={400}
@@ -254,7 +270,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
             autoSize={{ minRows: 1, maxRows: 2 }}
             className="api-key-textarea"
             onChange={(e) => setTempApiKey(e.target.value)}
-            placeholder={`请输入 ${providerId} API Key`}
+            placeholder={`请输入 ${providerInfo.providerName} API Key`}
             value={tempApiKey}
           />
         </div>

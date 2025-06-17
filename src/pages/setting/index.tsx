@@ -68,11 +68,11 @@ const Setting: React.FC = () => {
         />
         <div className="setting-content">
           <Tabs
+            centered
             className="setting-tabs"
             defaultActiveKey="basic"
             items={tabItems}
             size="small"
-            type="card"
           />
         </div>
       </div>
