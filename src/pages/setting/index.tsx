@@ -59,23 +59,20 @@ const Setting: React.FC = () => {
         ease: "easeInOut",
       }}
     >
-      <div className="setting-container">
-        <Button
-          className="close-button"
-          icon={<CloseOutlined />}
-          onClick={handleClose}
-          type="text"
-        />
-        <div className="setting-content">
-          <Tabs
-            centered
-            className="setting-tabs"
-            defaultActiveKey="basic"
-            items={tabItems}
-            size="small"
-          />
-        </div>
-      </div>
+      <Button
+        className="close-button"
+        icon={<CloseOutlined />}
+        onClick={handleClose}
+        shape="circle"
+        type="text"
+      />
+      <Tabs
+        centered
+        className="setting-tabs"
+        defaultActiveKey="basic"
+        items={tabItems}
+        size="small"
+      />
     </motion.div>
   );
 };

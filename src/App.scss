@@ -2,8 +2,6 @@
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   font-weight: 400;
-
-  color: #0f0f0f;
   background: transparent;
 
   font-synthesis: none;
@@ -28,8 +26,8 @@
 .app-container {
   -webkit-app-region: drag;
   user-select: none;
-  border-radius: 30px;
-  background-color: $bg;
+  border-radius: $border-radius-large;
+  background-color: $bg-primary;
   padding: 20px;
   height: 100vh;
   width: 100vw;
@@ -44,6 +42,6 @@
 }
 
 .ant-modal-mask {
-  border-radius: 30px;
+  border-radius: $border-radius-large;
   overflow: hidden;
 }

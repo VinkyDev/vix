@@ -1,3 +1,49 @@
 $bg: #FFFFFF;
 $think: #8f91a8;
 $border: #0d0d0d0d;
+
+// 主色调
+$primary-color: #1890ff;
+$primary-light: #40a9ff;
+$primary-bg: #f0f8ff;
+$primary-border: #e6f4ff;
+
+// 成功色
+$success-color: #52c41a;
+$success-light: #73d13d;
+
+// 警告色
+$warning-color: #faad14;
+$warning-light: #ffc53d;
+
+// 错误色
+$error-color: #ff4d4f;
+$error-light: #ff7875;
+
+// 文字颜色
+$text-primary: #1f2937;
+$text-secondary: #8c8c8c;
+$text-tertiary: #6b7280;
+
+// 背景颜色
+$bg-primary: #ffffff;
+$bg-secondary: #fafbff;
+$bg-tertiary: #f8f9fa;
+$bg-quaternary: #e9ecef;
+
+// 边框颜色
+$border-light: #f0f0f0;
+$border-normal: #d9d9d9;
+$border-dark: #e8e8e8;
+
+// 阴影
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.04);
+$shadow-normal: 0 4px 16px rgba(0, 0, 0, 0.08);
+$shadow-primary: 0 2px 8px rgba(24, 144, 255, 0.15);
+$shadow-primary-hover: 0 2px 8px rgba(24, 144, 255, 0.2);
+$shadow-error: 0 2px 8px rgba(255, 77, 79, 0.3);
+
+// 圆角
+$border-radius-small: 6px;
+$border-radius-normal: 8px;
+$border-radius-large: 12px;

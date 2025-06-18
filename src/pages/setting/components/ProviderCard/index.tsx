@@ -97,7 +97,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   ];
 
   const renderModelList = () => (
-    <div className="model-list">
+    <Flex gap={8} vertical>
       {models.map((model, index) => (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
@@ -145,7 +145,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           </Card>
         </motion.div>
       ))}
-    </div>
+    </Flex>
   );
 
   return (
@@ -155,44 +155,53 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       initial={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="provider-main-card">
-        <div className="provider-header">
-          <div className="provider-info">
+      <Card>
+        <Flex
+          align="center"
+          className="provider-header"
+          justify="space-between"
+        >
+          <Flex className="provider-info" vertical>
             <Title className="provider-name" level={5}>
               {providerInfo.providerName}
             </Title>
             <Text className="provider-desc" type="secondary">
               {models.length} 个模型
             </Text>
-          </div>
-          <div className="provider-status">
-            <Space size={4}>
-              {currentApiKey ? (
-                <Tag className="status-tag" color="success">
-                  <KeyOutlined />
-                  已配置
-                </Tag>
-              ) : (
-                <Tag className="status-tag" color="warning">
-                  <KeyOutlined />
-                  未配置
-                </Tag>
-              )}
-              <Dropdown
-                menu={{ items: apiKeyMenuItems }}
-                placement="bottomRight"
-                trigger={["click"]}
+          </Flex>
+
+          <Space size={4}>
+            {currentApiKey ? (
+              <Tag
+                className="status-tag"
+                color="success"
+                icon={<KeyOutlined />}
               >
-                <Button
-                  className="api-key-menu-btn"
-                  icon={<MoreOutlined />}
-                  size="small"
-                  type="text"
-                />
-              </Dropdown>
-            </Space>
-          </div>
-        </div>
+                已配置
+              </Tag>
+            ) : (
+              <Tag
+                className="status-tag"
+                color="warning"
+                icon={<KeyOutlined />}
+              >
+                未配置
+              </Tag>
+            )}
+            <Dropdown
+              menu={{ items: apiKeyMenuItems }}
+              placement="bottomRight"
+              trigger={["click"]}
+            >
+              <Button
+                className="api-key-menu-btn"
+                icon={<MoreOutlined />}
+                size="small"
+                type="text"
+              />
+            </Dropdown>
+          </Space>
+        </Flex>
 
         {/* API Key 快速查看区域 */}
         {currentApiKey && showApiKey && (
@@ -265,15 +274,13 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         }
         width={400}
       >
-        <div className="edit-modal-content">
-          <Input.TextArea
-            autoSize={{ minRows: 1, maxRows: 2 }}
-            className="api-key-textarea"
-            onChange={(e) => setTempApiKey(e.target.value)}
-            placeholder={`请输入 ${providerInfo.providerName} API Key`}
-            value={tempApiKey}
-          />
-        </div>
+        <Input.TextArea
+          autoSize={{ minRows: 1, maxRows: 2 }}
+          className="api-key-textarea"
+          onChange={(e) => setTempApiKey(e.target.value)}
+          placeholder={`请输入 ${providerInfo.providerName} API Key`}
+          value={tempApiKey}
+        />
       </Modal>
     </motion.div>
   );

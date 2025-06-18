@@ -4,7 +4,15 @@ import {
   InfoCircleOutlined,
   MessageOutlined,
 } from "@ant-design/icons";
-import { Button, Card, InputNumber, message, Tooltip, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Flex,
+  InputNumber,
+  message,
+  Tooltip,
+  Typography,
+} from "antd";
 import { motion } from "motion/react";
 import React from "react";
 
@@ -73,7 +81,7 @@ const BasicSettings: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="basic-settings-card">
+      <Card>
         <div className="basic-settings-header">
           <Title className="settings-title" level={5}>
             <MessageOutlined />
@@ -81,9 +89,8 @@ const BasicSettings: React.FC = () => {
           </Title>
         </div>
 
-        <div className="settings-content">
-          {/* 上下文窗口长度设置 */}
-          <div className="setting-item">
+        <Flex className="settings-content" gap={12} vertical>
+          <Flex className="setting-item" justify="space-between">
             <div className="setting-label">
               <Text strong>上下文窗口长度</Text>
               <Tooltip
@@ -104,10 +111,9 @@ const BasicSettings: React.FC = () => {
                 value={contextWindowSize}
               />
             </div>
-          </div>
+          </Flex>
 
-          {/* 清除上下文按钮 */}
-          <div className="setting-item">
+          <Flex className="setting-item" justify="space-between">
             <div className="setting-label">
               <Text strong>上下文管理</Text>
               <Tooltip
@@ -128,10 +134,9 @@ const BasicSettings: React.FC = () => {
                 清除当前上下文
               </Button>
             </div>
-          </div>
+          </Flex>
 
-          {/* 历史记录保存条数 */}
-          <div className="setting-item">
+          <Flex className="setting-item" justify="space-between">
             <div className="setting-label">
               <Text strong>历史记录保存条数</Text>
               <Tooltip
@@ -152,14 +157,14 @@ const BasicSettings: React.FC = () => {
                 value={maxMessages}
               />
             </div>
-          </div>
+          </Flex>
 
-          {/* 清除历史记录按钮 */}
-          <div className="setting-item">
+          <Flex className="setting-item" justify="space-between">
             <div className="setting-label">
               <Text strong>清除历史记录</Text>
             </div>
-            <div className="setting-control">
+
+            <Flex className="setting-control">
               <Button
                 className="clear-context-btn"
                 disabled={messages.length === 0}
@@ -169,9 +174,9 @@ const BasicSettings: React.FC = () => {
               >
                 清除历史记录
               </Button>
-            </div>
-          </div>
-        </div>
+            </Flex>
+          </Flex>
+        </Flex>
       </Card>
     </motion.div>
   );
