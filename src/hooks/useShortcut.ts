@@ -1,14 +1,17 @@
 import { useEffect } from "react";
 
-import { ShortcutAction } from "@/constants/shortcut";
+import { ShortcutKey, useUserSettingsStore } from "@/store";
 import { createShortcutHandler } from "@/utils/shortcut";
-export function useShortcut(action: ShortcutAction, callback: () => unknown) {
+
+export function useShortcut(key: ShortcutKey, callback: () => unknown) {
+  const shortcuts = useUserSettingsStore((state) => state.shortcuts);
+
   useEffect(() => {
-    const handle = createShortcutHandler(action);
+    const handle = createShortcutHandler(shortcuts[key]);
     handle.register(callback);
 
     return () => {
       handle.unregister();
     };
-  }, [action, callback]);
+  }, [key, callback, shortcuts]);
 }

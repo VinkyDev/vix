@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { getDefaultShortcuts } from "@/utils/shortcut";
+
+export enum ShortcutKey {
+  ToggleWindow = "toggleWindow",
+}
+
 interface UserSettingsStore {
   /** 是否使用推理 */
   useThinking: boolean;
@@ -11,6 +17,18 @@ interface UserSettingsStore {
   contextWindowSize: number;
   /** 设置上下文窗口长度 */
   setContextWindowSize: (size: number) => void;
+
+  /** 快捷键配置 */
+  shortcuts: {
+    [ShortcutKey.ToggleWindow]: string;
+  };
+  /** 设置快捷键 */
+  setShortcut: (
+    key: keyof UserSettingsStore["shortcuts"],
+    value: string
+  ) => void;
+  /** 重置快捷键为默认值 */
+  resetShortcuts: () => void;
 }
 
 export const useUserSettingsStore = create<UserSettingsStore>()(
@@ -21,12 +39,23 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
 
       contextWindowSize: 4,
       setContextWindowSize: (size) => set({ contextWindowSize: size }),
+
+      shortcuts: getDefaultShortcuts(),
+      setShortcut: (key, value) =>
+        set((state) => ({
+          shortcuts: {
+            ...state.shortcuts,
+            [key]: value,
+          },
+        })),
+      resetShortcuts: () => set({ shortcuts: getDefaultShortcuts() }),
     }),
     {
       name: "user-settings-storage",
       partialize: (state) => ({
         useThinking: state.useThinking,
         contextWindowSize: state.contextWindowSize,
+        shortcuts: state.shortcuts,
       }),
     }
   )

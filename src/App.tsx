@@ -12,11 +12,10 @@ import {
 } from "react-router-dom";
 
 import FadeWrapper from "./components/FadeWrapper";
-import { ShortcutAction } from "./constants/shortcut";
 import { useHideOnBlur, useShortcut } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
-import { useModelStore } from "./store";
+import { ShortcutKey, useModelStore } from "./store";
 import { emitter, toggleWindow } from "./utils";
 
 const config: XProviderProps = {};
@@ -53,7 +52,7 @@ function App() {
   useHideOnBlur(false);
 
   // 快捷键注册
-  useShortcut(ShortcutAction.TOGGLE_WINDOW, async () => {
+  useShortcut(ShortcutKey.ToggleWindow, async () => {
     const visiable = await toggleWindow();
     emitter.emit("toggle-window", visiable);
   });
