@@ -26,6 +26,7 @@ import { getErrorMessage } from "@/utils/error";
 import ActionBar from "./components/ActionBar";
 import AttachmentHeader from "./components/AttachmentHeader";
 import Welcome from "./components/Welcome";
+import "./index.scss";
 
 const Chat = () => {
   const [content, setContent] = useState("");

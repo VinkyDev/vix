@@ -1,4 +1,4 @@
-import { CopyOutlined, UserOutlined } from "@ant-design/icons";
+import { CopyOutlined } from "@ant-design/icons";
 import { RolesType } from "@ant-design/x/es/bubble/BubbleList";
 
 import MarkdownRender from "@/components/MarkdownRender";
@@ -17,20 +17,23 @@ export const roles: RolesType = {
   system: {
     messageRender: MarkdownRender,
     classNames: {
-      avatar: "system-avatar",
       content: "system-content",
     },
   },
   assistant: {
-    avatar: { icon: <UserOutlined />, style: { background: "#fde3cf" } },
     messageRender: MarkdownRender,
     placement: "start",
+    classNames: {
+      content: "assistant-content",
+    },
     footer: (content) => <MessageAction content={content} />,
   },
   user: {
-    avatar: { icon: <UserOutlined />, style: { background: "#87d068" } },
     messageRender: MarkdownRender,
     placement: "end",
+    classNames: {
+      content: "user-content",
+    },
     footer: (content) => <MessageAction content={content} />,
   },
 };

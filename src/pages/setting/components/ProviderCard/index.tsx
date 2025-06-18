@@ -6,13 +6,11 @@ import {
   EyeOutlined,
   KeyOutlined,
   LinkOutlined,
-  MoreOutlined,
   RobotOutlined,
   ThunderboltOutlined,
 } from "@ant-design/icons";
 import { open } from "@tauri-apps/plugin-shell";
 import {
-  Button,
   Card,
   Collapse,
   Dropdown,
@@ -171,34 +169,28 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           </Flex>
 
           <Space size={4}>
-            {currentApiKey ? (
-              <Tag
-                className="status-tag"
-                color="success"
-                icon={<KeyOutlined />}
-              >
-                已配置
-              </Tag>
-            ) : (
-              <Tag
-                className="status-tag"
-                color="warning"
-                icon={<KeyOutlined />}
-              >
-                未配置
-              </Tag>
-            )}
             <Dropdown
               menu={{ items: apiKeyMenuItems }}
               placement="bottomRight"
-              trigger={["click"]}
+              trigger={["click", "hover"]}
             >
-              <Button
-                className="api-key-menu-btn"
-                icon={<MoreOutlined />}
-                size="small"
-                type="text"
-              />
+              {currentApiKey ? (
+                <Tag
+                  className="status-tag"
+                  color="success"
+                  icon={<KeyOutlined />}
+                >
+                  已配置
+                </Tag>
+              ) : (
+                <Tag
+                  className="status-tag"
+                  color="warning"
+                  icon={<KeyOutlined />}
+                >
+                  未配置
+                </Tag>
+              )}
             </Dropdown>
           </Space>
         </Flex>

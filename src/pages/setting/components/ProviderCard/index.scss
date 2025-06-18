@@ -1,6 +1,10 @@
 .provider-card {
   margin-bottom: 16px;
 
+  .ant-card-body {
+    padding: 12px 20px;
+  }
+
   .provider-header {
     margin-bottom: 12px;
     padding-bottom: 12px;

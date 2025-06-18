@@ -1,0 +1,39 @@
+.system-content {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: transparent !important;
+}
+
+.ant-sender {
+  &:focus-within {
+    border: 0 solid $border-normal !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+      0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+  }
+  &::after {
+    border: 1px solid $border-normal !important;
+  }
+}
+
+.ant-bubble-content {
+  .ant-typography {
+    p {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+.user-content {
+  background-color: $bg-bubble !important;
+  .ant-typography {
+    color: #fff !important;
+    p {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+.ant-bubble .ant-bubble-footer {
+  margin-top: 2px !important;
+}

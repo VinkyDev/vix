@@ -50,7 +50,7 @@ function App() {
   }, [fetchModelList]);
 
   // 失去焦点隐藏
-  useHideOnBlur();
+  useHideOnBlur(false);
 
   // 快捷键注册
   useShortcut(ShortcutAction.TOGGLE_WINDOW, async () => {

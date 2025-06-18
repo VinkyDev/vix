@@ -21,16 +21,6 @@ const Setting: React.FC = () => {
 
   const tabItems = [
     {
-      key: "basic",
-      label: (
-        <Space>
-          <SettingOutlined />
-          <span>基础配置</span>
-        </Space>
-      ),
-      children: <BasicSettings />,
-    },
-    {
       key: "models",
       label: (
         <Space>
@@ -39,6 +29,16 @@ const Setting: React.FC = () => {
         </Space>
       ),
       children: <ModelSelector />,
+    },
+    {
+      key: "basic",
+      label: (
+        <Space>
+          <SettingOutlined />
+          <span>基础配置</span>
+        </Space>
+      ),
+      children: <BasicSettings />,
     },
   ];
 
@@ -55,7 +55,7 @@ const Setting: React.FC = () => {
         clipPath: "circle(0% at 0% 100%)",
       }}
       transition={{
-        duration: 0.5,
+        duration: 0.4,
         ease: "easeInOut",
       }}
     >
@@ -69,7 +69,7 @@ const Setting: React.FC = () => {
       <Tabs
         centered
         className="setting-tabs"
-        defaultActiveKey="basic"
+        defaultActiveKey="models"
         items={tabItems}
         size="small"
       />

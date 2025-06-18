@@ -19,7 +19,6 @@
     content: "";
     flex: 1;
     border-top: 1px solid #ddd;
-    transform: translateY(-5px);
   }
 
   &::before {
@@ -29,15 +28,4 @@
   &::after {
     margin-left: 0.75em;
   }
-}
-
-.system-content {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: transparent !important;
-}
-
-.system-avatar {
-  display: none;
 }
