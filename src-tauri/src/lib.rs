@@ -1,4 +1,9 @@
-use tauri::{AppHandle, Manager};
+use tauri::{
+    async_runtime::spawn,
+    menu::{Menu, MenuItem},
+    tray::TrayIconBuilder,
+    ActivationPolicy, AppHandle, Manager,
+};
 
 #[tauri::command]
 async fn show_window(app: AppHandle) -> Result<(), String> {
@@ -49,6 +54,36 @@ pub fn run() {
             hide_window,
             toggle_window
         ])
+        .setup(|app| {
+            let quit_i = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
+            let toggle_i = MenuItem::with_id(app, "toggle", "显示/隐藏", true, None::<&str>)?;
+            let menu = Menu::with_items(app, &[&toggle_i, &quit_i])?;
+
+            let _tray = TrayIconBuilder::new()
+                .on_menu_event(|app, event| match event.id.as_ref() {
+                    "quit" => {
+                        app.exit(0);
+                    }
+                    "toggle" => {
+                        let app_handle = app.clone();
+                        spawn(async move {
+                            let _ = toggle_window(app_handle).await;
+                        });
+                    }
+                    _ => {
+                        println!("menu item {:?} not handled", event.id);
+                    }
+                })
+                .icon(app.default_window_icon().unwrap().clone())
+                .icon_as_template(true)
+                .menu(&menu)
+                .show_menu_on_left_click(true)
+                .build(app)?;
+
+            #[cfg(target_os = "macos")]
+            app.set_activation_policy(ActivationPolicy::Accessory);
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
