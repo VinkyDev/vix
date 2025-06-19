@@ -237,6 +237,21 @@ const Chat = () => {
             thinking: { type: useThinking ? "enabled" : "disabled" },
             message,
             stream: true,
+            tools: [
+              {
+                type: "function",
+                function: {
+                  name: "查看网页",
+                  description: "查看网页内容",
+                  parameters: {
+                    type: "object",
+                    properties: {
+                      url: { type: "string" },
+                    },
+                  },
+                },
+              },
+            ],
             messages: effectiveMessages
               .map((msg) => ({
                 ...msg.message,

@@ -52,7 +52,7 @@ rm src-tauri/Cargo.toml.bak
 echo -e "${GREEN}✅ 版本已更新${NC}"
 
 # 提交版本更改
-git add package.json src-tauri/tauri.conf.json src-tauri/Cargo.toml
+git add package.json src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock
 git commit -m "chore: bump version to $NEW_VERSION"
 
 echo -e "${GREEN}🔄 切换到 main 分支并合并 develop...${NC}"

@@ -12,6 +12,9 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "lint:check": "eslint . --ext ts,tsx"
   },
+  "engines": {
+    "node": ">=20.14.0"
+  },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "@ant-design/x": "^1.4.0",

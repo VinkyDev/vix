@@ -1,5 +1,12 @@
-import { BulbOutlined, LinkOutlined, SettingOutlined } from "@ant-design/icons";
-import { Button, Flex } from "antd";
+import {
+  BulbOutlined,
+  EditOutlined,
+  LinkOutlined,
+  SettingOutlined,
+  ToolOutlined,
+  TranslationOutlined,
+} from "@ant-design/icons";
+import { Button, Dropdown, Flex } from "antd";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +21,7 @@ export interface ActionBarItem {
   label?: string;
   onClick?: () => void;
   show?: boolean;
+  render?: () => React.ReactNode;
 }
 
 const ActionBar = ({
@@ -51,6 +59,33 @@ const ActionBar = ({
         onClick: () => setUseThinking(!useThinking),
         show: getCurrentModel().thinking || false,
       },
+      {
+        key: "skills",
+        render: () => {
+          return (
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: "translate",
+                    label: "翻译",
+                    icon: <TranslationOutlined />,
+                  },
+                  {
+                    key: "write",
+                    label: "写作",
+                    icon: <EditOutlined />,
+                  },
+                ],
+              }}
+            >
+              <Button className="skill" icon={<ToolOutlined />}>
+                技能
+              </Button>
+            </Dropdown>
+          );
+        },
+      },
     ];
   }, [
     useThinking,
@@ -63,18 +98,19 @@ const ActionBar = ({
 
   return (
     <Flex gap="small">
-      {actionItems.map(
-        (action) =>
-          (action.show ?? true) && (
-            <Button
-              className={action.className}
-              icon={action.icon}
-              key={action.key}
-              onClick={action.onClick}
-            >
-              {action?.label}
-            </Button>
-          )
+      {actionItems.map((action) =>
+        (action.show ?? true) && action.render ? (
+          action.render()
+        ) : (
+          <Button
+            className={action.className}
+            icon={action.icon}
+            key={action.key}
+            onClick={action.onClick}
+          >
+            {action?.label}
+          </Button>
+        )
       )}
     </Flex>
   );
