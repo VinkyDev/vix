@@ -1,16 +1,17 @@
 import {
   BulbOutlined,
   EditOutlined,
-  LinkOutlined,
+  // LinkOutlined,
   SettingOutlined,
   ToolOutlined,
   TranslationOutlined,
 } from "@ant-design/icons";
 import { Button, Dropdown, Flex } from "antd";
-import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
 import "./index.scss";
+
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useModelStore, useUserSettingsStore } from "@/store";
 
@@ -24,13 +25,7 @@ export interface ActionBarItem {
   render?: () => React.ReactNode;
 }
 
-const ActionBar = ({
-  attachmentsOpen,
-  setAttachmentsOpen,
-}: {
-  attachmentsOpen: boolean;
-  setAttachmentsOpen: (open: boolean) => void;
-}) => {
+const ActionBar = () => {
   const { getCurrentModel } = useModelStore();
   const { setUseThinking, useThinking } = useUserSettingsStore();
   const navigate = useNavigate();
@@ -44,13 +39,11 @@ const ActionBar = ({
           navigate("/setting");
         },
       },
-      {
-        icon: <LinkOutlined />,
-        key: "file",
-        onClick: () => {
-          setAttachmentsOpen(!attachmentsOpen);
-        },
-      },
+      // {
+      //   icon: <LinkOutlined />,
+      //   key: "file",
+      //   onClick: () => {},
+      // },
       {
         className: useThinking ? "thinking-active" : "thinking",
         icon: <BulbOutlined />,
@@ -70,6 +63,7 @@ const ActionBar = ({
                     key: "translate",
                     label: "翻译",
                     icon: <TranslationOutlined />,
+                    onClick: async () => {},
                   },
                   {
                     key: "write",
@@ -87,14 +81,7 @@ const ActionBar = ({
         },
       },
     ];
-  }, [
-    useThinking,
-    getCurrentModel,
-    setUseThinking,
-    attachmentsOpen,
-    setAttachmentsOpen,
-    navigate,
-  ]);
+  }, [useThinking, getCurrentModel, setUseThinking, navigate]);
 
   return (
     <Flex gap="small">

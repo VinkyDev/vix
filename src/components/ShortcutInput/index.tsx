@@ -2,7 +2,7 @@ import { Input, InputProps, InputRef, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 
 import "./index.scss";
-import { keyIcons, keyMap } from "./constants";
+import { codeToKeyMap, keyIcons } from "./constants";
 
 interface ShortcutInputProps
   extends Omit<InputProps, "onChange" | "onKeyDown"> {
@@ -46,6 +46,7 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({
 
     const keys: string[] = [];
 
+    // 收集修饰键
     if (e.metaKey) keys.push("Command");
     if (e.ctrlKey) keys.push("Control");
     if (e.altKey) keys.push("Alt");
@@ -53,24 +54,22 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({
 
     updateCurrentKeys(keys);
 
+    // 处理 F 功能键（F1-F12 可以单独使用）
     if (e.key.startsWith("F") && /^F([1-9]|1[0-2])$/.test(e.key)) {
       finishRecording(e.key);
       return;
     }
 
+    // 排除纯修饰键
     const isModifierKey = ["Meta", "Control", "Alt", "Shift"].includes(e.key);
 
-    if (
-      keys.length > 0 &&
-      !isModifierKey
-    ) {
-      const mainKey = keyMap[e.key] ?? e.key;
+    if (keys.length > 0 && !isModifierKey) {
+      // 统一使用 e.code 获取物理键位，避免符号转换问题
+      const mainKey = codeToKeyMap[e.code] ?? e.key;
       keys.push(mainKey);
       const shortcut = keys.join("+");
       finishRecording(shortcut);
-      return;
     }
-
   };
 
   const handleKeyUp = (e: React.KeyboardEvent) => {
