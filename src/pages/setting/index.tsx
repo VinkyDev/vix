@@ -4,7 +4,6 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { Button, Space, Tabs } from "antd";
-import { motion } from "motion/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -43,22 +42,7 @@ const Setting: React.FC = () => {
   ];
 
   return (
-    <motion.div
-      animate={{
-        clipPath: "circle(150% at 0% 100%)",
-      }}
-      className="setting-overlay"
-      exit={{
-        clipPath: "circle(0% at 0% 100%)",
-      }}
-      initial={{
-        clipPath: "circle(0% at 0% 100%)",
-      }}
-      transition={{
-        duration: 0.4,
-        ease: "easeInOut",
-      }}
-    >
+    <div className="setting-container">
       <Button
         className="close-button"
         icon={<CloseOutlined />}
@@ -73,7 +57,7 @@ const Setting: React.FC = () => {
         items={tabItems}
         size="small"
       />
-    </motion.div>
+    </div>
   );
 };
 

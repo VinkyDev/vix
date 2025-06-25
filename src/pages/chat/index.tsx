@@ -7,7 +7,8 @@ import {
 } from "@ant-design/x";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
-import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { roles } from "@/pages/chat/constants";
@@ -22,9 +23,9 @@ import { emitter } from "@/utils";
 import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
-import "./index.scss";
-import Welcome from "./components/Welcome";
 import { calculateMessagesToSend, transformMessage } from "./helper";
+import "./index.scss";
+
 const Chat = () => {
   const [content, setContent] = useState("");
 
@@ -118,10 +119,19 @@ const Chat = () => {
     });
   }, []);
 
+  const initState = useMemo(() => messages.length === 0, [messages]);
+
   return (
-    <Flex gap="middle" style={{ height: "100%" }} vertical>
-      {messages.length === 0 && <Welcome />}
+    <Flex
+      className={clsx("chat-container", { "chat-container-init": initState })}
+      data-tauri-drag-region
+      gap="middle"
+      vertical
+    >
       <Bubble.List
+        className={clsx("chat-bubble-list", {
+          "chat-bubble-list-init": initState,
+        })}
         items={messages.map(
           ({ id, message }) =>
             ({
@@ -131,11 +141,11 @@ const Chat = () => {
             } as BubbleProps)
         )}
         roles={roles}
-        style={{ height: "100%" }}
       />
       <Sender
         actions={false}
         autoSize={{ maxRows: 4, minRows: 1 }}
+        data-tauri-drag-region
         disabled={!getApiKey(providerId)}
         footer={({ components }) => {
           const { LoadingButton, SendButton } = components;

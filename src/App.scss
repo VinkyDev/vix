@@ -23,17 +23,6 @@
   display: none;
 }
 
-.app-container {
-  -webkit-app-region: drag;
-  user-select: none;
-  border-radius: $border-radius-large;
-  background-color: $bg-primary;
-  padding: 20px;
-  box-sizing: border-box;
-  cursor: grab;
-  overflow: hidden;
-}
-
 .app-loading {
   height: 100%;
   width: 100%;

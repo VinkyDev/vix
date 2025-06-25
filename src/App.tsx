@@ -2,7 +2,6 @@ import "./App.scss";
 
 import { XProvider, XProviderProps } from "@ant-design/x";
 import { Flex, Spin } from "antd";
-import { AnimatePresence } from "motion/react";
 import { useEffect } from "react";
 import {
   Route,
@@ -12,7 +11,6 @@ import {
 } from "react-router-dom";
 
 import { AutoSize } from "./components/AutoSize";
-import FadeWrapper from "./components/FadeWrapper";
 import { useHideOnBlur, useShortcut } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
@@ -21,23 +19,14 @@ import { emitter, toggleWindow } from "./utils";
 
 const config: XProviderProps = {};
 
-function AnimatedRoutes() {
+function AppRoutes() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="popLayout">
-      <Routes key={location.pathname} location={location}>
-        <Route
-          element={
-            <FadeWrapper>
-              <Chat />
-            </FadeWrapper>
-          }
-          path="/"
-        />
-        <Route element={<Setting />} path="/setting" />
-      </Routes>
-    </AnimatePresence>
+    <Routes key={location.pathname} location={location}>
+      <Route element={<Chat />} path="/" />
+      <Route element={<Setting />} path="/setting" />
+    </Routes>
   );
 }
 
@@ -62,13 +51,13 @@ function App() {
     <XProvider {...config}>
       <Router>
         <AutoSize>
-          <div className="app-container" data-tauri-drag-region>
+          <div className="app-container">
             {loading ? (
               <Flex align="center" className="app-loading" justify="center">
                 <Spin />
               </Flex>
             ) : (
-              <AnimatedRoutes />
+              <AppRoutes />
             )}
           </div>
         </AutoSize>

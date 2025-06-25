@@ -30,7 +30,6 @@ export const AutoSize: React.FC<AutoSizeProps> = ({
 
     await win.setSize(newSize);
     await new Promise((r) => setTimeout(r, 50));
-    await win.center();
     await win.show();
     await win.setFocus();
   }, [ready]);
