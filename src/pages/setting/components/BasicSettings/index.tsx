@@ -68,7 +68,7 @@ const BasicSettings: React.FC = () => {
   const getContextStats = () => {
     const totalMessages = messages.length;
     const lastDividerIndex = messages.reduce((acc, msg, index) => {
-      if (msg.message.type === "divider") {
+      if (msg.message.content.includes("<divider>")) {
         return index;
       }
       return acc;

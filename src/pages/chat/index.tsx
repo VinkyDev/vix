@@ -5,8 +5,10 @@ import {
   useXAgent,
   useXChat,
 } from "@ant-design/x";
+import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { roles } from "@/pages/chat/constants";
 import {
@@ -20,15 +22,15 @@ import { emitter } from "@/utils";
 import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
-import Welcome from "./components/Welcome";
 import "./index.scss";
-
+import Welcome from "./components/Welcome";
+import { calculateMessagesToSend, transformMessage } from "./helper";
 const Chat = () => {
   const [content, setContent] = useState("");
 
   const { getCurrentModel } = useModelStore();
   const { getApiKey } = useApiKeyStore();
-  const { useThinking } = useUserSettingsStore();
+  const { useThinking, contextWindowSize } = useUserSettingsStore();
 
   const { baseURL, modelId, providerId, thinkingId } = getCurrentModel();
 
@@ -43,20 +45,24 @@ const Chat = () => {
   const {
     messages: messageStoreMessages,
     setMessages: setMessageStoreMessages,
-  } = useMessageStore();
+  } = useMessageStore(
+    useShallow((state) => ({
+      messages: state.messages,
+      setMessages: state.setMessages,
+    }))
+  );
 
   const sendMessage = (message: MessageType) => {
+    const currentMessages = calculateMessagesToSend(
+      messages,
+      contextWindowSize
+    );
     onRequest({
       enable_thinking: useThinking,
       thinking: { type: useThinking ? "enabled" : "disabled" },
       stream: true,
       message,
-      messages: [
-        ...messages.map((msg) => ({
-          ...msg.message,
-        })),
-        message,
-      ],
+      messages: [...currentMessages, message],
     });
   };
 
@@ -84,44 +90,19 @@ const Chat = () => {
     resolveAbortController: (controller) => {
       abortController.current = controller;
     },
-    transformMessage: (info) => {
-      const { chunk, originMessage } = info || {};
-      let currentContent = "";
-      let currentThink = "";
-
-      if (chunk?.data && !chunk?.data.includes("DONE")) {
-        const message = JSON.parse(chunk?.data);
-        currentThink = message?.choices?.[0]?.delta?.reasoning_content || "";
-        currentContent = message?.choices?.[0]?.delta?.content || "";
-      }
-
-      let content = "";
-
-      if (!originMessage?.content && currentThink) {
-        content = `<think>${currentThink}`;
-      } else if (
-        originMessage?.content?.includes("<think>") &&
-        !originMessage?.content.includes("</think>") &&
-        currentContent
-      ) {
-        content = `${originMessage?.content}</think>${currentContent}`;
-      } else {
-        content = `${
-          originMessage?.content || ""
-        }${currentThink}${currentContent}`;
-      }
-
-      return {
-        content,
-        role: "assistant",
-      };
-    },
+    transformMessage,
   });
 
   // 历史记录存储
-  useEffect(() => {
-    setMessageStoreMessages(messages);
-  }, [messages, setMessageStoreMessages]);
+  useDebounceEffect(
+    () => {
+      setMessageStoreMessages(messages);
+    },
+    [messages, setMessageStoreMessages],
+    {
+      wait: 1000,
+    }
+  );
 
   // 自动聚焦
   useEffect(() => {
@@ -136,19 +117,14 @@ const Chat = () => {
     <Flex gap="middle" style={{ height: "100%" }} vertical>
       {messages.length === 0 && <Welcome />}
       <Bubble.List
-        items={messages
-          .filter(
-            (msg) =>
-              msg.message.role !== "system" && msg.message.role !== "tool"
-          )
-          .map(
-            ({ id, message }) =>
-              ({
-                content: message.content,
-                key: id,
-                role: message.role,
-              } as BubbleProps)
-          )}
+        items={messages.map(
+          ({ id, message }) =>
+            ({
+              content: message.content,
+              key: id,
+              role: message.role,
+            } as BubbleProps)
+        )}
         roles={roles}
         style={{ height: "100%" }}
       />

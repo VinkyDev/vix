@@ -4,9 +4,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type MessageType = {
-  role: string;
+  role?: string;
   content: string;
-  type?: "normal" | "divider";
 };
 
 interface MessageStore {
@@ -38,8 +37,7 @@ export const useMessageStore = create<MessageStore>()(
         const dividerMessage: Omit<MessageInfo<MessageType>, "id"> = {
           message: {
             role: "system",
-            content: ":::divider\n上下文已清除\n:::\n",
-            type: "divider",
+            content: "<divider>上下文已清除</divider>",
           },
           status: "success",
         };
