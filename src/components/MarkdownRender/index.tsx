@@ -9,43 +9,69 @@ import { Token } from "markdown-it/index.js";
 import "./index.scss";
 import "highlight.js/styles/github.css";
 
-const md = markdownit({ breaks: true, html: true })
-  .use(container, "think", {
-    render(tokens: Token[], idx: number) {
-      const token = tokens[idx];
-      if (token.nesting === 1) {
-        return `<div class="think">\n`;
-      } else {
-        return `</div>\n`;
-      }
-    },
-  })
-  .use(container, "divider", {
-    render(tokens: Token[], idx: number) {
-      const token = tokens[idx];
-      if (token.nesting === 1) {
-        return `<div class="divider">\n`;
-      } else {
-        return `</div>\n`;
-      }
-    },
-  })
-  .use((md) => {
-    md.options.highlight = (str, lang) => {
-      if (lang && hljs.getLanguage(lang)) {
-        return `<pre class="hljs"><code>${
-          hljs.highlight(str, { language: lang }).value
-        }</code></pre>`;
-      }
+const containerConfigs = [
+  {
+    name: "think",
+    className: "think",
+    openTag: "<think>",
+    closeTag: "</think>",
+  },
+  {
+    name: "divider",
+    className: "divider",
+    openTag: "<divider>",
+    closeTag: "</divider>",
+  },
+];
 
-      return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
-    };
+const md = markdownit({ breaks: true, html: true });
+
+containerConfigs.forEach((config) => {
+  md.use(container, config.name, {
+    render(tokens: Token[], idx: number) {
+      const token = tokens[idx];
+      if (token.nesting === 1) {
+        return `<div class="${config.className}">\n`;
+      } else {
+        return `</div>\n`;
+      }
+    },
   });
+});
+
+md.use((md) => {
+  md.options.highlight = (str, lang) => {
+    if (lang && hljs.getLanguage(lang)) {
+      return `<pre class="hljs"><code>${
+        hljs.highlight(str, { language: lang }).value
+      }</code></pre>`;
+    }
+
+    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+  };
+});
 
 const preprocessContent = (content: string) => {
-  return content
-    .replace(/<think>/g, ":::think\n")
-    .replace(/<\/think>/g, "\n:::\n");
+  let processedContent = content;
+
+  containerConfigs.forEach((config) => {
+    if (config.openTag && config.closeTag) {
+      const openRegex = new RegExp(
+        config.openTag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "g"
+      );
+      const closeRegex = new RegExp(
+        config.closeTag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "g"
+      );
+
+      processedContent = processedContent
+        .replace(openRegex, `:::${config.name}\n`)
+        .replace(closeRegex, `\n:::\n`);
+    }
+  });
+
+  return processedContent;
 };
 
 const renderMarkdown: BubbleProps["messageRender"] = (content) => {
