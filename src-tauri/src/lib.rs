@@ -5,6 +5,7 @@ use tauri::{
     tray::TrayIconBuilder,
     ActivationPolicy, AppHandle, Emitter, Listener, Manager, WebviewUrl, WebviewWindowBuilder,
 };
+use tauri_plugin_log::{Target, TargetKind};
 
 #[tauri::command]
 async fn show_window(app: AppHandle) -> Result<(), String> {
@@ -163,6 +164,15 @@ pub fn run() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .targets([
+                    Target::new(TargetKind::Stdout),
+                    Target::new(TargetKind::LogDir { file_name: None }),
+                    Target::new(TargetKind::Webview),
+                ])
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![
             show_window,
             hide_window,

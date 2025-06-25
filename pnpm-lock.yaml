@@ -20,6 +20,9 @@ importers:
       '@tauri-apps/plugin-global-shortcut':
         specifier: ~2
         version: 2.2.1
+      '@tauri-apps/plugin-log':
+        specifier: ^2.5.1
+        version: 2.5.1
       '@tauri-apps/plugin-opener':
         specifier: ^2
         version: 2.2.7
@@ -850,6 +853,9 @@ packages:
 
   '@tauri-apps/plugin-global-shortcut@2.2.1':
     resolution: {integrity: sha512-b64/TI1t5LIi2JY4OWlYjZpPRq60T5GVVL/no27sUuxaNUZY8dVtwsMtDUgxUpln2yR+P2PJsYlqY5V8sLSxEw==}
+
+  '@tauri-apps/plugin-log@2.5.1':
+    resolution: {integrity: sha512-cG/K5jAQqn2cwNdB1b4QkqI+wh2+w3BgEx3vF+fSuDbqbIW2mF36ou57yDcZ/4k0O+j9JuTY6PkJEeprimdaog==}
 
   '@tauri-apps/plugin-opener@2.2.7':
     resolution: {integrity: sha512-uduEyvOdjpPOEeDRrhwlCspG/f9EQalHumWBtLBnp3fRp++fKGLqDOyUhSIn7PzX45b/rKep//ZQSAQoIxobLA==}
@@ -3127,6 +3133,10 @@ snapshots:
       '@tauri-apps/cli-win32-x64-msvc': 2.5.0
 
   '@tauri-apps/plugin-global-shortcut@2.2.1':
+    dependencies:
+      '@tauri-apps/api': 2.5.0
+
+  '@tauri-apps/plugin-log@2.5.1':
     dependencies:
       '@tauri-apps/api': 2.5.0
 

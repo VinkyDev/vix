@@ -11,6 +11,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import { AutoSize } from "./components/AutoSize";
 import FadeWrapper from "./components/FadeWrapper";
 import { useHideOnBlur, useShortcut } from "./hooks";
 import Chat from "./pages/chat";
@@ -60,15 +61,17 @@ function App() {
   return (
     <XProvider {...config}>
       <Router>
-        <div className="app-container" data-tauri-drag-region>
-          {loading ? (
-            <Flex align="center" className="app-loading" justify="center">
-              <Spin />
-            </Flex>
-          ) : (
-            <AnimatedRoutes />
-          )}
-        </div>
+        <AutoSize>
+          <div className="app-container" data-tauri-drag-region>
+            {loading ? (
+              <Flex align="center" className="app-loading" justify="center">
+                <Spin />
+              </Flex>
+            ) : (
+              <AnimatedRoutes />
+            )}
+          </div>
+        </AutoSize>
       </Router>
     </XProvider>
   );
