@@ -13,6 +13,11 @@ interface UserSettingsStore {
   /** 设置是否使用推理 */
   setUseThinking: (useThinking: boolean) => void;
 
+  /** 是否使用联网搜索 */
+  useSearch: boolean;
+  /** 设置是否使用联网搜索 */
+  setUseSearch: (useSearch: boolean) => void;
+
   /** 上下文窗口长度 */
   contextWindowSize: number;
   /** 设置上下文窗口长度 */
@@ -35,7 +40,9 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
   persist(
     (set) => ({
       useThinking: false,
+      useSearch: false,
       setUseThinking: (useThinking) => set({ useThinking }),
+      setUseSearch: (useSearch) => set({ useSearch }),
 
       contextWindowSize: 4,
       setContextWindowSize: (size) => set({ contextWindowSize: size }),
@@ -54,6 +61,7 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
       name: "user-settings-storage",
       partialize: (state) => ({
         useThinking: state.useThinking,
+        useSearch: state.useSearch,
         contextWindowSize: state.contextWindowSize,
         shortcuts: state.shortcuts,
       }),

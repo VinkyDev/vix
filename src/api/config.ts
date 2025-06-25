@@ -6,12 +6,13 @@ export interface ProviderConfig {
 }
 
 export interface ModelConfig {
-  description: string;
+  description?: string;
   modelId: string;
   name: string;
   providerId: string;
-  thinking: boolean;
-  thinkingId: string;
+  thinking?: boolean;
+  thinkingId?: string;
+  search?: boolean;
 }
 
 export type ConfigData<T> = {

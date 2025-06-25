@@ -7,7 +7,6 @@ import {
   KeyOutlined,
   LinkOutlined,
   RobotOutlined,
-  ThunderboltOutlined,
 } from "@ant-design/icons";
 import { open } from "@tauri-apps/plugin-shell";
 import {
@@ -114,17 +113,19 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
             <Flex align="center" justify="space-between">
               <div className="model-info">
                 <Flex align="center" gap={8}>
-                  <RobotOutlined className="model-icon" />
                   <Text strong>{model.name}</Text>
-                  {model.thinking && (
-                    <Tag
-                      className="thinking-tag"
-                      color="blue"
-                      icon={<ThunderboltOutlined />}
-                    >
-                      推理
-                    </Tag>
-                  )}
+                  <Space size={0}>
+                    {model.thinking && (
+                      <Tag className="tag" color="blue">
+                        推理
+                      </Tag>
+                    )}
+                    {model.search && (
+                      <Tag className="tag" color="cyan">
+                        联网搜索
+                      </Tag>
+                    )}
+                  </Space>
                 </Flex>
                 <Text className="model-description" type="secondary">
                   {model.description}

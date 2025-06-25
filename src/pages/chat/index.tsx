@@ -30,7 +30,7 @@ const Chat = () => {
 
   const { getCurrentModel } = useModelStore();
   const { getApiKey } = useApiKeyStore();
-  const { useThinking, contextWindowSize } = useUserSettingsStore();
+  const { useThinking, contextWindowSize, useSearch } = useUserSettingsStore();
 
   const { baseURL, modelId, providerId, thinkingId } = getCurrentModel();
 
@@ -59,7 +59,12 @@ const Chat = () => {
     );
     onRequest({
       enable_thinking: useThinking,
-      thinking: { type: useThinking ? "enabled" : "disabled" },
+      enable_search: useSearch,
+      search: { type: useSearch ? "enabled" : "disabled" },
+      search_options: {
+        forced_search: true,
+      },
+      thinking: { type: useThinking ? "enabled" : "disabled" }, // 兼容豆包API
       stream: true,
       message,
       messages: [...currentMessages, message],

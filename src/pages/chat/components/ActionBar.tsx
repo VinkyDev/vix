@@ -1,6 +1,7 @@
 import {
   BulbOutlined,
   EditOutlined,
+  SearchOutlined,
   // LinkOutlined,
   SettingOutlined,
   ToolOutlined,
@@ -27,7 +28,8 @@ export interface ActionBarItem {
 
 const ActionBar = () => {
   const { getCurrentModel } = useModelStore();
-  const { setUseThinking, useThinking } = useUserSettingsStore();
+  const { setUseThinking, useThinking, setUseSearch, useSearch } =
+    useUserSettingsStore();
   const navigate = useNavigate();
 
   const actionItems = useMemo<ActionBarItem[]>(() => {
@@ -38,19 +40,23 @@ const ActionBar = () => {
         onClick: () => {
           navigate("/setting");
         },
+        show: true,
       },
-      // {
-      //   icon: <LinkOutlined />,
-      //   key: "file",
-      //   onClick: () => {},
-      // },
       {
-        className: useThinking ? "thinking-active" : "thinking",
+        className: useThinking ? "active" : "inactive",
         icon: <BulbOutlined />,
         key: "thinking",
         label: "推理",
         onClick: () => setUseThinking(!useThinking),
         show: getCurrentModel().thinking || false,
+      },
+      {
+        className: useSearch ? "active" : "inactive",
+        icon: <SearchOutlined />,
+        key: "search",
+        label: "联网搜索",
+        onClick: () => setUseSearch(!useSearch),
+        show: getCurrentModel().search || false,
       },
       {
         key: "skills",
@@ -81,23 +87,32 @@ const ActionBar = () => {
         },
       },
     ];
-  }, [useThinking, getCurrentModel, setUseThinking, navigate]);
+  }, [
+    useThinking,
+    useSearch,
+    setUseThinking,
+    setUseSearch,
+    getCurrentModel,
+    navigate,
+  ]);
 
   return (
     <Flex gap="small">
-      {actionItems.map((action) =>
-        (action.show ?? true) && action.render ? (
-          action.render()
-        ) : (
-          <Button
-            className={action.className}
-            icon={action.icon}
-            key={action.key}
-            onClick={action.onClick}
-          >
-            {action?.label}
-          </Button>
-        )
+      {actionItems.map(
+        (action) =>
+          action.show &&
+          (action.render ? (
+            action.render()
+          ) : (
+            <Button
+              className={action.className}
+              icon={action.icon}
+              key={action.key}
+              onClick={action.onClick}
+            >
+              {action?.label}
+            </Button>
+          ))
       )}
     </Flex>
   );
