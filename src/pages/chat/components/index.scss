@@ -1,10 +1,16 @@
 .active {
   background-color: #e4edff;
   border: 1px solid #76a3ff;
-  color: #0058ff;
-  padding: 10px;
+  color: $primary-dark;
+  &:hover {
+    background-color: #e4edff !important;
+  }
 }
 
-.inactive {
-  padding: 10px;
+.action-button {
+  padding: 0 10px;
+}
+
+.conversation-drawer {
+  background-color: $primary-bg;
 }

@@ -1,7 +1,7 @@
 import "./App.scss";
 
 import { XProvider, XProviderProps } from "@ant-design/x";
-import { Flex, Spin } from "antd";
+import { App as AntdApp, ConfigProvider, Flex, Spin, ThemeConfig } from "antd";
 import { useEffect } from "react";
 import {
   Route,
@@ -10,14 +10,21 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { AutoSize } from "./components/AutoSize";
-import { useHideOnBlur, useShortcut } from "./hooks";
+import { useShortcut } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
 import { ShortcutKey, useModelStore } from "./store";
 import { emitter, toggleWindow } from "./utils";
 
 const config: XProviderProps = {};
+
+const theme: ThemeConfig = {
+  components: {
+    Button: {
+      defaultBg: "#fafafa",
+    },
+  },
+};
 
 function AppRoutes() {
   const location = useLocation();
@@ -38,9 +45,6 @@ function App() {
     fetchModelList();
   }, [fetchModelList]);
 
-  // 失去焦点隐藏
-  useHideOnBlur(false);
-
   // 快捷键注册
   useShortcut(ShortcutKey.ToggleWindow, async () => {
     const visiable = await toggleWindow();
@@ -49,19 +53,21 @@ function App() {
 
   return (
     <XProvider {...config}>
-      <Router>
-        <AutoSize>
-          <div className="app-container">
-            {loading ? (
-              <Flex align="center" className="app-loading" justify="center">
-                <Spin />
-              </Flex>
-            ) : (
-              <AppRoutes />
-            )}
+      <ConfigProvider theme={theme}>
+        <Router>
+          <div className="app-container" data-tauri-drag-region>
+            <AntdApp style={{ height: "100%" }}>
+              {loading ? (
+                <Flex align="center" className="app-loading" justify="center">
+                  <Spin />
+                </Flex>
+              ) : (
+                <AppRoutes />
+              )}
+            </AntdApp>
           </div>
-        </AutoSize>
-      </Router>
+        </Router>
+      </ConfigProvider>
     </XProvider>
   );
 }

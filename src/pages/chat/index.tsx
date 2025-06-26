@@ -7,8 +7,7 @@ import {
 } from "@ant-design/x";
 import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
-import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { roles } from "@/pages/chat/constants";
@@ -23,12 +22,17 @@ import { emitter } from "@/utils";
 import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
-import { calculateMessagesToSend, transformMessage } from "./helper";
+import { ConversationDrawer } from "./components/ConversationDrawer";
+import { TitleBar } from "./components/TitleBar";
 import "./index.scss";
+import {
+  calculateMessagesToSend,
+  shouldUpdateMessages,
+  transformMessage,
+} from "./helper";
 
-const Chat = () => {
+const ChatComponent = () => {
   const [content, setContent] = useState("");
-
   const { getCurrentModel } = useModelStore();
   const { getApiKey } = useApiKeyStore();
   const { useThinking, contextWindowSize, useSearch } = useUserSettingsStore();
@@ -43,6 +47,7 @@ const Chat = () => {
 
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const abortController = useRef<AbortController | null>(null);
+
   const {
     messages: messageStoreMessages,
     setMessages: setMessageStoreMessages,
@@ -102,9 +107,12 @@ const Chat = () => {
   // 历史记录存储
   useDebounceEffect(
     () => {
-      setMessageStoreMessages(messages);
+      // 使用工具函数比较消息是否真正发生变化，避免不必要的更新
+      if (shouldUpdateMessages(messages, messageStoreMessages)) {
+        setMessageStoreMessages(messages);
+      }
     },
-    [messages, setMessageStoreMessages],
+    [messages, messageStoreMessages, setMessageStoreMessages],
     {
       wait: 1000,
     }
@@ -119,19 +127,10 @@ const Chat = () => {
     });
   }, []);
 
-  const initState = useMemo(() => messages.length === 0, [messages]);
-
   return (
-    <Flex
-      className={clsx("chat-container", { "chat-container-init": initState })}
-      data-tauri-drag-region
-      gap="middle"
-      vertical
-    >
+    <Fragment>
       <Bubble.List
-        className={clsx("chat-bubble-list", {
-          "chat-bubble-list-init": initState,
-        })}
+        className="chat-bubble-list"
         items={messages.map(
           ({ id, message }) =>
             ({
@@ -145,7 +144,6 @@ const Chat = () => {
       <Sender
         actions={false}
         autoSize={{ maxRows: 4, minRows: 1 }}
-        data-tauri-drag-region
         disabled={!getApiKey(providerId)}
         footer={({ components }) => {
           const { LoadingButton, SendButton } = components;
@@ -180,6 +178,41 @@ const Chat = () => {
         ref={senderRef}
         value={content}
       />
+    </Fragment>
+  );
+};
+
+const Chat = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { getCurrentModel } = useModelStore();
+
+  const { name } = getCurrentModel();
+
+  const { conversations, createConversation, getCurrentConversation } =
+    useMessageStore(
+      useShallow((state) => ({
+        conversations: state.conversations,
+        createConversation: state.createConversation,
+        getCurrentConversation: state.getCurrentConversation,
+      }))
+    );
+
+  // 确保至少有一个对话
+  useEffect(() => {
+    if (Object.keys(conversations).length === 0) {
+      createConversation("新对话");
+    }
+  }, [conversations, createConversation]);
+
+  const currentConversation = getCurrentConversation();
+  const currentConversationId = currentConversation?.id;
+  const displayName = currentConversation?.title || name;
+
+  return (
+    <Flex className="chat-container" key={currentConversationId}>
+      <ConversationDrawer open={drawerOpen} setOpen={setDrawerOpen} />
+      <TitleBar name={displayName} setDrawerOpen={setDrawerOpen} />
+      <ChatComponent />
     </Flex>
   );
 };

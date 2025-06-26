@@ -18,12 +18,20 @@ interface ModelStore {
   modelList: Model[];
   /** 当前选中的模型ID */
   currentModelId: string;
+  /** 启用的模型ID列表 */
+  enabledModelIds: string[];
   /** 获取模型列表 */
   fetchModelList: () => Promise<void>;
   /** 当前选中的模型 */
   getCurrentModel: () => Model;
   /** 设置当前选中的模型 */
   setCurrentModelId: (modelId: string) => void;
+  /** 获取启用的模型列表 */
+  getEnabledModels: () => Model[];
+  /** 启用/禁用模型 */
+  toggleModel: (modelId: string, enabled: boolean) => void;
+  /** 检查模型是否启用 */
+  isModelEnabled: (modelId: string) => boolean;
 }
 
 export const useModelStore = create<ModelStore>()(
@@ -32,6 +40,7 @@ export const useModelStore = create<ModelStore>()(
       loading: true,
       modelList: [],
       currentModelId: "",
+      enabledModelIds: [],
 
       fetchModelList: async () => {
         set({ loading: true });
@@ -61,6 +70,17 @@ export const useModelStore = create<ModelStore>()(
         });
 
         set({ loading: false, modelList: allModelList });
+
+        // 如果没有当前选中的模型，选择第一个启用的模型
+        const state = get();
+        if (!state.currentModelId && state.enabledModelIds.length > 0) {
+          const firstEnabledModel = allModelList.find(model =>
+            state.enabledModelIds.includes(model.modelId)
+          );
+          if (firstEnabledModel) {
+            set({ currentModelId: firstEnabledModel.modelId });
+          }
+        }
       },
 
       getCurrentModel: () => {
@@ -72,11 +92,49 @@ export const useModelStore = create<ModelStore>()(
       },
 
       setCurrentModelId: (modelId) => set({ currentModelId: modelId }),
+
+      getEnabledModels: () => {
+        const state = get();
+        return state.modelList.filter(model =>
+          state.enabledModelIds.includes(model.modelId)
+        );
+      },
+
+      toggleModel: (modelId, enabled) => {
+        const state = get();
+        let newEnabledModelIds = [...state.enabledModelIds];
+
+        if (enabled) {
+          if (!newEnabledModelIds.includes(modelId)) {
+            newEnabledModelIds.push(modelId);
+          }
+        } else {
+          newEnabledModelIds = newEnabledModelIds.filter(id => id !== modelId);
+        }
+
+        set({ enabledModelIds: newEnabledModelIds });
+
+        // 如果当前选中的模型被禁用了，选择第一个启用的模型
+        if (!enabled && state.currentModelId === modelId && newEnabledModelIds.length > 0) {
+          const firstEnabledModel = state.modelList.find(model =>
+            newEnabledModelIds.includes(model.modelId)
+          );
+          if (firstEnabledModel) {
+            set({ currentModelId: firstEnabledModel.modelId });
+          }
+        }
+      },
+
+      isModelEnabled: (modelId) => {
+        const state = get();
+        return state.enabledModelIds.includes(modelId);
+      },
     }),
     {
       name: "model-storage",
       partialize: (state) => ({
         currentModelId: state.currentModelId,
+        enabledModelIds: state.enabledModelIds,
       }),
     }
   )

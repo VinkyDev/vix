@@ -1,21 +1,33 @@
-import { Empty, Flex, Spin, Typography } from "antd";
+import { Empty, Flex, Layout, Spin, Typography } from "antd";
 import { groupBy } from "lodash-es";
 import { motion } from "motion/react";
-import React from "react";
+import React, { useState } from "react";
 
-import { type Model, useModelStore } from "@/store";
+import { useModelStore } from "@/store";
 
-import ProviderCard from "../ProviderCard";
+import ProviderDetail from "./ProviderDetail";
+import ProviderList from "./ProviderList";
+import "./index.scss";
 
 const { Text } = Typography;
+const { Sider, Content } = Layout;
 
 const ModelSelector: React.FC = () => {
-  const { getCurrentModel, modelList, setCurrentModelId, loading } =
-    useModelStore();
-  const modelsByProvider = groupBy(modelList, "providerId");
+  const { modelList, loading } = useModelStore();
+  const [selectedProviderId, setSelectedProviderId] = useState<string>("");
 
-  const handleModelSelect = (selectedModel: Model) => {
-    setCurrentModelId(selectedModel.modelId);
+  const modelsByProvider = groupBy(modelList, "providerId");
+  const providers = Object.keys(modelsByProvider);
+
+  // 初始化时选择第一个供应商
+  React.useEffect(() => {
+    if (providers.length > 0 && !selectedProviderId) {
+      setSelectedProviderId(providers[0]);
+    }
+  }, [providers, selectedProviderId]);
+
+  const handleProviderSelect = (providerId: string) => {
+    setSelectedProviderId(providerId);
   };
 
   if (loading) {
@@ -45,30 +57,55 @@ const ModelSelector: React.FC = () => {
     );
   }
 
+  const selectedProviderModels = selectedProviderId
+    ? modelsByProvider[selectedProviderId]
+    : [];
+
   return (
-    <Flex vertical>
-      {Object.entries(modelsByProvider).map(
-        ([providerId, providerModels], index) => (
-          <motion.div
-            animate={{ opacity: 1, y: 0 }}
-            initial={{ opacity: 0, y: 50 }}
-            key={providerId}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.1,
-              ease: "easeOut",
+    <div className="model-selector-container">
+      <motion.div
+        animate={{ opacity: 1 }}
+        initial={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Layout
+          className="model-selector-layout"
+          style={{
+            height: "100%",
+            background: "transparent",
+            gap: 24,
+          }}
+        >
+          {/* 左侧供应商列表 */}
+          <Sider
+            className="provider-sidebar"
+            style={{
+              background: "transparent",
+              borderRadius: 8,
+              overflow: "hidden",
             }}
+            width={160}
           >
-            <ProviderCard
-              currentModelId={getCurrentModel().modelId}
-              models={providerModels}
-              onModelSelect={handleModelSelect}
-              providerId={providerId}
+            <ProviderList
+              modelsByProvider={modelsByProvider}
+              onProviderSelect={handleProviderSelect}
+              providers={providers}
+              selectedProviderId={selectedProviderId}
             />
-          </motion.div>
-        )
-      )}
-    </Flex>
+          </Sider>
+
+          {/* 右侧供应商详情 */}
+          <Content className="provider-content">
+            {selectedProviderId && selectedProviderModels.length > 0 && (
+              <ProviderDetail
+                models={selectedProviderModels}
+                providerId={selectedProviderId}
+              />
+            )}
+          </Content>
+        </Layout>
+      </motion.div>
+    </div>
   );
 };
 

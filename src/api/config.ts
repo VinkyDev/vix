@@ -3,6 +3,7 @@ export interface ProviderConfig {
   baseURL: string;
   getApiKeyUrl: string;
   providerId: string;
+  icon?: string;
 }
 
 export interface ModelConfig {

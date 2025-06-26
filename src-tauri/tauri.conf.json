@@ -18,12 +18,12 @@
         "title": "vix",
         "visible": true,
         "decorations": false,
-        "resizable": false,
+        "resizable": true,
         "center": true,
         "skipTaskbar": true,
         "alwaysOnTop": true,
         "transparent": true,
-        "width": 360,
+        "width": 400,
         "height": 550,
         "dragDropEnabled": false
       }

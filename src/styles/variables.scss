@@ -1,11 +1,15 @@
-$bg: #ffffff;
 $think: #8f91a8;
 $border: #0d0d0d0d;
 
 // 主色调
 $primary-color: #1890ff;
 $primary-light: #40a9ff;
-$primary-bg: #f0f8ff;
+$primary-dark: #0058ff;
+$primary-bg: linear-gradient(
+  135deg,
+  rgba(255, 255, 255, 0.95) 0%,
+  rgba(255, 255, 255, 0.99) 100%
+);
 $primary-border: #e6f4ff;
 
 // 成功色

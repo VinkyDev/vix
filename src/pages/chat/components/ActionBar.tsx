@@ -1,18 +1,17 @@
 import {
   BulbOutlined,
   EditOutlined,
-  SearchOutlined,
-  // LinkOutlined,
-  SettingOutlined,
+  GlobalOutlined,
+  RobotOutlined,
   ToolOutlined,
   TranslationOutlined,
 } from "@ant-design/icons";
-import { Button, Dropdown, Flex } from "antd";
+import { Button, Dropdown, Flex, Select } from "antd";
 
 import "./index.scss";
 
+import clsx from "clsx";
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { useModelStore, useUserSettingsStore } from "@/store";
 
@@ -27,36 +26,79 @@ export interface ActionBarItem {
 }
 
 const ActionBar = () => {
-  const { getCurrentModel } = useModelStore();
+  const { getCurrentModel, getEnabledModels, setCurrentModelId } =
+    useModelStore();
   const { setUseThinking, useThinking, setUseSearch, useSearch } =
     useUserSettingsStore();
-  const navigate = useNavigate();
+
+  const currentModel = getCurrentModel();
+  const enabledModels = getEnabledModels();
 
   const actionItems = useMemo<ActionBarItem[]>(() => {
     return [
       {
-        icon: <SettingOutlined />,
-        key: "setting",
-        onClick: () => {
-          navigate("/setting");
+        key: "model-selector",
+        render: () => {
+          if (enabledModels.length === 0) {
+            return (
+              <Button disabled icon={<RobotOutlined />}>
+                无可用模型
+              </Button>
+            );
+          }
+
+          return (
+            <Select
+              className="model-selector"
+              onChange={setCurrentModelId}
+              placeholder="选择模型"
+              popupRender={(menu) => (
+                <div>
+                  {menu}
+                  <div
+                    style={{
+                      padding: "8px 12px",
+                      borderTop: "1px solid #f0f0f0",
+                    }}
+                  >
+                    <span style={{ fontSize: 12, color: "#666" }}>
+                      共 {enabledModels.length} 个模型可用
+                    </span>
+                  </div>
+                </div>
+              )}
+              style={{ minWidth: 180 }}
+              value={currentModel?.modelId}
+            >
+              {enabledModels.map((model) => (
+                <Select.Option key={model.modelId} value={model.modelId}>
+                  <Flex align="center" gap={8} justify="space-between">
+                    <span style={{ fontFamily: "monospace", fontSize: 13 }}>
+                      {model.name}
+                    </span>
+                  </Flex>
+                </Select.Option>
+              ))}
+            </Select>
+          );
         },
         show: true,
       },
       {
-        className: useThinking ? "active" : "inactive",
+        className: useThinking ? "active" : undefined,
         icon: <BulbOutlined />,
         key: "thinking",
         label: "推理",
         onClick: () => setUseThinking(!useThinking),
-        show: getCurrentModel().thinking || false,
+        show: currentModel?.thinking || false,
       },
       {
-        className: useSearch ? "active" : "inactive",
-        icon: <SearchOutlined />,
+        className: useSearch ? "active" : undefined,
+        icon: <GlobalOutlined />,
         key: "search",
-        label: "联网搜索",
+        label: "联网",
         onClick: () => setUseSearch(!useSearch),
-        show: getCurrentModel().search || false,
+        show: currentModel?.search || false,
       },
       {
         key: "skills",
@@ -85,6 +127,7 @@ const ActionBar = () => {
             </Dropdown>
           );
         },
+        show: false,
       },
     ];
   }, [
@@ -92,8 +135,9 @@ const ActionBar = () => {
     useSearch,
     setUseThinking,
     setUseSearch,
-    getCurrentModel,
-    navigate,
+    currentModel,
+    enabledModels,
+    setCurrentModelId,
   ]);
 
   return (
@@ -102,10 +146,10 @@ const ActionBar = () => {
         (action) =>
           action.show &&
           (action.render ? (
-            action.render()
+            <div key={action.key}>{action.render()}</div>
           ) : (
             <Button
-              className={action.className}
+              className={clsx(action.className, "action-button")}
               icon={action.icon}
               key={action.key}
               onClick={action.onClick}

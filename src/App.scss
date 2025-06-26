@@ -23,6 +23,21 @@
   display: none;
 }
 
+.app-container {
+  height: 100vh;
+  width: 100vw;
+  background-color: $bg-primary;
+  user-select: none;
+  border-radius: $border-radius-large;
+  background: $primary-bg;
+  border-radius: 16px;
+
+  box-sizing: border-box;
+  cursor: grab;
+  padding: 10px 20px 20px;
+  overflow: hidden;
+}
+
 .app-loading {
   height: 100%;
   width: 100%;
@@ -31,4 +46,12 @@
 .ant-modal-mask {
   border-radius: $border-radius-large;
   overflow: hidden;
+}
+
+.ant-drawer-content-wrapper {
+  button {
+    &:focus-visible {
+      outline: none !important;
+    }
+  }
 }

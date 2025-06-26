@@ -1,21 +1,13 @@
 .chat-container {
-  background-color: $bg-primary;
-  user-select: none;
-  border-radius: $border-radius-large;
-  background-color: $bg-primary;
-  padding: 20px;
-  box-sizing: border-box;
-  cursor: grab;
-  max-height: 450px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.chat-container-init {
-  background-color: #f4f4f4;
-  padding: 0;
-}
-
-.chat-bubble-list-init {
-  display: none;
+.chat-bubble-list {
+  flex: 1;
+  padding: 10px 0;
 }
 
 .system-content {
@@ -45,9 +37,17 @@
 }
 
 .user-content {
-  background-color: $bg-bubble !important;
   .ant-typography {
-    color: #fff !important;
+    p {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+.assistant-content {
+  padding: 0 !important;
+  background-color: transparent !important;
+  .ant-typography {
     p {
       margin-bottom: 0 !important;
     }
