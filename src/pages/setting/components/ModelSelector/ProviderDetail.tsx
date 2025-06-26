@@ -11,8 +11,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { debounce } from "lodash-es";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useApiKeyStore } from "@/store/apiKeyStore";
 import { type Model, useModelStore } from "@/store/modelStore";
@@ -35,28 +34,22 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
   const currentApiKey = getApiKey(providerId);
   const providerInfo = models[0];
 
-  // 初始化
   useEffect(() => {
     setTempApiKey(currentApiKey || "");
   }, [currentApiKey, providerInfo.getApiKeyUrl]);
 
-  // 防抖保存API Key
-  const debouncedSaveApiKey = useCallback(
-    debounce((value: string) => {
-      if (value !== currentApiKey) {
-        setApiKey(providerId, value);
-        if (value) {
-          message.success("API Key 已保存");
-        }
+  const handleSaveApiKey = () => {
+    if (tempApiKey !== currentApiKey) {
+      setApiKey(providerId, tempApiKey);
+      if (tempApiKey) {
+        message.success("API Key 已保存");
       }
-    }, 1000),
-    [providerId, currentApiKey, setApiKey]
-  );
+    }
+  };
 
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTempApiKey(value);
-    debouncedSaveApiKey(value);
   };
 
   const handleOpenApiKeyUrl = () => {
@@ -69,13 +62,10 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
     toggleModel(model.modelId, enabled);
   };
 
-  const enabledCount = models.filter(
-    (m) => isModelEnabled(m.modelId)
-  ).length;
+  const enabledCount = models.filter((m) => isModelEnabled(m.modelId)).length;
 
   return (
     <div className="provider-detail">
-      {/* 供应商头部信息 */}
       <Flex align="center" className="provider-header" justify="space-between">
         <Title level={4} style={{ margin: 0, fontSize: 18 }}>
           {providerInfo.providerName}
@@ -85,7 +75,6 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
         </Tag>
       </Flex>
 
-      {/* API Key 配置区域 */}
       <Card
         className="api-section"
         size="small"
@@ -111,6 +100,7 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
         }
       >
         <Input
+          onBlur={handleSaveApiKey}
           onChange={handleApiKeyChange}
           placeholder="请输入API Key"
           style={{ fontSize: 13 }}
@@ -118,7 +108,6 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
         />
       </Card>
 
-      {/* 模型列表 */}
       <Card
         className="models-section"
         size="small"
@@ -151,6 +140,11 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
                 }}
               >
                 <List.Item.Meta
+                  description={
+                    <Text style={{ fontSize: 12 }} type="secondary">
+                      {model.description}
+                    </Text>
+                  }
                   title={
                     <Flex align="center" gap={8}>
                       <Text

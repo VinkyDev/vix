@@ -13,15 +13,19 @@
       flex: 0 0 200px;
       height: 100%;
 
-      .provider-list-content {
+      .provider-list-container {
         height: 100%;
-        overflow-y: auto;
 
-        .provider-item {
-          margin-bottom: 8px;
+        .provider-list-content {
+          height: 100%;
+          overflow-y: auto;
 
-          &.selected .provider-name {
-            font-weight: 500;
+          .provider-item {
+            margin-bottom: 8px;
+
+            &.selected .provider-name {
+              font-weight: 500;
+            }
           }
         }
       }

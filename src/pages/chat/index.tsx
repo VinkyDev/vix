@@ -25,6 +25,7 @@ import ActionBar from "./components/ActionBar";
 import { ConversationDrawer } from "./components/ConversationDrawer";
 import { TitleBar } from "./components/TitleBar";
 import "./index.scss";
+import { Welcome } from "./components/Welcome";
 import {
   calculateMessagesToSend,
   shouldUpdateMessages,
@@ -129,6 +130,7 @@ const ChatComponent = () => {
 
   return (
     <Fragment>
+      {messages.length === 0 && <Welcome />}
       <Bubble.List
         className="chat-bubble-list"
         items={messages.map(

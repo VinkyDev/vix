@@ -23,6 +23,9 @@ const theme: ThemeConfig = {
     Button: {
       defaultBg: "#fafafa",
     },
+    Select: {
+      selectorBg: "#fafafa",
+    },
   },
 };
 

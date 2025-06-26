@@ -4,6 +4,7 @@ export interface ProviderConfig {
   getApiKeyUrl: string;
   providerId: string;
   icon?: string;
+  providerTags?: string[];
 }
 
 export interface ModelConfig {

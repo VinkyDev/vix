@@ -49,7 +49,6 @@ const ActionBar = () => {
 
           return (
             <Select
-              className="model-selector"
               onChange={setCurrentModelId}
               placeholder="选择模型"
               popupRender={(menu) => (
@@ -67,7 +66,7 @@ const ActionBar = () => {
                   </div>
                 </div>
               )}
-              style={{ minWidth: 180 }}
+              style={{ minWidth: 150 }}
               value={currentModel?.modelId}
             >
               {enabledModels.map((model) => (

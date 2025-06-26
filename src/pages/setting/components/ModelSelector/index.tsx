@@ -15,6 +15,7 @@ const { Sider, Content } = Layout;
 const ModelSelector: React.FC = () => {
   const { modelList, loading } = useModelStore();
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
+  const [collapsed, setCollapsed] = useState(true);
 
   const modelsByProvider = groupBy(modelList, "providerId");
   const providers = Object.keys(modelsByProvider);
@@ -62,50 +63,53 @@ const ModelSelector: React.FC = () => {
     : [];
 
   return (
-    <div className="model-selector-container">
-      <motion.div
-        animate={{ opacity: 1 }}
-        initial={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+    <motion.div
+      animate={{ opacity: 1 }}
+      className="model-selector-container"
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Layout
+        className="model-selector-layout"
+        style={{
+          height: "100%",
+          background: "transparent",
+          gap: 16,
+        }}
       >
-        <Layout
-          className="model-selector-layout"
+        {/* 左侧供应商列表 */}
+        <Sider
+          className="provider-sidebar"
+          collapsed={collapsed}
+          collapsedWidth={64}
           style={{
-            height: "100%",
             background: "transparent",
-            gap: 24,
+            borderRadius: 8,
+            overflow: "hidden",
           }}
+          width={150}
         >
-          {/* 左侧供应商列表 */}
-          <Sider
-            className="provider-sidebar"
-            style={{
-              background: "transparent",
-              borderRadius: 8,
-              overflow: "hidden",
-            }}
-            width={160}
-          >
-            <ProviderList
-              modelsByProvider={modelsByProvider}
-              onProviderSelect={handleProviderSelect}
-              providers={providers}
-              selectedProviderId={selectedProviderId}
-            />
-          </Sider>
+          <ProviderList
+            collapsed={collapsed}
+            modelsByProvider={modelsByProvider}
+            onCollapsedChange={setCollapsed}
+            onProviderSelect={handleProviderSelect}
+            providers={providers}
+            selectedProviderId={selectedProviderId}
+          />
+        </Sider>
 
-          {/* 右侧供应商详情 */}
-          <Content className="provider-content">
-            {selectedProviderId && selectedProviderModels.length > 0 && (
-              <ProviderDetail
-                models={selectedProviderModels}
-                providerId={selectedProviderId}
-              />
-            )}
-          </Content>
-        </Layout>
-      </motion.div>
-    </div>
+        {/* 右侧供应商详情 */}
+        <Content className="provider-content">
+          {selectedProviderId && selectedProviderModels.length > 0 && (
+            <ProviderDetail
+              models={selectedProviderModels}
+              providerId={selectedProviderId}
+            />
+          )}
+        </Content>
+      </Layout>
+    </motion.div>
   );
 };
 
