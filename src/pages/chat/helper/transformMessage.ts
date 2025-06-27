@@ -1,9 +1,12 @@
+import { MessageStatus } from "@ant-design/x/es/use-x-chat";
 import { SSEOutput } from "@ant-design/x/es/x-stream";
 
 import { MessageType } from "@/store/messageStore";
 
 export const transformMessage = (info: {
   chunk: SSEOutput;
+  chunks: SSEOutput[];
+  status: MessageStatus;
   originMessage?: MessageType;
 }) => {
   const { chunk, originMessage } = info || {};

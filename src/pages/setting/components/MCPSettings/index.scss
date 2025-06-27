@@ -1,0 +1,168 @@
+.mcp-settings {
+  padding: 0;
+
+  .mcp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+
+    .ant-typography {
+      margin-bottom: 0;
+    }
+  }
+
+  .server-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .server-card {
+      .ant-card-head {
+        border-bottom: 1px solid #f0f0f0;
+
+        .ant-card-head-title {
+          padding: 12px 0;
+        }
+
+        .ant-card-extra {
+          padding: 12px 0;
+        }
+      }
+
+      .ant-card-body {
+        padding: 16px;
+      }
+
+      .ant-descriptions {
+        .ant-descriptions-item-label {
+          font-weight: 500;
+          color: #666;
+          width: 80px;
+        }
+
+        .ant-descriptions-item-content {
+          code {
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+          }
+        }
+      }
+
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.2s ease;
+      }
+    }
+  }
+
+  .ant-empty {
+    margin: 40px 0;
+  }
+
+  .ant-modal {
+    .ant-form {
+      .ant-form-item-label {
+        font-weight: 500;
+      }
+
+      .ant-input,
+      .ant-input-number,
+      .ant-select-selector {
+        border-radius: 6px;
+      }
+
+      .env-item {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        .ant-input {
+          flex: 1;
+        }
+
+        .ant-btn {
+          flex-shrink: 0;
+        }
+      }
+
+      .add-env-btn {
+        width: 100%;
+        border-style: dashed;
+        margin-top: 8px;
+      }
+    }
+
+    .log-viewer {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+
+      .log-line {
+        margin-bottom: 2px;
+
+        &.log-stdout {
+          color: #4ec9b0;
+        }
+
+        &.log-stderr {
+          color: #f44747;
+        }
+
+        &.log-error {
+          color: #f44747;
+          font-weight: 600;
+        }
+
+        &.log-info {
+          color: #569cd6;
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #2d2d2d;
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 3px;
+
+        &:hover {
+          background: #777;
+        }
+      }
+    }
+  }
+}
+
+// 全局样式覆盖
+.ant-badge {
+  .ant-badge-status-text {
+    font-size: 12px;
+    margin-left: 4px;
+  }
+}
+
+.ant-tag {
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 18px;
+  padding: 0 6px;
+}

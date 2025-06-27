@@ -15,6 +15,19 @@
     "shell:default",
     "core:event:default",
     "core:window:allow-set-size",
-    "log:default"
+    "log:default",
+    "shell:allow-execute",
+    "shell:allow-kill",
+    "shell:allow-stdin-write",
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "npx",
+          "cmd": "npx",
+          "args": true
+        }
+      ]
+    }
   ]
 }

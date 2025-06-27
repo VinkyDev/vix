@@ -1,5 +1,6 @@
 import {
   CloseOutlined,
+  CloudServerOutlined,
   RobotOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
@@ -8,6 +9,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import BasicSettings from "./components/BasicSettings";
+import MCPSettings from "./components/MCPSettings";
 import ModelSelector from "./components/ModelSelector";
 import "./index.scss";
 
@@ -28,6 +30,16 @@ const Setting: React.FC = () => {
         </Space>
       ),
       children: <ModelSelector />,
+    },
+    {
+      key: "mcp",
+      label: (
+        <Space>
+          <CloudServerOutlined />
+          <span>MCP 服务</span>
+        </Space>
+      ),
+      children: <MCPSettings />,
     },
     {
       key: "basic",
