@@ -1,5 +1,5 @@
 export * from "./error";
 export * from "./eventBus";
+export * from "./platform";
 export * from "./shortcut";
-export * from "./system";
 export * from "./window";

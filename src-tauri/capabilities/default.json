@@ -26,6 +26,21 @@
           "name": "npx",
           "cmd": "npx",
           "args": true
+        },
+        {
+          "name": "node",
+          "cmd": "node",
+          "args": true
+        },
+        {
+          "name": "npm",
+          "cmd": "npm",
+          "args": true
+        },
+        {
+          "name": "cmd.exe",
+          "cmd": "cmd.exe",
+          "args": true
         }
       ]
     }

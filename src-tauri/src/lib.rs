@@ -3,8 +3,10 @@ use tauri::{
     async_runtime::spawn,
     menu::{Menu, MenuItem},
     tray::TrayIconBuilder,
-    ActivationPolicy, AppHandle, Emitter, Listener, Manager, WebviewUrl, WebviewWindowBuilder,
+    AppHandle, Emitter, Listener, Manager, WebviewUrl, WebviewWindowBuilder,
 };
+#[cfg(target_os = "macos")]
+use tauri::ActivationPolicy;
 use tauri_plugin_log::{Target, TargetKind};
 
 #[tauri::command]

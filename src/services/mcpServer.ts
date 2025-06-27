@@ -1,6 +1,7 @@
 import { Child, Command } from '@tauri-apps/plugin-shell';
 
 import { MCPServerConfig } from '@/types';
+import { PlatformUtils } from '@/utils/platform';
 
 export interface MCPServerEvents {
   onProcessStart?: (pid: number) => void;
@@ -42,10 +43,17 @@ export class MCPServer {
     }
 
     try {
+      // 处理命令和环境变量
+      const { command: processedCommand, args: processedArgs } = PlatformUtils.processCommand(
+        this.config.command,
+        this.config.args
+      );
+      const processedEnv = PlatformUtils.processEnvironmentVariables(this.config.env);
+
       // 创建命令
-      this._cmd = Command.create(this.config.command, this.config.args, {
+      this._cmd = Command.create(processedCommand, processedArgs, {
         cwd: this.config.cwd,
-        env: this.config.env,
+        env: processedEnv,
       });
 
       // 设置事件监听
