@@ -43,7 +43,14 @@ function AppRoutes() {
         }
         path="/"
       />
-      <Route element={<Setting />} path="/setting" />
+      <Route
+        element={
+          <KeepAlive id="setting">
+            <Setting />
+          </KeepAlive>
+        }
+        path="/setting"
+      />
     </Routes>
   );
 }

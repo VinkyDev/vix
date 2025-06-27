@@ -67,6 +67,9 @@ interface MCPStore {
 
   /** 导出配置 */
   exportConfiguration: () => Record<string, Omit<MCPServerConfig, "name">>;
+
+  /** 初始化状态回调 */
+  initializeStateCallbacks: () => void;
 }
 
 // 创建服务实例的工厂函数
@@ -157,7 +160,7 @@ export const useMCPStore = create<MCPStore>()(
 
         // 如果服务正在运行，先停止它
         if (service && service.status === MCPServerStatus.Running) {
-          get().stopService(name);
+          get().stopService(name).catch(console.error);
         }
 
         set((state) => {
@@ -168,26 +171,31 @@ export const useMCPStore = create<MCPStore>()(
       },
 
       updateService: (name, configUpdate) => {
-        set((state) => {
-          const serviceInstance = state.services[name];
-          if (!serviceInstance) return state;
+        const { services } = get();
+        const serviceInstance = services[name];
 
-          const newConfig = {
-            ...serviceInstance.config,
-            ...configUpdate,
+        if (!serviceInstance) return;
+
+        // 如果服务正在运行，先停止它
+        if (serviceInstance.status === MCPServerStatus.Running) {
+          serviceInstance.service.stop().catch(console.error);
+        }
+
+        // 更新配置并创建新的服务实例
+        const newConfig = {
+          ...serviceInstance.config,
+          ...configUpdate,
+        };
+
+        set((state) => {
+          const onUpdate = () => {
+            set((currentState) => ({ ...currentState }));
           };
 
           return {
             services: {
               ...state.services,
-              [name]: {
-                ...serviceInstance,
-                config: newConfig,
-                service: new MCPService(
-                  newConfig,
-                  serviceInstance.service["events"]
-                ),
-              },
+              [name]: createServiceInstance(newConfig, onUpdate),
             },
           };
         });
@@ -202,7 +210,6 @@ export const useMCPStore = create<MCPStore>()(
         }
 
         await serviceInstance.service.start();
-        // 状态更新会自动通过事件回调触发
       },
 
       stopService: async (name) => {
@@ -214,7 +221,6 @@ export const useMCPStore = create<MCPStore>()(
         }
 
         await serviceInstance.service.stop();
-        // 状态更新会自动通过事件回调触发
       },
 
       restartService: async (name) => {
@@ -226,7 +232,6 @@ export const useMCPStore = create<MCPStore>()(
         }
 
         await serviceInstance.service.restart();
-        // 状态更新会自动通过事件回调触发
       },
 
       callServiceTool: async (serviceName, toolName, arguments_) => {
@@ -288,6 +293,23 @@ export const useMCPStore = create<MCPStore>()(
 
         return config;
       },
+
+      initializeStateCallbacks: () => {
+        const { services } = get();
+
+        Object.entries(services).forEach(([name, serviceInstance]) => {
+          const onUpdate = () => {
+            set((currentState) => ({ ...currentState }));
+          };
+
+          set((state) => ({
+            services: {
+              ...state.services,
+              [name]: createServiceInstance(serviceInstance.config, onUpdate),
+            },
+          }));
+        });
+      },
     }),
     {
       name: "mcp-storage",
@@ -310,7 +332,6 @@ export const useMCPStore = create<MCPStore>()(
             ])
         ),
       }),
-      // 从持久化存储恢复时重建 service 实例
       onRehydrateStorage: () => (state) => {
         if (state?.services) {
           Object.entries(state.services).forEach(([name, data]) => {
