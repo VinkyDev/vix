@@ -3,6 +3,7 @@ import "./App.scss";
 import { XProvider, XProviderProps } from "@ant-design/x";
 import { App as AntdApp, ConfigProvider, Flex, Spin, ThemeConfig } from "antd";
 import { useEffect } from "react";
+import { AliveScope, KeepAlive } from "react-activation";
 import {
   Route,
   BrowserRouter as Router,
@@ -33,8 +34,15 @@ function AppRoutes() {
   const location = useLocation();
 
   return (
-    <Routes key={location.pathname} location={location}>
-      <Route element={<Chat />} path="/" />
+    <Routes location={location}>
+      <Route
+        element={
+          <KeepAlive id="chat">
+            <Chat />
+          </KeepAlive>
+        }
+        path="/"
+      />
       <Route element={<Setting />} path="/setting" />
     </Routes>
   );
@@ -57,19 +65,21 @@ function App() {
   return (
     <XProvider {...config}>
       <ConfigProvider theme={theme}>
-        <Router>
-          <div className="app-container" data-tauri-drag-region>
-            <AntdApp style={{ height: "100%" }}>
-              {loading ? (
-                <Flex align="center" className="app-loading" justify="center">
-                  <Spin />
-                </Flex>
-              ) : (
-                <AppRoutes />
-              )}
-            </AntdApp>
-          </div>
-        </Router>
+        <AliveScope>
+          <Router>
+            <div className="app-container" data-tauri-drag-region>
+              <AntdApp style={{ height: "100%" }}>
+                {loading ? (
+                  <Flex align="center" className="app-loading" justify="center">
+                    <Spin />
+                  </Flex>
+                ) : (
+                  <AppRoutes />
+                )}
+              </AntdApp>
+            </div>
+          </Router>
+        </AliveScope>
       </ConfigProvider>
     </XProvider>
   );

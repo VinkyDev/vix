@@ -6,10 +6,10 @@ import {
   ToolOutlined,
   TranslationOutlined,
 } from "@ant-design/icons";
-import { Button, Dropdown, Flex, Select } from "antd";
 
 import "./index.scss";
 
+import { Button, Dropdown, Flex, Select } from "antd";
 import clsx from "clsx";
 import { useMemo } from "react";
 

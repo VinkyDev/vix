@@ -71,7 +71,7 @@ const ChatComponent = () => {
       search_options: {
         forced_search: true,
       },
-      thinking: { type: useThinking ? "enabled" : "disabled" }, // 兼容豆包API
+      thinking: { type: useThinking ? "enabled" : "disabled" },
       stream: true,
       message,
       messages: [...currentMessages, message],
@@ -108,7 +108,6 @@ const ChatComponent = () => {
   // 历史记录存储
   useDebounceEffect(
     () => {
-      // 使用工具函数比较消息是否真正发生变化，避免不必要的更新
       if (shouldUpdateMessages(messages, messageStoreMessages)) {
         setMessageStoreMessages(messages);
       }
