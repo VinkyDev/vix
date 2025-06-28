@@ -1,8 +1,7 @@
+import { CopyOutlined } from "@ant-design/icons";
 import { Actions } from "@ant-design/x";
 import { ActionItem } from "@ant-design/x/es/actions/interface";
 import { message } from "antd";
-
-import { actionItems } from "@/pages/chat/constants";
 
 const MessageAction = ({ content }: { content: string }) => {
   const handleAction = (item: ActionItem, content: string) => {
@@ -21,11 +20,23 @@ const MessageAction = ({ content }: { content: string }) => {
     }
   };
 
+  const actionItems = [
+    content.trim()
+      ? {
+          icon: <CopyOutlined />,
+          key: "copy",
+          label: "复制",
+        }
+      : undefined,
+  ].filter(Boolean) as ActionItem[];
+
   return (
-    <Actions
-      items={actionItems}
-      onClick={(item) => handleAction(item, content)}
-    />
+    actionItems.length > 0 && (
+      <Actions
+        items={actionItems}
+        onClick={(item) => handleAction(item, content)}
+      />
+    )
   );
 };
 

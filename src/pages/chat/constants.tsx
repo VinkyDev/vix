@@ -1,17 +1,8 @@
-import { CopyOutlined } from "@ant-design/icons";
 import { RolesType } from "@ant-design/x/es/bubble/BubbleList";
 
 import MarkdownRender from "@/components/MarkdownRender";
 
 import MessageAction from "./components/MessageAction";
-
-export const actionItems = [
-  {
-    icon: <CopyOutlined />,
-    key: "copy",
-    label: "复制",
-  },
-];
 
 export const roles: RolesType = {
   system: {
@@ -26,7 +17,10 @@ export const roles: RolesType = {
     classNames: {
       content: "assistant-content",
     },
-    footer: (content) => <MessageAction content={content} />,
+    footer: (content) =>
+      content.includes("<toolcall>") ? null : (
+        <MessageAction content={content} />
+      ),
   },
   user: {
     messageRender: MarkdownRender,

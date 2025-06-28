@@ -13,6 +13,7 @@ import {
  */
 class ToolCallAccumulator {
   private toolCalls: Map<number, OpenAIToolCall> = new Map();
+  private toolCallsDisplayed: boolean = false;
 
   /**
    * 处理工具调用增量更新
@@ -63,10 +64,25 @@ class ToolCallAccumulator {
   }
 
   /**
+   * 检查是否已经显示过工具调用
+   */
+  isToolCallsDisplayed(): boolean {
+    return this.toolCallsDisplayed;
+  }
+
+  /**
+   * 标记工具调用已显示
+   */
+  markToolCallsDisplayed(): void {
+    this.toolCallsDisplayed = true;
+  }
+
+  /**
    * 清空累积状态
    */
   clear(): void {
     this.toolCalls.clear();
+    this.toolCallsDisplayed = false;
   }
 
   /**
@@ -106,18 +122,47 @@ class ContentFormatter {
   }
 
   /**
-   * 格式化工具调用状态显示
+   * 生成工具调用卡片标记
    */
-  static formatToolCallsStatus(toolCalls: OpenAIToolCall[]): string {
+  static generateToolCallsMarkup(toolCalls: OpenAIToolCall[]): string {
     if (toolCalls.length === 0) {
       return '';
     }
 
-    const toolCallsText = toolCalls
-      .map(call => `🔧 正在调用工具: ${call.function.name}`)
+    const toolCallsMarkup = toolCalls
+      .map(call => {
+        const toolName = call.function.name;
+        return `<toolcall>${toolName}|pending</toolcall>`;
+      })
       .join('\n');
     
-    return `\n\n${toolCallsText}`;
+    return `\n\n${toolCallsMarkup}`;
+  }
+
+  /**
+   * 更新工具调用状态标记
+   */
+  static updateToolCallsMarkup(
+    content: string, 
+    toolCallResults: { id: string; toolName: string; status: 'success' | 'error'; result?: string; error?: string }[]
+  ): string {
+    let updatedContent = content;
+    
+    toolCallResults.forEach(({ toolName, status, result, error }) => {
+      const pendingPattern = new RegExp(`<toolcall>${toolName}\\|pending</toolcall>`, 'g');
+      const replacement = `<toolcall>${toolName}|${status}|${status === 'error' ? error : result}</toolcall>`;
+      updatedContent = updatedContent.replace(pendingPattern, replacement);
+    });
+    
+    return updatedContent;
+  }
+
+  /**
+   * 移除重复的工具调用显示
+   */
+  static removeOldToolCallDisplays(content: string): string {
+    // 移除旧的文本形式的工具调用显示
+    return content.replace(/\n\n🔧 正在调用工具: .+/g, '');
   }
 }
 
@@ -236,13 +281,17 @@ export function transformMessage(
     parsed.reasoning,
     parsed.content
   );
+
+  // 清理旧的工具调用显示
+  content = ContentFormatter.removeOldToolCallDisplays(content);
   
-  // 添加工具调用状态显示
-  if (accumulator.hasValidToolCalls()) {
-    const toolCallsStatus = ContentFormatter.formatToolCallsStatus(
+  // 只在第一次检测到工具调用时添加卡片标记
+  if (accumulator.hasValidToolCalls() && !accumulator.isToolCallsDisplayed()) {
+    const toolCallsMarkup = ContentFormatter.generateToolCallsMarkup(
       accumulator.getToolCalls()
     );
-    content += toolCallsStatus;
+    content += toolCallsMarkup;
+    accumulator.markToolCallsDisplayed();
   }
   
   // 构建返回结果
@@ -260,6 +309,16 @@ export function transformMessage(
   }
   
   return result;
+}
+
+/**
+ * 更新消息中的工具调用状态
+ */
+export function updateToolCallStatus(
+  content: string,
+  toolCallResults: { id: string; toolName: string; status: 'success' | 'error'; result?: string; error?: string }[]
+): string {
+  return ContentFormatter.updateToolCallsMarkup(content, toolCallResults);
 }
 
 /**

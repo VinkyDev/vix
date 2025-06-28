@@ -45,3 +45,18 @@ export interface ChatRequestParams {
   tools?: OpenAITool[];
   tool_choice?: string;
 }
+
+// 工具调用状态跟踪
+export interface ToolCallStatusInfo {
+  id: string;
+  toolName: string;
+  status: 'pending' | 'success' | 'error';
+  result?: string;
+  error?: string;
+}
+
+// 消息中的工具调用信息
+export interface MessageToolCallInfo {
+  pendingCalls: ToolCallStatusInfo[];
+  completedCalls: ToolCallStatusInfo[];
+}

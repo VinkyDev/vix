@@ -1,0 +1,56 @@
+.tool-call-card {
+  margin-top: 16px;
+  margin-bottom: 0 !important;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  width: 80vw;
+  &.pending {
+    border-left: 4px solid #1890ff;
+    animation: pulse 2s infinite;
+  }
+
+  &.success {
+    border-left: 4px solid #52c41a;
+  }
+
+  &.error {
+    border-left: 4px solid #ff4d4f;
+  }
+
+  .tool-call-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+
+    .tool-call-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+  }
+
+  .tool-call-result {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    border-left-color: #1890ff;
+    box-shadow: 0 0 0 0 rgba(24, 144, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(24, 144, 255, 0);
+  }
+  100% {
+    border-left-color: #1890ff;
+    box-shadow: 0 0 0 0 rgba(24, 144, 255, 0);
+  }
+}

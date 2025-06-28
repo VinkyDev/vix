@@ -33,6 +33,7 @@ import {
   clearMessageTransformState,
   shouldUpdateMessages,
   transformMessage,
+  updateToolCallStatus,
 } from "./helper";
 
 const ChatComponent = () => {
@@ -53,6 +54,8 @@ const ChatComponent = () => {
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const abortController = useRef<AbortController | null>(null);
   const messagesRef = useRef<MessageInfo<MessageType>[]>([]);
+  const pendingToolCallsRef = useRef<Set<string>>(new Set());
+  const toolCallResultsRef = useRef<Map<string, any>>(new Map());
 
   const {
     messages: messageStoreMessages,
@@ -71,15 +74,117 @@ const ChatComponent = () => {
 
   const { executeToolCalls, clearState: clearToolCallState } = useToolCalls({
     onToolCallsComplete: (results) => {
-      const combinedContent = results[0].content;
-      const combinedToolCallIds = results[0].tool_call_id;
-      sendMessage({
-        content: combinedContent,
-        role: "tool",
-        tool_call_id: combinedToolCallIds,
+      results.forEach((result) => {
+        toolCallResultsRef.current.set(result.tool_call_id, result);
+        pendingToolCallsRef.current.delete(result.tool_call_id);
       });
+
+      setMessages((prevMessages) => {
+        let targetMessageIndex = -1;
+        let targetMessage = null;
+
+        for (let i = prevMessages.length - 1; i >= 0; i--) {
+          const msg = prevMessages[i];
+          if (
+            msg.message.role === "assistant" &&
+            msg.message.content.includes("|pending</toolcall>")
+          ) {
+            targetMessageIndex = i;
+            targetMessage = msg;
+            break;
+          }
+        }
+
+        if (targetMessage && targetMessageIndex !== -1) {
+          const toolCallMatches = targetMessage.message.content.matchAll(
+            /<toolcall>([^|]+)\|pending<\/toolcall>/g
+          );
+          const pendingTools = Array.from(toolCallMatches).map(
+            (match) => match[1]
+          );
+
+          const toolCallResults = results.map((result, index) => {
+            const toolName = pendingTools[index] || "unknown";
+
+            return {
+              id: result.tool_call_id,
+              toolName,
+              status: "success" as const,
+              result: result.content,
+            };
+          });
+
+          const updatedMessages = [...prevMessages];
+          updatedMessages[targetMessageIndex] = {
+            ...targetMessage,
+            message: {
+              ...targetMessage.message,
+              content: updateToolCallStatus(
+                targetMessage.message.content,
+                toolCallResults
+              ),
+            },
+          };
+
+          return updatedMessages;
+        }
+
+        return prevMessages;
+      });
+
+      if (pendingToolCallsRef.current.size === 0) {
+        const allResults = Array.from(toolCallResultsRef.current.values());
+        const combinedContent = allResults
+          .map((result) => result.content)
+          .join("\n\n");
+        const combinedToolCallIds = allResults
+          .map((result) => result.tool_call_id)
+          .join(",");
+
+        toolCallResultsRef.current.clear();
+
+        sendMessage({
+          content: combinedContent,
+          role: "tool",
+          tool_call_id: combinedToolCallIds,
+        });
+      }
     },
     onError: (_error) => {
+      setMessages((prevMessages) => {
+        let targetMessageIndex = -1;
+
+        for (let i = prevMessages.length - 1; i >= 0; i--) {
+          const msg = prevMessages[i];
+          if (
+            msg.message.role === "assistant" &&
+            msg.message.content.includes("|pending</toolcall>")
+          ) {
+            targetMessageIndex = i;
+            break;
+          }
+        }
+
+        if (targetMessageIndex !== -1) {
+          const updatedMessages = [...prevMessages];
+          updatedMessages[targetMessageIndex] = {
+            ...updatedMessages[targetMessageIndex],
+            message: {
+              ...updatedMessages[targetMessageIndex].message,
+              content: updatedMessages[
+                targetMessageIndex
+              ].message.content.replace(/\|pending</g, "|error<"),
+            },
+          };
+          return updatedMessages;
+        }
+
+        return prevMessages;
+      });
+
+      pendingToolCallsRef.current.clear();
+      toolCallResultsRef.current.clear();
+
       sendMessage({
         content: `工具调用过程中发生错误: ${_error.message}`,
         role: "assistant",
@@ -87,7 +192,7 @@ const ChatComponent = () => {
     },
   });
 
-  const { messages, onRequest } = useXChat({
+  const { messages, onRequest, setMessages } = useXChat({
     agent,
     defaultMessages: messageStoreMessages,
     requestFallback: (_, { error }) => {
@@ -113,9 +218,15 @@ const ChatComponent = () => {
     },
     transformMessage: (info) => {
       const result = transformMessage(info, sessionId);
+
       if (result.tool_calls && result.tool_calls.length > 0) {
+        result.tool_calls.forEach((toolCall) => {
+          pendingToolCallsRef.current.add(toolCall.id);
+        });
+
         executeToolCalls(result.tool_calls);
       }
+
       return result;
     },
   });
@@ -151,22 +262,21 @@ const ChatComponent = () => {
     onRequest(requestParams);
   };
 
-  // 历史记录存储
   useEffect(() => {
     if (shouldUpdateMessages(messages, messageStoreMessages)) {
       setMessageStoreMessages(messages);
     }
   }, [messages, messageStoreMessages, setMessageStoreMessages]);
 
-  // 清理状态当对话切换时
   useEffect(() => {
     return () => {
       clearMessageTransformState(sessionId);
       clearToolCallState();
+      pendingToolCallsRef.current.clear();
+      toolCallResultsRef.current.clear();
     };
   }, [sessionId, clearToolCallState]);
 
-  // 自动聚焦
   useEffect(() => {
     emitter.on("toggle-window", (visible) => {
       if (senderRef?.current && visible) {
@@ -261,7 +371,6 @@ const Chat = () => {
       }))
     );
 
-  // 确保至少有一个对话
   useEffect(() => {
     if (Object.keys(conversations).length === 0) {
       createConversation("新对话");
