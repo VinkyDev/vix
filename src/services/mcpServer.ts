@@ -1,7 +1,7 @@
-import { Child, Command } from '@tauri-apps/plugin-shell';
+import { Child, Command } from "@tauri-apps/plugin-shell";
 
-import { MCPServerConfig } from '@/types';
-import { PlatformUtils } from '@/utils/platform';
+import { MCPServerConfig } from "@/types";
+import { PlatformUtils } from "@/utils/platform";
 
 export interface MCPServerEvents {
   onProcessStart?: (pid: number) => void;
@@ -39,16 +39,16 @@ export class MCPServer {
 
   async start(): Promise<void> {
     if (this._isRunning) {
-      throw new Error('Server is already running');
+      throw new Error("Server is already running");
     }
 
     try {
       // 处理命令和环境变量
-      const { command: processedCommand, args: processedArgs } = PlatformUtils.processCommand(
-        this.config.command,
-        this.config.args
+      const { command: processedCommand, args: processedArgs } =
+        PlatformUtils.processCommand(this.config.command, this.config.args);
+      const processedEnv = PlatformUtils.processEnvironmentVariables(
+        this.config.env
       );
-      const processedEnv = PlatformUtils.processEnvironmentVariables(this.config.env);
 
       // 创建命令
       this._cmd = Command.create(processedCommand, processedArgs, {
@@ -66,7 +66,8 @@ export class MCPServer {
       this.events.onProcessStart?.(this._child.pid);
     } catch (error) {
       this._isRunning = false;
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.events.onProcessError?.(errorMessage);
       throw new Error(`Failed to start MCP server: ${errorMessage}`);
     }
@@ -80,7 +81,8 @@ export class MCPServer {
     try {
       await this._child.kill();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.events.onProcessError?.(errorMessage);
       throw new Error(`Failed to stop MCP server: ${errorMessage}`);
     } finally {
@@ -91,20 +93,20 @@ export class MCPServer {
   private setupEventListeners(): void {
     if (!this._cmd) return;
 
-    this._cmd.stdout.on('data', (data: string) => {
+    this._cmd.stdout.on("data", (data: string) => {
       this.events.onStdout?.(data);
     });
 
-    this._cmd.stderr.on('data', (data: string) => {
+    this._cmd.stderr.on("data", (data: string) => {
       this.events.onStderr?.(data);
     });
 
-    this._cmd.on('close', (data: any) => {
+    this._cmd.on("close", (data: any) => {
       this.cleanup();
       this.events.onProcessExit?.(data.code);
     });
 
-    this._cmd.on('error', (error: any) => {
+    this._cmd.on("error", (error: any) => {
       this.cleanup();
       this.events.onProcessError?.(String(error));
     });

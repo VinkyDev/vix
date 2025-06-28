@@ -18,6 +18,11 @@ interface UserSettingsStore {
   /** 设置是否使用联网搜索 */
   setUseSearch: (useSearch: boolean) => void;
 
+  /** 选中的MCP服务列表 */
+  selectedMCPServices: string[];
+  /** 设置选中的MCP服务列表 */
+  setSelectedMCPServices: (services: string[]) => void;
+
   /** 上下文窗口长度 */
   contextWindowSize: number;
   /** 设置上下文窗口长度 */
@@ -41,8 +46,10 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
     (set) => ({
       useThinking: false,
       useSearch: false,
+      selectedMCPServices: [],
       setUseThinking: (useThinking) => set({ useThinking }),
       setUseSearch: (useSearch) => set({ useSearch }),
+      setSelectedMCPServices: (selectedMCPServices) => set({ selectedMCPServices }),
 
       contextWindowSize: 4,
       setContextWindowSize: (size) => set({ contextWindowSize: size }),
@@ -62,6 +69,7 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
       partialize: (state) => ({
         useThinking: state.useThinking,
         useSearch: state.useSearch,
+        selectedMCPServices: state.selectedMCPServices,
         contextWindowSize: state.contextWindowSize,
         shortcuts: state.shortcuts,
       }),

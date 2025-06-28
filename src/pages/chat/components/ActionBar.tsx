@@ -1,4 +1,5 @@
 import {
+  ApiOutlined,
   BulbOutlined,
   EditOutlined,
   GlobalOutlined,
@@ -13,7 +14,8 @@ import { Button, Dropdown, Flex, Select } from "antd";
 import clsx from "clsx";
 import { useMemo } from "react";
 
-import { useModelStore, useUserSettingsStore } from "@/store";
+import { useMCPStore, useModelStore, useUserSettingsStore } from "@/store";
+import { MCPServerStatus } from "@/types";
 
 export interface ActionBarItem {
   className?: string;
@@ -28,11 +30,29 @@ export interface ActionBarItem {
 const ActionBar = () => {
   const { getCurrentModel, getEnabledModels, setCurrentModelId } =
     useModelStore();
-  const { setUseThinking, useThinking, setUseSearch, useSearch } =
-    useUserSettingsStore();
+  const { 
+    setUseThinking, 
+    useThinking, 
+    setUseSearch, 
+    useSearch,
+    selectedMCPServices,
+    setSelectedMCPServices 
+  } = useUserSettingsStore();
+  const { services } = useMCPStore();
 
   const currentModel = getCurrentModel();
   const enabledModels = getEnabledModels();
+
+  // 获取可用的MCP服务（已连接的服务）
+  const availableMCPServices = useMemo(() => {
+    return Object.entries(services)
+      .filter(([_, service]) => service.status === MCPServerStatus.Running && service.isConnected)
+      .map(([name, service]) => ({
+        value: name,
+        label: name,
+        toolCount: service.tools.length,
+      }));
+  }, [services]);
 
   const actionItems = useMemo<ActionBarItem[]>(() => {
     return [
@@ -74,6 +94,55 @@ const ActionBar = () => {
                   <Flex align="center" gap={8} justify="space-between">
                     <span style={{ fontFamily: "monospace", fontSize: 13 }}>
                       {model.name}
+                    </span>
+                  </Flex>
+                </Select.Option>
+              ))}
+            </Select>
+          );
+        },
+        show: true,
+      },
+      {
+        key: "mcp-services",
+        render: () => {
+          if (availableMCPServices.length === 0) {
+            return (
+              <Button disabled icon={<ApiOutlined />}>
+                无可用工具
+              </Button>
+            );
+          }
+
+          return (
+            <Select
+              mode="multiple"
+              onChange={setSelectedMCPServices}
+              placeholder="选择工具服务"
+              popupRender={(menu) => (
+                <div>
+                  {menu}
+                  <div
+                    style={{
+                      padding: "8px 12px",
+                      borderTop: "1px solid #f0f0f0",
+                    }}
+                  >
+                    <span style={{ fontSize: 12, color: "#666" }}>
+                      共 {availableMCPServices.length} 个服务可用
+                    </span>
+                  </div>
+                </div>
+              )}
+              style={{ minWidth: 150 }}
+              value={selectedMCPServices}
+            >
+              {availableMCPServices.map((service) => (
+                <Select.Option key={service.value} value={service.value}>
+                  <Flex align="center" gap={8} justify="space-between">
+                    <span>{service.label}</span>
+                    <span style={{ fontSize: 12, color: "#999" }}>
+                      {service.toolCount} 工具
                     </span>
                   </Flex>
                 </Select.Option>
@@ -132,10 +201,13 @@ const ActionBar = () => {
   }, [
     useThinking,
     useSearch,
+    selectedMCPServices,
     setUseThinking,
     setUseSearch,
+    setSelectedMCPServices,
     currentModel,
     enabledModels,
+    availableMCPServices,
     setCurrentModelId,
   ]);
 

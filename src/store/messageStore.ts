@@ -3,9 +3,13 @@ import { omit } from "lodash-es";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { OpenAIToolCall } from "@/types";
+
 export type MessageType = {
   role?: string;
   content: string;
+  toolCalls?: OpenAIToolCall[];
+  tool_call_id?: string;
 };
 
 export type Conversation = {
