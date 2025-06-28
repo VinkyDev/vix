@@ -82,7 +82,6 @@ const ServerLogsDrawer: React.FC<ServerLogsDrawerProps> = ({
 
   return (
     <Drawer
-      destroyOnClose
       footer={
         <div style={{ textAlign: "right" }}>
           <Space>
@@ -103,14 +102,19 @@ const ServerLogsDrawer: React.FC<ServerLogsDrawerProps> = ({
       placement="right"
       title={
         <Space>
-          <Title level={4} style={{ margin: 0 }}>
+          <Title level={5} style={{ margin: 0 }}>
             服务日志: {serverName}
           </Title>
         </Space>
       }
-      width={520}
+      width="80%"
     >
-      <div style={{ height: "100%", padding: "0 0 24px 0" }}>
+      <div
+        style={{
+          height: "100%",
+          boxSizing: "border-box",
+        }}
+      >
         <div
           className="log-viewer"
           ref={logContainerRef}
@@ -120,12 +124,13 @@ const ServerLogsDrawer: React.FC<ServerLogsDrawerProps> = ({
             color: "#d4d4d4",
             borderRadius: "8px",
             padding: "16px",
-            fontFamily: "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
+            fontFamily:
+              "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
             fontSize: "13px",
             lineHeight: "1.5",
-            overflowY: "auto",
             whiteSpace: "pre-wrap",
             wordBreak: "break-all",
+            overflowY: "auto",
           }}
         >
           {service.logs.length === 0 ? (

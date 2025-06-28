@@ -8,7 +8,6 @@ import {
   PlusOutlined,
   StopOutlined,
   ToolOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import {
   Badge,
@@ -22,7 +21,6 @@ import {
   Row,
   Space,
   Typography,
-  Upload,
 } from "antd";
 import { useEffect, useState } from "react";
 
@@ -43,18 +41,17 @@ export default function MCPSettings() {
     startService,
     stopService,
     removeService,
-    importConfiguration,
     exportConfiguration,
     initializeStateCallbacks,
   } = useMCPStore();
 
   const [configDrawerVisible, setConfigDrawerVisible] = useState(false);
-  const [configDrawerMode, setConfigDrawerMode] = useState<"add" | "edit">("add");
+  const [configDrawerMode, setConfigDrawerMode] = useState<"add" | "edit">(
+    "add"
+  );
   const [logsModalVisible, setLogsModalVisible] = useState(false);
   const [toolsDrawerVisible, setToolsDrawerVisible] = useState(false);
   const [selectedService, setSelectedService] = useState<string>("");
-  const [importModalVisible, setImportModalVisible] = useState(false);
-  const [importContent, setImportContent] = useState("");
   const [loadingServices, setLoadingServices] = useState<Set<string>>(
     new Set()
   );
@@ -141,18 +138,6 @@ export default function MCPSettings() {
     message.success("配置已导出");
   };
 
-  const handleImportConfig = () => {
-    try {
-      const config = JSON.parse(importContent);
-      importConfiguration(config);
-      setImportModalVisible(false);
-      setImportContent("");
-      message.success("配置导入成功");
-    } catch (error) {
-      message.error(`配置格式错误，请检查 JSON 格式: ${error}`);
-    }
-  };
-
   const getStatusColor = (status: MCPServerStatus): string => {
     switch (status) {
       case MCPServerStatus.Running:
@@ -194,23 +179,23 @@ export default function MCPSettings() {
     // 下拉菜单项
     const menuItems = [
       {
-        key: 'edit',
-        label: '编辑',
+        key: "edit",
+        label: "编辑",
         icon: <EditOutlined />,
         onClick: () => handleEditService(serviceName),
       },
       {
-        key: 'logs',
-        label: '日志',
+        key: "logs",
+        label: "日志",
         icon: <FileTextOutlined />,
         onClick: () => handleViewLogs(serviceName),
       },
       {
-        type: 'divider' as const,
+        type: "divider" as const,
       },
       {
-        key: 'delete',
-        label: '删除',
+        key: "delete",
+        label: "删除",
         icon: <DeleteOutlined />,
         danger: true,
         onClick: () => handleDeleteService(serviceName),
@@ -229,20 +214,24 @@ export default function MCPSettings() {
           }}
         >
           {/* 卡片头部 */}
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginBottom: "20px"
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: "20px",
+            }}
+          >
             <Title level={5} style={{ margin: 0, flex: 1 }}>
               {service.config.name}
             </Title>
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
               <Text style={{ fontSize: "12px" }} type="secondary">
                 {getStatusText(service.status)}
               </Text>
@@ -258,12 +247,14 @@ export default function MCPSettings() {
           </div>
 
           {/* 操作按钮区域 - 单行布局 */}
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "8px"
-          }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             {/* 启动/停止按钮 */}
             {isRunning ? (
               <Button
@@ -308,13 +299,9 @@ export default function MCPSettings() {
                 items: menuItems,
               }}
               placement="bottomRight"
-              trigger={['click']}
+              trigger={["hover"]}
             >
-              <Button
-                icon={<MoreOutlined />}
-                size="small"
-                type="text"
-              >
+              <Button icon={<MoreOutlined />} size="small" type="text">
                 更多
               </Button>
             </Dropdown>
@@ -352,21 +339,6 @@ export default function MCPSettings() {
           <Button icon={<DownloadOutlined />} onClick={handleExportConfig}>
             导出配置
           </Button>
-          <Upload
-            accept=".json"
-            beforeUpload={(file) => {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                setImportContent(e.target?.result as string);
-                setImportModalVisible(true);
-              };
-              reader.readAsText(file);
-              return false;
-            }}
-            showUploadList={false}
-          >
-            <Button icon={<UploadOutlined />}>导入配置</Button>
-          </Upload>
         </Space>
       </div>
 
@@ -408,38 +380,6 @@ export default function MCPSettings() {
         serviceName={selectedService}
         visible={toolsDrawerVisible}
       />
-
-      {/* 导入配置模态框 */}
-      <Modal
-        cancelText="取消"
-        okText="导入"
-        onCancel={() => {
-          setImportModalVisible(false);
-          setImportContent("");
-        }}
-        onOk={handleImportConfig}
-        open={importModalVisible}
-        title="导入配置"
-      >
-        <Upload.Dragger
-          accept=".json"
-          beforeUpload={(file) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              setImportContent(e.target?.result as string);
-            };
-            reader.readAsText(file);
-            return false;
-          }}
-          showUploadList={false}
-        >
-          <p className="ant-upload-drag-icon">
-            <UploadOutlined />
-          </p>
-          <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
-          <p className="ant-upload-hint">支持 JSON 格式的配置文件</p>
-        </Upload.Dragger>
-      </Modal>
     </div>
   );
 }

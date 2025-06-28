@@ -17,6 +17,7 @@
   border: 0;
   vertical-align: baseline;
   cursor: default;
+  box-sizing: border-box;
 }
 
 *::-webkit-scrollbar {
@@ -32,7 +33,6 @@
   background: $primary-bg;
   border-radius: 16px;
 
-  box-sizing: border-box;
   cursor: grab;
   padding: 10px 20px 20px;
   overflow: hidden;

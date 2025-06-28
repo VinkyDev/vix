@@ -69,10 +69,10 @@ export default function MCPToolsDrawer({
   const handleExecuteTool = async () => {
     if (!selectedTool) return;
 
+    const values = await form.validateFields();
+
     try {
       setExecuting(true);
-
-      const values = await form.validateFields();
 
       const args: Record<string, any> = {};
       Object.keys(values).forEach((key) => {
@@ -205,7 +205,7 @@ export default function MCPToolsDrawer({
     }
 
     return (
-      <Form form={form} layout="vertical">
+      <Form form={form} layout="vertical" requiredMark={false}>
         {Object.entries(properties).map(
           ([paramName, paramSchema]: [string, any]) => {
             const isRequired = required.includes(paramName);
@@ -281,6 +281,8 @@ export default function MCPToolsDrawer({
                   wordBreak: "break-word",
                   margin: 0,
                   color: result.isError ? "#cf1322" : "#389e0d",
+                  maxHeight: "300px",
+                  overflowY: "auto",
                 }}
               >
                 {content.text}
@@ -303,10 +305,10 @@ export default function MCPToolsDrawer({
 
   return (
     <Drawer
-      bodyStyle={{ padding: 0 }}
       onClose={onClose}
       open={visible}
       placement="right"
+      styles={{ body: { padding: 0 } }}
       title={
         <Space>
           <ToolOutlined />
@@ -315,21 +317,15 @@ export default function MCPToolsDrawer({
       }
       width="80%"
     >
-      <Row style={{ height: "100%" }}>
-        {/* 左侧工具列表 */}
+      <Row>
         <Col
           span={8}
           style={{ borderRight: "1px solid #f0f0f0", height: "100%" }}
         >
-          <div style={{ padding: "16px", borderBottom: "1px solid #f0f0f0" }}>
-            <Title level={5} style={{ margin: 0 }}>
-              可用工具 ({tools.length})
-            </Title>
-          </div>
           <div
             style={{
               padding: "8px",
-              maxHeight: "calc(100vh - 120px)",
+              height: "100%",
               overflowY: "auto",
             }}
           >
@@ -345,7 +341,6 @@ export default function MCPToolsDrawer({
           </div>
         </Col>
 
-        {/* 右侧工具详情和执行区域 */}
         <Col span={16} style={{ height: "100%" }}>
           {!selectedTool ? (
             <div style={{ padding: "60px", textAlign: "center" }}>

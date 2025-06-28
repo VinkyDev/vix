@@ -156,7 +156,6 @@ const BasicSettings: React.FC = () => {
                 <Button
                   danger
                   disabled={currentContextSize === 0}
-                  ghost
                   icon={<ClearOutlined />}
                   onClick={handleClearContext}
                   size="small"
@@ -187,7 +186,6 @@ const BasicSettings: React.FC = () => {
                 <Button
                   danger
                   disabled={messages.length === 0}
-                  ghost
                   icon={<DeleteOutlined />}
                   onClick={handleClearHistory}
                   size="small"
