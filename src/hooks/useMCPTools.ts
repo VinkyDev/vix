@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useMCPStore, useUserSettingsStore } from '@/store';
-import { MCPServerStatus, MCPToolAdapter, OpenAITool } from '@/types';
-import { convertMCPToolToOpenAI } from '@/utils/mcpToolAdapter';
+import { useMCPStore, useUserSettingsStore } from "@/store";
+import { MCPServerStatus, MCPToolAdapter, OpenAITool } from "@/types";
+import { convertMCPToolToOpenAI } from "@/utils/mcpToolAdapter";
 
 /**
  * 获取当前选中的MCP服务的所有工具并转换为OpenAI格式
@@ -16,10 +16,14 @@ export function useMCPTools() {
     const toolAdapters: MCPToolAdapter[] = [];
     const openAITools: OpenAITool[] = [];
 
-    selectedMCPServices.forEach(serviceName => {
+    selectedMCPServices.forEach((serviceName) => {
       const service = services[serviceName];
-      if (service && service.status === MCPServerStatus.Running && service.isConnected) {
-        service.tools.forEach(mcpTool => {
+      if (
+        service &&
+        service.status === MCPServerStatus.Running &&
+        service.isConnected
+      ) {
+        service.tools.forEach((mcpTool) => {
           const adapter = convertMCPToolToOpenAI(serviceName, mcpTool);
           toolAdapters.push(adapter);
           openAITools.push(adapter.openAITool);
@@ -35,7 +39,9 @@ export function useMCPTools() {
 
   // 根据工具名称查找对应的适配器
   const findAdapter = (toolName: string): MCPToolAdapter | undefined => {
-    return adapters.find(adapter => adapter.openAITool.function.name === toolName);
+    return adapters.find(
+      (adapter) => adapter.openAITool.function.name === toolName
+    );
   };
 
   return {
@@ -48,4 +54,4 @@ export function useMCPTools() {
     /** 是否有可用的工具 */
     hasTools: tools.length > 0,
   };
-} 
+}

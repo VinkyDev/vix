@@ -12,7 +12,7 @@ import {
 } from "react-router-dom";
 
 import GlobalErrorBoundary from "./components/GlobalErrorBoundary";
-import { useDesignToken, useShortcut } from "./hooks";
+import { useShortcut } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
 import { ShortcutKey, useModelStore } from "./store";
@@ -61,7 +61,6 @@ function AppRoutes() {
 
 function App() {
   const { fetchModelList, loading } = useModelStore();
-  const token = useDesignToken();
 
   // 获取模型列表
   useEffect(() => {

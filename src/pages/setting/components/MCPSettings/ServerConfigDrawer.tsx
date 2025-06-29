@@ -255,11 +255,7 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
             )}
           </>
         ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            size="large"
-          >
+          <Form form={form} layout="vertical" size="large">
             {/* 基本信息卡片 */}
             <Card
               size="small"

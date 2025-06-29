@@ -74,7 +74,7 @@ export const useModelStore = create<ModelStore>()(
         // 如果没有当前选中的模型，选择第一个启用的模型
         const state = get();
         if (!state.currentModelId && state.enabledModelIds.length > 0) {
-          const firstEnabledModel = allModelList.find(model =>
+          const firstEnabledModel = allModelList.find((model) =>
             state.enabledModelIds.includes(model.modelId)
           );
           if (firstEnabledModel) {
@@ -95,7 +95,7 @@ export const useModelStore = create<ModelStore>()(
 
       getEnabledModels: () => {
         const state = get();
-        return state.modelList.filter(model =>
+        return state.modelList.filter((model) =>
           state.enabledModelIds.includes(model.modelId)
         );
       },
@@ -109,14 +109,20 @@ export const useModelStore = create<ModelStore>()(
             newEnabledModelIds.push(modelId);
           }
         } else {
-          newEnabledModelIds = newEnabledModelIds.filter(id => id !== modelId);
+          newEnabledModelIds = newEnabledModelIds.filter(
+            (id) => id !== modelId
+          );
         }
 
         set({ enabledModelIds: newEnabledModelIds });
 
         // 如果当前选中的模型被禁用了，选择第一个启用的模型
-        if (!enabled && state.currentModelId === modelId && newEnabledModelIds.length > 0) {
-          const firstEnabledModel = state.modelList.find(model =>
+        if (
+          !enabled &&
+          state.currentModelId === modelId &&
+          newEnabledModelIds.length > 0
+        ) {
+          const firstEnabledModel = state.modelList.find((model) =>
             newEnabledModelIds.includes(model.modelId)
           );
           if (firstEnabledModel) {

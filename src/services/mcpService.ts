@@ -6,10 +6,10 @@ import {
   MCPServerStatus,
   MCPTool,
   MCPToolResult,
-} from '@/types';
+} from "@/types";
 
-import { MCPProtocolClient, MCPProtocolEvents } from './mcpProtocol';
-import { MCPServer, MCPServerEvents } from './mcpServer';
+import { MCPProtocolClient, MCPProtocolEvents } from "./mcpProtocol";
+import { MCPServer, MCPServerEvents } from "./mcpServer";
 
 export interface MCPServiceEvents {
   onStatusChange?: (status: MCPServerStatus) => void;
@@ -99,7 +99,8 @@ export class MCPService {
     } catch (error) {
       await this.cleanup();
       this.updateStatus(MCPServerStatus.Error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.log(`Failed to start MCP service: ${errorMessage}`);
       throw error;
     }
@@ -120,7 +121,8 @@ export class MCPService {
       this.log(`MCP service stopped: ${this.config.name}`);
     } catch (error) {
       this.updateStatus(MCPServerStatus.Error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.log(`Error stopping MCP service: ${errorMessage}`);
       throw error;
     }
@@ -133,7 +135,10 @@ export class MCPService {
   }
 
   // 协议操作方法
-  async callTool(name: string, arguments_: Record<string, any>): Promise<MCPToolResult> {
+  async callTool(
+    name: string,
+    arguments_: Record<string, any>
+  ): Promise<MCPToolResult> {
     this.ensureRunning();
     this.log(`Calling tool: ${name} with args: ${JSON.stringify(arguments_)}`);
 
@@ -142,7 +147,8 @@ export class MCPService {
       this.log(`Tool ${name} completed successfully`);
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.log(`Tool ${name} failed: ${errorMessage}`);
       throw error;
     }
@@ -158,7 +164,10 @@ export class MCPService {
     return await this.protocolClient!.readResource(uri);
   }
 
-  async getPrompt(name: string, arguments_?: Record<string, any>): Promise<any> {
+  async getPrompt(
+    name: string,
+    arguments_?: Record<string, any>
+  ): Promise<any> {
     this.ensureRunning();
     return await this.protocolClient!.getPrompt(name, arguments_);
   }
@@ -192,16 +201,18 @@ export class MCPService {
 
   private async initializeProtocolClient(): Promise<void> {
     if (!this.server?.isRunning || !this.server.child) {
-      throw new Error('Server is not running or child process not available');
+      throw new Error("Server is not running or child process not available");
     }
 
     const protocolEvents: MCPProtocolEvents = {
       onConnected: (serverInfo) => {
         this._serverInfo = serverInfo;
-        this.log(`Protocol client connected to: ${serverInfo.name} v${serverInfo.version}`);
+        this.log(
+          `Protocol client connected to: ${serverInfo.name} v${serverInfo.version}`
+        );
       },
       onDisconnected: () => {
-        this.log('Protocol client disconnected');
+        this.log("Protocol client disconnected");
         this.handleServerDisconnection();
       },
       onError: (error) => {
@@ -209,7 +220,10 @@ export class MCPService {
       },
     };
 
-    this.protocolClient = new MCPProtocolClient(this.server.child, protocolEvents);
+    this.protocolClient = new MCPProtocolClient(
+      this.server.child,
+      protocolEvents
+    );
     await this.protocolClient.initialize();
   }
 
@@ -233,7 +247,9 @@ export class MCPService {
       this.events.onResourcesUpdate?.(resources);
       this.events.onPromptsUpdate?.(prompts);
 
-      this.log(`Loaded ${tools.length} tools, ${resources.length} resources, ${prompts.length} prompts`);
+      this.log(
+        `Loaded ${tools.length} tools, ${resources.length} resources, ${prompts.length} prompts`
+      );
     } catch (error) {
       this.log(`Failed to load data: ${error}`);
     }
@@ -282,11 +298,11 @@ export class MCPService {
 
   private ensureRunning(): void {
     if (!this.isRunning || !this.isConnected) {
-      throw new Error('MCP service is not running or not connected');
+      throw new Error("MCP service is not running or not connected");
     }
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

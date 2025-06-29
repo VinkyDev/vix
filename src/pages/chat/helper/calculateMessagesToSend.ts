@@ -12,7 +12,6 @@ export const calculateMessagesToSend = (
   messages: MessageInfo<MessageType>[],
   contextWindowSize: number
 ): MessageType[] => {
-
   if (!messages.length) {
     return [];
   }
@@ -34,11 +33,14 @@ export const calculateMessagesToSend = (
   const messagesToSend = availableMessages.slice(-contextWindowSize);
 
   return messagesToSend
-    .filter(msg => !(
-      msg.message.role === "system" &&
-      msg.message.content.includes("<divider>上下文已清除</divider>")
-    ))
-    .map(msg => ({
+    .filter(
+      (msg) =>
+        !(
+          msg.message.role === "system" &&
+          msg.message.content.includes("<divider>上下文已清除</divider>")
+        )
+    )
+    .map((msg) => ({
       ...msg.message,
     }));
 };

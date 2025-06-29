@@ -115,11 +115,7 @@ export const ConversationDrawer = ({
         width={300}
       >
         <Flex className="drawer-container" vertical>
-          <Flex
-            align="center"
-            className="header"
-            justify="space-between"
-          >
+          <Flex align="center" className="header" justify="space-between">
             <Button
               icon={<PlusOutlined />}
               onClick={handleCreateConversation}
@@ -156,9 +152,7 @@ export const ConversationDrawer = ({
                       )}
                       justify="space-between"
                     >
-                      <div className="conversation-title">
-                        {item.title}
-                      </div>
+                      <div className="conversation-title">{item.title}</div>
                       <Flex className="conversation-actions" gap={4}>
                         <Button
                           className="action-btn"
@@ -187,11 +181,7 @@ export const ConversationDrawer = ({
                 )}
               />
             ) : (
-              <Flex
-                align="center"
-                className="empty-state"
-                justify="center"
-              >
+              <Flex align="center" className="empty-state" justify="center">
                 暂无对话
               </Flex>
             )}

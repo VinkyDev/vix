@@ -297,7 +297,7 @@ const ChatComponent = () => {
             content: message.content,
             key: id,
             role: message.role,
-          } as BubbleProps)
+          }) as BubbleProps
       );
   }, [messages]);
 

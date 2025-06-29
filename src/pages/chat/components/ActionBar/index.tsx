@@ -93,9 +93,7 @@ const ActionBar = () => {
                 <div>
                   {menu}
                   <div className="model-summary">
-                    <span>
-                      共 {enabledModels.length} 个模型可用
-                    </span>
+                    <span>共 {enabledModels.length} 个模型可用</span>
                   </div>
                 </div>
               )}
@@ -104,9 +102,7 @@ const ActionBar = () => {
               {enabledModels.map((model) => (
                 <Select.Option key={model.modelId} value={model.modelId}>
                   <Flex align="center" gap={8} justify="space-between">
-                    <span className="model-name">
-                      {model.name}
-                    </span>
+                    <span className="model-name">{model.name}</span>
                   </Flex>
                 </Select.Option>
               ))}
@@ -134,7 +130,8 @@ const ActionBar = () => {
                     className="select-all-btn"
                     onClick={() => {
                       if (
-                        selectedMCPServices.length === availableMCPServices.length
+                        selectedMCPServices.length ===
+                        availableMCPServices.length
                       ) {
                         setSelectedMCPServices([]);
                       } else {
@@ -216,10 +213,7 @@ const ActionBar = () => {
                 placement="bottomLeft"
                 trigger="click"
               >
-                <Badge
-                  count={selectedMCPServices.length}
-                  size="small"
-                >
+                <Badge count={selectedMCPServices.length} size="small">
                   <Button
                     className={clsx(
                       "badge-button",
@@ -316,4 +310,4 @@ const ActionBar = () => {
   );
 };
 
-export default ActionBar; 
+export default ActionBar;

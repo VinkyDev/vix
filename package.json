@@ -10,7 +10,13 @@
     "tauri": "tauri",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
-    "lint:check": "eslint . --ext ts,tsx"
+    "lint:check": "eslint . --ext ts,tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "type-check": "tsc --noEmit",
+    "code-quality": "pnpm run type-check && pnpm run lint:check && pnpm run format:check",
+    "code-fix": "pnpm run lint:fix && pnpm run format",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.14.0"
@@ -58,10 +64,15 @@
     "@vitejs/plugin-react": "^4.3.4",
     "esbuild": "^0.25.5",
     "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-perfectionist": "^4.14.0",
+    "eslint-plugin-prettier": "^5.5.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
     "sass": "^1.89.2",
     "typescript": "~5.6.3",
     "typescript-eslint": "^8.34.0",
@@ -69,5 +80,21 @@
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "^0.25.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,less}": [
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }

@@ -143,4 +143,4 @@ export const createConfigFromForm = (values: any): MCPServerConfig => {
     env: Object.keys(env).length > 0 ? env : undefined,
     cwd: values.cwd || undefined,
   };
-}; 
+};

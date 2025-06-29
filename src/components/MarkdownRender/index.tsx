@@ -86,13 +86,13 @@ const preprocessContent = (content: string) => {
 };
 
 const parseToolCallInfo = (content: string) => {
-  const parts = content.split('|');
+  const parts = content.split("|");
   if (parts.length >= 2) {
     return {
       toolName: parts[0].trim(),
-      status: parts[1].trim() as 'pending' | 'success' | 'error',
+      status: parts[1].trim() as "pending" | "success" | "error",
       result: parts[2]?.trim(),
-      error: parts[1].trim() === 'error' ? parts[2]?.trim() : undefined,
+      error: parts[1].trim() === "error" ? parts[2]?.trim() : undefined,
     };
   }
   return null;
@@ -110,15 +110,17 @@ const renderMarkdown: BubbleProps["messageRender"] = (content) => {
         }}
         ref={(element) => {
           if (element) {
-            const toolCallContainers = element.querySelectorAll('.toolcall[data-toolcall="true"]');
-            
+            const toolCallContainers = element.querySelectorAll(
+              '.toolcall[data-toolcall="true"]'
+            );
+
             toolCallContainers.forEach((container) => {
               const textContent = container.textContent?.trim();
               if (textContent) {
                 const toolCallInfo = parseToolCallInfo(textContent);
                 if (toolCallInfo) {
-                  container.innerHTML = '';
-                  
+                  container.innerHTML = "";
+
                   const root = createRoot(container);
                   root.render(
                     <ToolCallCard

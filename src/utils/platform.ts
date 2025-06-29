@@ -30,39 +30,40 @@ export class PlatformUtils {
    */
   private static getBasename(filePath: string): string {
     const parts = filePath.split(/[/\\]/);
-    return parts[parts.length - 1] || '';
+    return parts[parts.length - 1] || "";
   }
 
   /**
    * 简单的路径规范化
    */
   private static normalizePath(filePath: string): string {
-    if (!filePath) return '';
-    
-    const separator = this.isWindows() ? '\\' : '/';
-    return filePath
-      .replace(/[/\\]+/g, separator)
-      .replace(/[/\\]$/, '');
+    if (!filePath) return "";
+
+    const separator = this.isWindows() ? "\\" : "/";
+    return filePath.replace(/[/\\]+/g, separator).replace(/[/\\]$/, "");
   }
 
   /**
    * 处理命令执行，Windows 上的 npm 相关命令使用 cmd.exe
    */
-  static processCommand(command: string, args: string[]): { command: string; args: string[] } {
+  static processCommand(
+    command: string,
+    args: string[]
+  ): { command: string; args: string[] } {
     if (!this.isWindows()) {
       return { command, args };
     }
 
     const basename = this.getBasename(command);
     const npmCommands = ["npm", "npx", "node"];
-    
+
     if (npmCommands.includes(basename)) {
       return {
         command: "cmd.exe",
-        args: ["/c", command, ...args]
+        args: ["/c", command, ...args],
       };
     }
-    
+
     return { command, args };
   }
 

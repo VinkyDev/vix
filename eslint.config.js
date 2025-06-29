@@ -4,6 +4,8 @@ import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import perfectionist from 'eslint-plugin-perfectionist'
+import prettierConfig from 'eslint-config-prettier'
+import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
   // 忽略的文件和目录
@@ -48,7 +50,8 @@ export default [
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      perfectionist
+      perfectionist,
+      prettier: prettierPlugin
     },
     rules: {
       // React 基础规则
@@ -75,12 +78,22 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'warn',
 
-      // Perfectionist 规则 - 自动排序和组织代码
+            // Perfectionist 规则 - 自动排序和组织代码
       'perfectionist/sort-imports': [
         'error',
         {
           type: 'natural',
-          order: 'asc'
+          order: 'asc',
+          groups: [
+            'type',
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling', 'index'],
+            'unknown'
+          ],
+          newlinesBetween: 'always',
+          internalPattern: ['^@/']
         }
       ],
       'perfectionist/sort-named-imports': [
@@ -117,7 +130,13 @@ export default [
       'prefer-template': 'error',
       'no-nested-ternary': 'error',
       'no-unneeded-ternary': 'error',
-      'prefer-object-spread': 'error'
+      'prefer-object-spread': 'error',
+
+      // Prettier 兼容性
+      'prettier/prettier': 'error'
     }
-  }
+  },
+
+  // Prettier 配置 - 必须放在最后以覆盖冲突的规则
+  prettierConfig
 ]

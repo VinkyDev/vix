@@ -75,7 +75,9 @@ const ProviderList: React.FC<ProviderListProps> = ({
                   placement="right"
                   title={
                     <div className="tooltip-content">
-                      <div className="provider-name">{item.providerInfo.providerName}</div>
+                      <div className="provider-name">
+                        {item.providerInfo.providerName}
+                      </div>
                       {item.providerInfo.providerTags && (
                         <div className="provider-tags-tooltip">
                           {item.providerInfo.providerTags.join(", ")}
@@ -88,10 +90,10 @@ const ProviderList: React.FC<ProviderListProps> = ({
                     className={`provider-item-collapsed ${isSelected ? "selected" : ""}`}
                     onClick={() => onProviderSelect(item.providerId)}
                   >
-                    <Avatar 
+                    <Avatar
                       className="avatar-collapsed"
-                      size={token.fontSize * 1.5} 
-                      src={item.providerInfo.icon} 
+                      size={token.fontSize * 1.5}
+                      src={item.providerInfo.icon}
                     />
                   </div>
                 </Tooltip>
@@ -101,8 +103,15 @@ const ProviderList: React.FC<ProviderListProps> = ({
                   onClick={() => onProviderSelect(item.providerId)}
                 >
                   <Flex align="center" gap={token.marginXS}>
-                    <Avatar size={token.controlHeight} src={item.providerInfo.icon} />
-                    <Flex className="provider-info" gap={token.marginXXS} vertical>
+                    <Avatar
+                      size={token.controlHeight}
+                      src={item.providerInfo.icon}
+                    />
+                    <Flex
+                      className="provider-info"
+                      gap={token.marginXXS}
+                      vertical
+                    >
                       <Title className="provider-title" level={5}>
                         {item.providerInfo.providerName}
                       </Title>

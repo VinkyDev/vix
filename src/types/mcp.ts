@@ -1,4 +1,4 @@
-import { JSONSchema7 } from './schema';
+import { JSONSchema7 } from "./schema";
 
 // MCP 服务配置
 export interface MCPServerConfig {
@@ -16,16 +16,16 @@ export interface MCPServerConfig {
 
 // MCP 服务状态
 export enum MCPServerStatus {
-  Stopped = 'stopped',
-  Starting = 'starting',
-  Running = 'running',
-  Stopping = 'stopping',
-  Error = 'error',
+  Stopped = "stopped",
+  Starting = "starting",
+  Running = "running",
+  Stopping = "stopping",
+  Error = "error",
 }
 
 // MCP JSON-RPC 消息类型
 export interface JSONRPCMessage {
-  jsonrpc: '2.0';
+  jsonrpc: "2.0";
   id?: string | number;
   method?: string;
   params?: JSONSchema7;
@@ -42,7 +42,7 @@ export interface MCPTool {
   name: string;
   description: string;
   inputSchema: {
-    type: 'object';
+    type: "object";
     properties: Record<string, JSONSchema7>;
     required?: string[];
   };
@@ -82,7 +82,7 @@ export interface MCPServerInfo {
 // MCP 工具调用结果
 export interface MCPToolResult {
   content: Array<{
-    type: 'text' | 'image' | 'resource';
+    type: "text" | "image" | "resource";
     text?: string;
     data?: string;
     mimeType?: string;
@@ -95,12 +95,12 @@ export interface MCPToolAdapter {
   serviceName: string;
   tool: MCPTool;
   openAITool: {
-    type: 'function';
+    type: "function";
     function: {
       name: string;
       description: string;
       parameters: {
-        type: 'object';
+        type: "object";
         properties: Record<string, JSONSchema7>;
         required?: string[];
       };
@@ -119,9 +119,9 @@ export interface MCPMarketParam {
   /** 参数描述 */
   description?: string;
   /** 参数类型 */
-  type: 'string' | 'number' | 'boolean';
+  type: "string" | "number" | "boolean";
   /** 参数位置：env=环境变量，args=命令行参数 */
-  position: 'env' | 'args';
+  position: "env" | "args";
   /** 是否必需 */
   required: boolean;
   /** 默认值 */
@@ -200,4 +200,4 @@ export interface MCPMarketCategory {
   name: string;
   description: string;
   icon?: string;
-} 
+}

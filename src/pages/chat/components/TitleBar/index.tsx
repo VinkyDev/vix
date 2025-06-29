@@ -16,21 +16,14 @@ export const TitleBar = ({
   const navigate = useNavigate();
 
   return (
-    <Flex
-      align="center"
-      className="title-bar"
-      justify="space-between"
-    >
+    <Flex align="center" className="title-bar" justify="space-between">
       <Button
         icon={<MenuFoldOutlined />}
         onClick={() => setDrawerOpen(true)}
         shape="circle"
         type="text"
       />
-      <Title
-        className="title"
-        level={5}
-      >
+      <Title className="title" level={5}>
         {name}
       </Title>
       <Button

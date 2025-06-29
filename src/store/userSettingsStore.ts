@@ -49,7 +49,8 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
       selectedMCPServices: [],
       setUseThinking: (useThinking) => set({ useThinking }),
       setUseSearch: (useSearch) => set({ useSearch }),
-      setSelectedMCPServices: (selectedMCPServices) => set({ selectedMCPServices }),
+      setSelectedMCPServices: (selectedMCPServices) =>
+        set({ selectedMCPServices }),
 
       contextWindowSize: 4,
       setContextWindowSize: (size) => set({ contextWindowSize: size }),

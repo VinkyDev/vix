@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 正在执行 pre-push 检查..."
+
+# 运行类型检查
+echo "📝 运行类型检查..."
+pnpm run type-check
+
+# 运行 ESLint 检查
+echo "🔍 运行 ESLint 检查..."
+pnpm run lint:check
+
+# 运行 Prettier 检查
+echo "✨ 运行 Prettier 检查..."
+pnpm run format:check
+
+# 尝试构建项目
+echo "🏗️  检查项目构建..."
+pnpm run build
+
+echo "✅ 所有检查通过，准备推送..." 

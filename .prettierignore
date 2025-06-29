@@ -1,0 +1,33 @@
+# 依赖和构建输出
+node_modules/
+dist/
+build/
+public/
+
+# Tauri 相关
+src-tauri/
+
+# 日志文件
+*.log
+
+# 配置文件
+*.config.js
+*.config.ts
+vite.config.ts
+
+# 编辑器配置
+.vscode/
+.idea/
+
+# Git
+.git/
+
+# pnpm
+pnpm-lock.yaml
+
+# 特定文件
+LICENSE
+TODO.md
+
+# 生成的文件
+*.d.ts 

@@ -50,7 +50,7 @@ export interface ChatRequestParams {
 export interface ToolCallStatusInfo {
   id: string;
   toolName: string;
-  status: 'pending' | 'success' | 'error';
+  status: "pending" | "success" | "error";
   result?: string;
   error?: string;
 }

@@ -1,4 +1,4 @@
-import { MCPTool, MCPToolAdapter, OpenAITool } from '@/types';
+import { MCPTool, MCPToolAdapter, OpenAITool } from "@/types";
 
 /**
  * 将MCP工具转换为OpenAI格式的工具
@@ -6,14 +6,17 @@ import { MCPTool, MCPToolAdapter, OpenAITool } from '@/types';
  * @param mcpTool MCP工具定义
  * @returns OpenAI格式的工具
  */
-export function convertMCPToolToOpenAI(serviceName: string, mcpTool: MCPTool): MCPToolAdapter {
+export function convertMCPToolToOpenAI(
+  serviceName: string,
+  mcpTool: MCPTool
+): MCPToolAdapter {
   const openAITool: OpenAITool = {
-    type: 'function',
+    type: "function",
     function: {
       name: `${serviceName}_${mcpTool.name}`,
       description: mcpTool.description,
       parameters: {
-        type: 'object',
+        type: "object",
         properties: mcpTool.inputSchema.properties,
         required: mcpTool.inputSchema.required,
       },
@@ -32,15 +35,18 @@ export function convertMCPToolToOpenAI(serviceName: string, mcpTool: MCPTool): M
  * @param toolName OpenAI格式的工具名称 (serviceName_toolName)
  * @returns 解析后的服务名称和工具名称
  */
-export function parseToolName(toolName: string): { serviceName: string; toolName: string } {
-  const parts = toolName.split('_');
+export function parseToolName(toolName: string): {
+  serviceName: string;
+  toolName: string;
+} {
+  const parts = toolName.split("_");
   if (parts.length < 2) {
     throw new Error(`Invalid tool name format: ${toolName}`);
   }
-  
+
   const serviceName = parts[0];
-  const actualToolName = parts.slice(1).join('_');
-  
+  const actualToolName = parts.slice(1).join("_");
+
   return { serviceName, toolName: actualToolName };
 }
 
@@ -55,9 +61,9 @@ export function formatMCPToolResult(result: any): string {
   }
 
   const textContent = result.content
-    .filter((item: any) => item.type === 'text')
+    .filter((item: any) => item.type === "text")
     .map((item: any) => item.text)
-    .join('\n');
+    .join("\n");
 
   if (textContent) {
     return textContent;
@@ -65,4 +71,4 @@ export function formatMCPToolResult(result: any): string {
 
   // 如果没有文本内容，返回原始JSON
   return JSON.stringify(result);
-} 
+}

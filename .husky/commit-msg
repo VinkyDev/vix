@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 检查提交信息格式
+# 支持的格式：feat: 、fix: 、docs: 、style: 、refactor: 、test: 、chore: 等
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|ci|build|perf|revert)(\(.+\))?: .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "❌ 提交信息格式不正确！"
+    echo ""
+    echo "正确格式: <type>(<scope>): <description>"
+    echo ""
+    echo "类型 (type):"
+    echo "  feat:     新功能"
+    echo "  fix:      修复bug"
+    echo "  docs:     文档更新"
+    echo "  style:    代码格式化"
+    echo "  refactor: 重构代码"
+    echo "  test:     测试相关"
+    echo "  chore:    构建过程或辅助工具的变动"
+    echo "  ci:       CI/CD 相关"
+    echo "  build:    构建系统或外部依赖的变动"
+    echo "  perf:     性能优化"
+    echo "  revert:   回滚提交"
+    echo ""
+    echo "示例:"
+    echo "  feat: 添加用户登录功能"
+    echo "  fix(ui): 修复按钮样式问题"
+    echo "  docs: 更新API文档"
+    echo ""
+    exit 1
+fi 

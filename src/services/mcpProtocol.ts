@@ -1,4 +1,4 @@
-import { Child } from '@tauri-apps/plugin-shell';
+import { Child } from "@tauri-apps/plugin-shell";
 
 import {
   JSONRPCMessage,
@@ -7,7 +7,7 @@ import {
   MCPServerInfo,
   MCPTool,
   MCPToolResult,
-} from '@/types';
+} from "@/types";
 
 export interface MCPProtocolEvents {
   onMessage?: (message: JSONRPCMessage) => void;
@@ -22,11 +22,14 @@ export interface MCPProtocolEvents {
  */
 export class MCPProtocolClient {
   private requestId = 0;
-  private pendingRequests = new Map<number, {
-    resolve: (value: any) => void;
-    reject: (error: any) => void;
-    timeout: NodeJS.Timeout;
-  }>();
+  private pendingRequests = new Map<
+    number,
+    {
+      resolve: (value: any) => void;
+      reject: (error: any) => void;
+      timeout: NodeJS.Timeout;
+    }
+  >();
 
   private _connected = false;
   private _serverInfo?: MCPServerInfo;
@@ -47,26 +50,26 @@ export class MCPProtocolClient {
 
   async initialize(): Promise<MCPServerInfo> {
     if (this._connected) {
-      throw new Error('Client is already connected');
+      throw new Error("Client is already connected");
     }
 
     try {
       // 发送初始化请求
-      const serverInfo = await this.sendRequest('initialize', {
-        protocolVersion: '2024-11-05',
+      const serverInfo = await this.sendRequest("initialize", {
+        protocolVersion: "2024-11-05",
         capabilities: {
           tools: {},
           resources: {},
           prompts: {},
         },
         clientInfo: {
-          name: 'Vix',
-          version: '0.1.0',
+          name: "Vix",
+          version: "0.1.0",
         },
       });
 
       // 发送初始化完成通知
-      await this.sendNotification('initialized', {});
+      await this.sendNotification("initialized", {});
 
       this._connected = true;
       this._serverInfo = serverInfo;
@@ -74,7 +77,8 @@ export class MCPProtocolClient {
 
       return serverInfo;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.events.onError?.(errorMessage);
       throw new Error(`MCP protocol initialization failed: ${errorMessage}`);
     }
@@ -88,7 +92,7 @@ export class MCPProtocolClient {
     // 清理所有待处理的请求
     this.pendingRequests.forEach(({ reject, timeout }) => {
       clearTimeout(timeout);
-      reject(new Error('Connection closed'));
+      reject(new Error("Connection closed"));
     });
     this.pendingRequests.clear();
 
@@ -99,13 +103,16 @@ export class MCPProtocolClient {
 
   async getTools(): Promise<MCPTool[]> {
     this.ensureConnected();
-    const result = await this.sendRequest('tools/list', {});
+    const result = await this.sendRequest("tools/list", {});
     return result.tools || [];
   }
 
-  async callTool(name: string, arguments_: Record<string, any>): Promise<MCPToolResult> {
+  async callTool(
+    name: string,
+    arguments_: Record<string, any>
+  ): Promise<MCPToolResult> {
     this.ensureConnected();
-    return await this.sendRequest('tools/call', {
+    return await this.sendRequest("tools/call", {
       name,
       arguments: arguments_,
     });
@@ -113,24 +120,27 @@ export class MCPProtocolClient {
 
   async getResources(): Promise<MCPResource[]> {
     this.ensureConnected();
-    const result = await this.sendRequest('resources/list', {});
+    const result = await this.sendRequest("resources/list", {});
     return result.resources || [];
   }
 
   async readResource(uri: string): Promise<any> {
     this.ensureConnected();
-    return await this.sendRequest('resources/read', { uri });
+    return await this.sendRequest("resources/read", { uri });
   }
 
   async getPrompts(): Promise<MCPPrompt[]> {
     this.ensureConnected();
-    const result = await this.sendRequest('prompts/list', {});
+    const result = await this.sendRequest("prompts/list", {});
     return result.prompts || [];
   }
 
-  async getPrompt(name: string, arguments_?: Record<string, any>): Promise<any> {
+  async getPrompt(
+    name: string,
+    arguments_?: Record<string, any>
+  ): Promise<any> {
     this.ensureConnected();
-    return await this.sendRequest('prompts/get', {
+    return await this.sendRequest("prompts/get", {
       name,
       arguments: arguments_ || {},
     });
@@ -138,7 +148,7 @@ export class MCPProtocolClient {
 
   handleMessage(data: string): void {
     // 按行分割消息，因为可能一次收到多条消息
-    const lines = data.trim().split('\n');
+    const lines = data.trim().split("\n");
 
     for (const line of lines) {
       if (!line.trim()) continue;
@@ -164,7 +174,7 @@ export class MCPProtocolClient {
       this.pendingRequests.set(id, { resolve, reject, timeout });
 
       const message: JSONRPCMessage = {
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id,
         method,
         params,
@@ -180,7 +190,7 @@ export class MCPProtocolClient {
 
   private async sendNotification(method: string, params: any): Promise<void> {
     const message: JSONRPCMessage = {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       method,
       params,
     };
@@ -204,7 +214,9 @@ export class MCPProtocolClient {
         this.pendingRequests.delete(message.id as number);
 
         if (message.error) {
-          pending.reject(new Error(`${message.error.message} (${message.error.code})`));
+          pending.reject(
+            new Error(`${message.error.message} (${message.error.code})`)
+          );
         } else {
           pending.resolve(message.result);
         }
@@ -224,10 +236,10 @@ export class MCPProtocolClient {
   private handleServerNotification(message: JSONRPCMessage): void {
     // 处理服务器推送的通知
     switch (message.method) {
-      case 'notifications/resources/list_changed':
-      case 'notifications/resources/updated':
-      case 'notifications/tools/list_changed':
-      case 'notifications/prompts/list_changed':
+      case "notifications/resources/list_changed":
+      case "notifications/resources/updated":
+      case "notifications/tools/list_changed":
+      case "notifications/prompts/list_changed":
         // 触发相应的事件，让上层处理
         break;
     }
@@ -236,11 +248,11 @@ export class MCPProtocolClient {
   private handleServerRequest(message: JSONRPCMessage): void {
     // 对于不支持的请求，返回错误
     const response: JSONRPCMessage = {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: message.id,
       error: {
         code: -32601,
-        message: 'Method not found',
+        message: "Method not found",
       },
     };
     this.sendMessage(response).catch(() => {
@@ -250,7 +262,7 @@ export class MCPProtocolClient {
 
   private ensureConnected(): void {
     if (!this._connected) {
-      throw new Error('MCP client is not connected');
+      throw new Error("MCP client is not connected");
     }
   }
 }
