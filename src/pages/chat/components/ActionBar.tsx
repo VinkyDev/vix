@@ -10,9 +10,9 @@ import {
 
 import "./index.scss";
 
-import { Button, Dropdown, Flex, Select } from "antd";
+import { Badge, Button, Checkbox, Dropdown, Flex, Popover, Select } from "antd";
 import clsx from "clsx";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { useMCPStore, useModelStore, useUserSettingsStore } from "@/store";
 import { MCPServerStatus } from "@/types";
@@ -30,13 +30,13 @@ export interface ActionBarItem {
 const ActionBar = () => {
   const { getCurrentModel, getEnabledModels, setCurrentModelId } =
     useModelStore();
-  const { 
-    setUseThinking, 
-    useThinking, 
-    setUseSearch, 
+  const {
+    setUseThinking,
+    useThinking,
+    setUseSearch,
     useSearch,
     selectedMCPServices,
-    setSelectedMCPServices 
+    setSelectedMCPServices,
   } = useUserSettingsStore();
   const { services } = useMCPStore();
 
@@ -46,13 +46,30 @@ const ActionBar = () => {
   // 获取可用的MCP服务（已连接的服务）
   const availableMCPServices = useMemo(() => {
     return Object.entries(services)
-      .filter(([_, service]) => service.status === MCPServerStatus.Running && service.isConnected)
+      .filter(
+        ([_, service]) =>
+          service.status === MCPServerStatus.Running && service.isConnected
+      )
       .map(([name, service]) => ({
         value: name,
         label: name,
         toolCount: service.tools.length,
       }));
   }, [services]);
+
+  // 自动清理不再可用的已选中服务
+  useEffect(() => {
+    const availableServiceNames = new Set(
+      availableMCPServices.map((s) => s.value)
+    );
+    const validSelectedServices = selectedMCPServices.filter((serviceName) =>
+      availableServiceNames.has(serviceName)
+    );
+
+    if (validSelectedServices.length !== selectedMCPServices.length) {
+      setSelectedMCPServices(validSelectedServices);
+    }
+  }, [availableMCPServices, selectedMCPServices, setSelectedMCPServices]);
 
   const actionItems = useMemo<ActionBarItem[]>(() => {
     return [
@@ -114,40 +131,156 @@ const ActionBar = () => {
             );
           }
 
+          const popoverContent = (
+            <div style={{ width: 280, maxHeight: 320, overflowY: "auto" }}>
+              <div
+                style={{
+                  padding: "8px 12px",
+                  borderBottom: "1px solid #f0f0f0",
+                  marginBottom: "8px",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (
+                      selectedMCPServices.length === availableMCPServices.length
+                    ) {
+                      setSelectedMCPServices([]);
+                    } else {
+                      setSelectedMCPServices(
+                        availableMCPServices.map((s) => s.value)
+                      );
+                    }
+                  }}
+                  size="small"
+                  style={{
+                    padding: 0,
+                    height: "auto",
+                    color: "#1677ff",
+                    fontSize: "12px",
+                  }}
+                  type="link"
+                >
+                  {selectedMCPServices.length === availableMCPServices.length
+                    ? "清空选择"
+                    : "全选"}
+                </Button>
+              </div>
+
+              <div style={{ padding: "0 4px" }}>
+                {availableMCPServices.map((service) => {
+                  const isSelected = selectedMCPServices.includes(
+                    service.value
+                  );
+                  return (
+                    <div
+                      key={service.value}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isSelected) {
+                          setSelectedMCPServices(
+                            selectedMCPServices.filter(
+                              (s) => s !== service.value
+                            )
+                          );
+                        } else {
+                          setSelectedMCPServices([
+                            ...selectedMCPServices,
+                            service.value,
+                          ]);
+                        }
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#f5f5f5";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                      style={{
+                        padding: "8px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      <Flex align="center" gap={8} justify="space-between">
+                        <Flex align="center" gap={8}>
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={() => {}} // 由外层点击事件处理
+                          />
+                          <ApiOutlined
+                            style={{ fontSize: 12, color: "#1677ff" }}
+                          />
+                          <span style={{ fontSize: "14px" }}>
+                            {service.label}
+                          </span>
+                        </Flex>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            color: "#999",
+                            background: "#f5f5f5",
+                            padding: "2px 6px",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          {service.toolCount}
+                        </span>
+                      </Flex>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div
+                style={{
+                  padding: "8px 12px",
+                  borderTop: "1px solid #f0f0f0",
+                  marginTop: "8px",
+                  background: "#fafafa",
+                  fontSize: "12px",
+                  color: "#666",
+                }}
+              >
+                共 {availableMCPServices.length} 个服务可用
+                {selectedMCPServices.length > 0 && (
+                  <span style={{ marginLeft: 8, color: "#1677ff" }}>
+                    • 已选 {selectedMCPServices.length} 个
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+
           return (
-            <Select
-              mode="multiple"
-              onChange={setSelectedMCPServices}
-              placeholder="选择工具服务"
-              popupRender={(menu) => (
-                <div>
-                  {menu}
-                  <div
-                    style={{
-                      padding: "8px 12px",
-                      borderTop: "1px solid #f0f0f0",
-                    }}
-                  >
-                    <span style={{ fontSize: 12, color: "#666" }}>
-                      共 {availableMCPServices.length} 个服务可用
-                    </span>
-                  </div>
-                </div>
-              )}
-              style={{ minWidth: 150 }}
-              value={selectedMCPServices}
+            <Popover
+              content={popoverContent}
+              placement="bottomLeft"
+              trigger="click"
             >
-              {availableMCPServices.map((service) => (
-                <Select.Option key={service.value} value={service.value}>
-                  <Flex align="center" gap={8} justify="space-between">
-                    <span>{service.label}</span>
-                    <span style={{ fontSize: 12, color: "#999" }}>
-                      {service.toolCount} 工具
-                    </span>
-                  </Flex>
-                </Select.Option>
-              ))}
-            </Select>
+              <Badge
+                count={selectedMCPServices.length}
+                size="small"
+                style={{
+                  backgroundColor: "#1677ff",
+                }}
+              >
+                <Button
+                  icon={<ApiOutlined />}
+                  shape="circle"
+                  style={{
+                    background:
+                      selectedMCPServices.length > 0 ? "#e4edff" : undefined,
+                    borderColor:
+                      selectedMCPServices.length > 0 ? "#76a3ff" : undefined,
+                    color:
+                      selectedMCPServices.length > 0 ? "#0058ff" : undefined,
+                  }}
+                />
+              </Badge>
+            </Popover>
           );
         },
         show: true,

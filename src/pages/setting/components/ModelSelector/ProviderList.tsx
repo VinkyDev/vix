@@ -108,7 +108,6 @@ const ProviderList: React.FC<ProviderListProps> = ({
                   className={`provider-item ${isSelected ? "selected" : ""}`}
                   onClick={() => onProviderSelect(item.providerId)}
                   style={{
-                    cursor: "pointer",
                     padding: "12px 16px",
                     marginBottom: 8,
                     borderRadius: 8,

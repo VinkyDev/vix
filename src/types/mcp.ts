@@ -106,4 +106,98 @@ export interface MCPToolAdapter {
       };
     };
   };
+}
+
+// MCP 市场相关类型定义
+
+/** MCP 市场中的参数配置项 */
+export interface MCPMarketParam {
+  /** 参数键名 */
+  key: string;
+  /** 参数显示名称 */
+  label: string;
+  /** 参数描述 */
+  description?: string;
+  /** 参数类型 */
+  type: 'string' | 'number' | 'boolean';
+  /** 参数位置：env=环境变量，args=命令行参数 */
+  position: 'env' | 'args';
+  /** 是否必需 */
+  required: boolean;
+  /** 默认值 */
+  defaultValue?: string | number | boolean;
+  /** 占位符 */
+  placeholder?: string;
+  /** 验证规则 */
+  validation?: {
+    pattern?: string;
+    message?: string;
+  };
+  /** 是否支持多个值（仅适用于args类型） */
+  multiple?: boolean;
+  /** 多个值的分隔符（默认为逗号） */
+  separator?: string;
+}
+
+/** MCP 市场中的服务模板 */
+export interface MCPMarketTemplate {
+  /** 模板ID */
+  id: string;
+  /** 服务名称 */
+  name: string;
+  /** 服务显示名称 */
+  displayName: string;
+  /** 服务描述 */
+  description: string;
+  /** 服务图标 */
+  icon?: string;
+  /** 服务分类 */
+  category: string;
+  /** 服务标签 */
+  tags: string[];
+  /** 服务版本 */
+  version: string;
+  /** 作者 */
+  author: string;
+  /** 仓库地址 */
+  repository?: string;
+  /** 文档地址 */
+  documentation?: string;
+  /** 基础配置模板 */
+  template: {
+    command: string;
+    args: string[];
+    env?: Record<string, string>;
+    cwd?: string;
+  };
+  /** 需要用户配置的参数 */
+  params: MCPMarketParam[];
+  /** 服务特性 */
+  features: string[];
+  /** 是否为热门服务 */
+  popular?: boolean;
+  /** 是否为官方服务 */
+  official?: boolean;
+  /** 配置指引 */
+  guide?: {
+    /** 指引标题 */
+    title: string;
+    /** 指引描述 */
+    description: string;
+    /** 指引步骤 */
+    steps: string[];
+    /** 相关链接 */
+    links?: Array<{
+      text: string;
+      url: string;
+    }>;
+  };
+}
+
+/** MCP 市场分类 */
+export interface MCPMarketCategory {
+  id: string;
+  name: string;
+  description: string;
+  icon?: string;
 } 

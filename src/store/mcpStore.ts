@@ -11,19 +11,27 @@ import {
   MCPToolResult,
 } from "@/types";
 
-// 简化的服务实例接口，只包含 UI 需要的状态
 export interface MCPServiceInstance {
   config: MCPServerConfig;
-  get status(): MCPServerStatus;
+  status: MCPServerStatus;
   logs: string[];
   service: MCPService;
-  // 缓存的数据，直接从 service 获取
-  get tools(): MCPTool[];
-  get resources(): MCPResource[];
-  get prompts(): MCPPrompt[];
-  get pid(): number | undefined;
-  get isConnected(): boolean;
+  tools: MCPTool[];
+  resources: MCPResource[];
+  prompts: MCPPrompt[];
+  pid: number | undefined;
+  isConnected: boolean;
 }
+
+// 状态更新类型
+type ServiceStateUpdates = Partial<
+  Omit<MCPServiceInstance, "config" | "service" | "logs">
+>;
+
+type UpdateServiceStateFunction = (
+  serviceName: string,
+  updates: ServiceStateUpdates
+) => void;
 
 interface MCPStore {
   /** MCP 服务实例 */
@@ -75,14 +83,21 @@ interface MCPStore {
 // 创建服务实例的工厂函数
 function createServiceInstance(
   config: MCPServerConfig,
-  onUpdate?: () => void
+  updateServiceState: UpdateServiceStateFunction
 ): MCPServiceInstance {
   const logs: string[] = [];
 
-  const serviceEvents: MCPServiceEvents = {
-    onStatusChange: (_status) => {
-      // 状态变化时触发 store 更新
-      onUpdate?.();
+  // 事件处理器生成函数 - 封装通用逻辑
+  const createServiceEvents = (
+    serviceName: string,
+    service: MCPService
+  ): MCPServiceEvents => ({
+    onStatusChange: (status) => {
+      updateServiceState(serviceName, {
+        status,
+        isConnected: service.isConnected,
+        pid: service.pid,
+      });
     },
     onLog: (message) => {
       logs.push(message);
@@ -92,238 +107,211 @@ function createServiceInstance(
       }
     },
     onToolsUpdate: () => {
-      // 工具更新时触发 store 更新
-      onUpdate?.();
+      updateServiceState(serviceName, {
+        tools: [...service.tools],
+      });
     },
     onResourcesUpdate: () => {
-      // 资源更新时触发 store 更新
-      onUpdate?.();
+      updateServiceState(serviceName, {
+        resources: [...service.resources],
+      });
     },
     onPromptsUpdate: () => {
-      // 提示更新时触发 store 更新
-      onUpdate?.();
+      updateServiceState(serviceName, {
+        prompts: [...service.prompts],
+      });
     },
-  };
+  });
 
-  const service = new MCPService(config, serviceEvents);
+  // 创建服务和事件处理器
+  const service = new MCPService(config, {} as MCPServiceEvents);
+  const serviceEvents = createServiceEvents(config.name, service);
+  // 设置事件处理器
+  Object.assign(service["events"] || {}, serviceEvents);
 
+  // 初始化状态
   return {
     config,
-    get status() {
-      return service.status;
-    },
+    status: service.status,
     logs,
     service,
-    get tools() {
-      return service.tools;
-    },
-    get resources() {
-      return service.resources;
-    },
-    get prompts() {
-      return service.prompts;
-    },
-    get pid() {
-      return service.pid;
-    },
-    get isConnected() {
-      return service.isConnected;
-    },
+    tools: [...service.tools],
+    resources: [...service.resources],
+    prompts: [...service.prompts],
+    pid: service.pid,
+    isConnected: service.isConnected,
   };
 }
 
 export const useMCPStore = create<MCPStore>()(
   persist(
-    (set, get) => ({
-      services: {},
-
-      addService: (config) => {
-        set((state) => {
-          // 创建一个会触发状态更新的服务实例
-          const onUpdate = () => {
-            // 触发 store 重新渲染
-            set((currentState) => ({ ...currentState }));
-          };
-
-          return {
+    (set, get) => {
+      // 状态更新函数
+      const createUpdateServiceState = (): UpdateServiceStateFunction => {
+        return (serviceName: string, updates: ServiceStateUpdates) => {
+          set((state) => ({
             services: {
               ...state.services,
-              [config.name]: createServiceInstance(config, onUpdate),
-            },
-          };
-        });
-      },
-
-      removeService: (name) => {
-        const { services } = get();
-        const service = services[name];
-
-        // 如果服务正在运行，先停止它
-        if (service && service.status === MCPServerStatus.Running) {
-          get().stopService(name).catch(console.error);
-        }
-
-        set((state) => {
-          const newServices = { ...state.services };
-          delete newServices[name];
-          return { services: newServices };
-        });
-      },
-
-      updateService: (name, configUpdate) => {
-        const { services } = get();
-        const serviceInstance = services[name];
-
-        if (!serviceInstance) return;
-
-        // 如果服务正在运行，先停止它
-        if (serviceInstance.status === MCPServerStatus.Running) {
-          serviceInstance.service.stop().catch(console.error);
-        }
-
-        // 更新配置并创建新的服务实例
-        const newConfig = {
-          ...serviceInstance.config,
-          ...configUpdate,
-        };
-
-        set((state) => {
-          const onUpdate = () => {
-            set((currentState) => ({ ...currentState }));
-          };
-
-          return {
-            services: {
-              ...state.services,
-              [name]: createServiceInstance(newConfig, onUpdate),
-            },
-          };
-        });
-      },
-
-      startService: async (name) => {
-        const { services } = get();
-        const serviceInstance = services[name];
-
-        if (!serviceInstance) {
-          throw new Error(`Service ${name} not found`);
-        }
-
-        await serviceInstance.service.start();
-      },
-
-      stopService: async (name) => {
-        const { services } = get();
-        const serviceInstance = services[name];
-
-        if (!serviceInstance) {
-          throw new Error(`Service ${name} not found`);
-        }
-
-        await serviceInstance.service.stop();
-      },
-
-      restartService: async (name) => {
-        const { services } = get();
-        const serviceInstance = services[name];
-
-        if (!serviceInstance) {
-          throw new Error(`Service ${name} not found`);
-        }
-
-        await serviceInstance.service.restart();
-      },
-
-      callServiceTool: async (serviceName, toolName, arguments_) => {
-        const { services } = get();
-        const serviceInstance = services[serviceName];
-
-        if (!serviceInstance) {
-          throw new Error(`Service ${serviceName} not found`);
-        }
-
-        return await serviceInstance.service.callTool(toolName, arguments_);
-      },
-
-      refreshServiceData: async (name) => {
-        const { services } = get();
-        const serviceInstance = services[name];
-
-        if (!serviceInstance) {
-          throw new Error(`Service ${name} not found`);
-        }
-
-        await serviceInstance.service.refreshData();
-      },
-
-      clearServiceLogs: (name) => {
-        set((state) => {
-          const serviceInstance = state.services[name];
-          if (!serviceInstance) return state;
-
-          return {
-            services: {
-              ...state.services,
-              [name]: {
-                ...serviceInstance,
-                logs: [],
+              [serviceName]: {
+                ...state.services[serviceName],
+                ...updates,
               },
             },
-          };
-        });
-      },
+          }));
+        };
+      };
 
-      importConfiguration: (config) => {
-        Object.entries(config).forEach(([name, serviceConfig]) => {
-          get().addService({
-            name,
-            ...serviceConfig,
+      // 服务实例创建和更新
+      const createAndSetServiceInstance = (config: MCPServerConfig) => {
+        return createServiceInstance(config, createUpdateServiceState());
+      };
+
+      // 服务获取
+      const getServiceSafely = (name: string): MCPServiceInstance => {
+        const service = get().services[name];
+        if (!service) {
+          throw new Error(`Service ${name} not found`);
+        }
+        return service;
+      };
+
+      // 停止服务
+      const stopServiceIfRunning = async (
+        serviceInstance: MCPServiceInstance
+      ) => {
+        if (serviceInstance.status === MCPServerStatus.Running) {
+          await serviceInstance.service.stop();
+        }
+      };
+
+      return {
+        services: {},
+
+        addService: (config) => {
+          set((state) => ({
+            services: {
+              ...state.services,
+              [config.name]: createAndSetServiceInstance(config),
+            },
+          }));
+        },
+
+        removeService: (name) => {
+          const service = get().services[name];
+          if (service) {
+            stopServiceIfRunning(service).catch(console.error);
+          }
+
+          set((state) => {
+            const newServices = { ...state.services };
+            delete newServices[name];
+            return { services: newServices };
           });
-        });
-      },
+        },
 
-      exportConfiguration: () => {
-        const { services } = get();
-        const config: Record<string, Omit<MCPServerConfig, "name">> = {};
+        updateService: (name, configUpdate) => {
+          const serviceInstance = get().services[name];
+          if (!serviceInstance) return;
 
-        Object.values(services).forEach((serviceInstance) => {
-          const { name, ...serviceConfig } = serviceInstance.config;
-          config[name] = serviceConfig;
-        });
+          stopServiceIfRunning(serviceInstance).catch(console.error);
 
-        return config;
-      },
-
-      initializeStateCallbacks: () => {
-        const { services } = get();
-
-        Object.entries(services).forEach(([name, serviceInstance]) => {
-          const onUpdate = () => {
-            set((currentState) => ({ ...currentState }));
-          };
+          const newConfig = { ...serviceInstance.config, ...configUpdate };
 
           set((state) => ({
             services: {
               ...state.services,
-              [name]: createServiceInstance(serviceInstance.config, onUpdate),
+              [name]: createAndSetServiceInstance(newConfig),
             },
           }));
-        });
-      },
-    }),
+        },
+
+        startService: async (name) => {
+          const serviceInstance = getServiceSafely(name);
+          await serviceInstance.service.start();
+        },
+
+        stopService: async (name) => {
+          const serviceInstance = getServiceSafely(name);
+          await serviceInstance.service.stop();
+        },
+
+        restartService: async (name) => {
+          const serviceInstance = getServiceSafely(name);
+          await serviceInstance.service.restart();
+        },
+
+        callServiceTool: async (serviceName, toolName, arguments_) => {
+          const serviceInstance = getServiceSafely(serviceName);
+          return await serviceInstance.service.callTool(toolName, arguments_);
+        },
+
+        refreshServiceData: async (name) => {
+          const serviceInstance = getServiceSafely(name);
+          await serviceInstance.service.refreshData();
+        },
+
+        clearServiceLogs: (name) => {
+          set((state) => {
+            const serviceInstance = state.services[name];
+            if (!serviceInstance) return state;
+
+            return {
+              services: {
+                ...state.services,
+                [name]: {
+                  ...serviceInstance,
+                  logs: [],
+                },
+              },
+            };
+          });
+        },
+
+        importConfiguration: (config) => {
+          const { addService } = get();
+          Object.entries(config).forEach(([name, serviceConfig]) => {
+            addService({ name, ...serviceConfig });
+          });
+        },
+
+        exportConfiguration: () => {
+          const { services } = get();
+          const config: Record<string, Omit<MCPServerConfig, "name">> = {};
+
+          Object.values(services).forEach((serviceInstance) => {
+            const { name, ...serviceConfig } = serviceInstance.config;
+            config[name] = serviceConfig;
+          });
+
+          return config;
+        },
+
+        initializeStateCallbacks: () => {
+          const { services } = get();
+          const updateServiceState = createUpdateServiceState();
+
+          Object.entries(services).forEach(([name, serviceInstance]) => {
+            set((state) => ({
+              services: {
+                ...state.services,
+                [name]: createServiceInstance(
+                  serviceInstance.config,
+                  updateServiceState
+                ),
+              },
+            }));
+          });
+        },
+      };
+    },
     {
       name: "mcp-storage",
       partialize: (state) => ({
         services: Object.fromEntries(
           Object.entries(state.services)
-            .filter(
-              ([_, serviceInstance]) =>
-                serviceInstance &&
-                serviceInstance.config &&
-                serviceInstance.config.name
-            )
-            .map(([name, serviceInstance]) => [
-              name,
+            .filter(([_name, serviceInstance]) => serviceInstance?.config?.name)
+            .map(([serviceName, serviceInstance]) => [
+              serviceName,
               {
                 config: serviceInstance.config,
                 status: MCPServerStatus.Stopped,
@@ -334,11 +322,14 @@ export const useMCPStore = create<MCPStore>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.services) {
-          Object.entries(state.services).forEach(([name, data]) => {
-            if (data.config) {
-              state.services[name] = createServiceInstance(data.config);
-            }
-          });
+          setTimeout(() => {
+            const store = useMCPStore.getState();
+            Object.entries(state.services).forEach(([_name, data]) => {
+              if (data.config) {
+                store.addService(data.config);
+              }
+            });
+          }, 0);
         }
       },
     }

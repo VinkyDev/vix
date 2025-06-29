@@ -16,7 +16,6 @@ export const TitleBar = ({
   return (
     <Flex
       align="center"
-      data-tauri-drag-region
       justify="space-between"
       style={{
         marginBottom: 5,

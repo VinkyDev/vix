@@ -5,6 +5,7 @@ import {
   MoreOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  ShopOutlined,
   StopOutlined,
   ToolOutlined,
 } from "@ant-design/icons";
@@ -26,6 +27,7 @@ import { useEffect, useState } from "react";
 import { useMCPStore } from "@/store";
 import { MCPServerStatus } from "@/types";
 
+import MCPMarketDrawer from "./MCPMarketDrawer";
 import MCPToolsDrawer from "./MCPToolsDrawer";
 import ServerConfigDrawer from "./ServerConfigDrawer";
 import ServerLogsDrawer from "./ServerLogsDrawer";
@@ -49,6 +51,7 @@ export default function MCPSettings() {
   );
   const [logsModalVisible, setLogsModalVisible] = useState(false);
   const [toolsDrawerVisible, setToolsDrawerVisible] = useState(false);
+  const [marketDrawerVisible, setMarketDrawerVisible] = useState(false);
   const [selectedService, setSelectedService] = useState<string>("");
   const [loadingServices, setLoadingServices] = useState<Set<string>>(
     new Set()
@@ -309,6 +312,12 @@ export default function MCPSettings() {
         </Title>
         <Space>
           <Button
+            icon={<ShopOutlined />}
+            onClick={() => setMarketDrawerVisible(true)}
+          >
+            MCP 市场
+          </Button>
+          <Button
             icon={<PlusOutlined />}
             onClick={() => {
               setConfigDrawerMode("add");
@@ -358,6 +367,11 @@ export default function MCPSettings() {
         }}
         serviceName={selectedService}
         visible={toolsDrawerVisible}
+      />
+
+      <MCPMarketDrawer
+        onClose={() => setMarketDrawerVisible(false)}
+        visible={marketDrawerVisible}
       />
     </div>
   );

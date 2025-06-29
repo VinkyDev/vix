@@ -3,7 +3,9 @@
         "Avenir",
         "DASHSCOPE",
         "markdownit",
+        "partialize",
         "qwen",
-        "tauri"
+        "tauri",
+        "toolcall"
     ]
 }
