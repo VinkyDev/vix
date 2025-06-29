@@ -1,6 +1,5 @@
 import {
   DeleteOutlined,
-  DownloadOutlined,
   EditOutlined,
   FileTextOutlined,
   MoreOutlined,
@@ -41,7 +40,6 @@ export default function MCPSettings() {
     startService,
     stopService,
     removeService,
-    exportConfiguration,
     initializeStateCallbacks,
   } = useMCPStore();
 
@@ -120,22 +118,6 @@ export default function MCPSettings() {
   const handleViewLogs = (name: string) => {
     setSelectedService(name);
     setLogsModalVisible(true);
-  };
-
-  const handleExportConfig = () => {
-    const config = exportConfiguration();
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "mcp-config.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    message.success("配置已导出");
   };
 
   const getStatusColor = (status: MCPServerStatus): string => {
@@ -335,9 +317,6 @@ export default function MCPSettings() {
             type="primary"
           >
             添加服务
-          </Button>
-          <Button icon={<DownloadOutlined />} onClick={handleExportConfig}>
-            导出配置
           </Button>
         </Space>
       </div>

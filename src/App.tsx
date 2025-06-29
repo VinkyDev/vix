@@ -11,6 +11,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import GlobalErrorBoundary from "./components/GlobalErrorBoundary";
 import { useShortcut } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
@@ -70,25 +71,31 @@ function App() {
   });
 
   return (
-    <XProvider {...config}>
-      <ConfigProvider theme={theme}>
-        <AliveScope>
-          <Router>
-            <div className="app-container" data-tauri-drag-region>
-              <AntdApp style={{ height: "100%" }}>
-                {loading ? (
-                  <Flex align="center" className="app-loading" justify="center">
-                    <Spin />
-                  </Flex>
-                ) : (
-                  <AppRoutes />
-                )}
-              </AntdApp>
-            </div>
-          </Router>
-        </AliveScope>
-      </ConfigProvider>
-    </XProvider>
+    <GlobalErrorBoundary>
+      <XProvider {...config}>
+        <ConfigProvider theme={theme}>
+          <AliveScope>
+            <Router>
+              <div className="app-container" data-tauri-drag-region>
+                <AntdApp style={{ height: "100%" }}>
+                  {loading ? (
+                    <Flex
+                      align="center"
+                      className="app-loading"
+                      justify="center"
+                    >
+                      <Spin />
+                    </Flex>
+                  ) : (
+                    <AppRoutes />
+                  )}
+                </AntdApp>
+              </div>
+            </Router>
+          </AliveScope>
+        </ConfigProvider>
+      </XProvider>
+    </GlobalErrorBoundary>
   );
 }
 
