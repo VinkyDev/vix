@@ -1,0 +1,130 @@
+.provider-list-container {
+  height: 100%;
+
+  .collapse-toggle-btn {
+    width: 100%;
+    margin-bottom: $spacing-xs;
+    height: $spacing-xxxl;
+    border: none;
+    background: transparent;
+
+    &:hover {
+      background-color: $bg-hover;
+    }
+
+    &:focus {
+      background-color: $bg-hover;
+    }
+  }
+
+  .provider-list-content {
+    height: 100%;
+    overflow: auto;
+    background: transparent;
+
+    // 隐藏默认的 List 边框和间距
+    .ant-list-items {
+      .ant-list-item {
+        border: none;
+        padding: 0;
+      }
+    }
+
+    .motion-item {
+      .provider-item-collapsed {
+        cursor: pointer;
+        padding: $spacing-xs;
+        margin-bottom: $spacing-xs;
+        border-radius: $border-radius-normal;
+        border: 2px solid transparent;
+        background: transparent;
+        transition: all 0.2s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.selected {
+          border-color: $primary-color;
+          background-color: $color-blue-100;
+        }
+
+        &:hover:not(.selected) {
+          background-color: $bg-hover;
+          border-color: $border-normal;
+        }
+
+        .avatar-collapsed {
+          // Avatar 大小通过 JS 控制，这里不设置固定值
+          flex-shrink: 0;
+        }
+      }
+
+      .provider-item {
+        padding: $spacing-md $spacing-lg;
+        margin-bottom: $spacing-xs;
+        border-radius: $border-radius-normal;
+        border: 1px solid transparent;
+        background: transparent;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &.selected {
+          border-color: $primary-color;
+          background-color: $color-blue-100;
+        }
+
+        &:hover:not(.selected) {
+          background-color: $bg-hover;
+          border-color: $border-normal;
+        }
+
+        .ant-list-item-meta {
+          align-items: center;
+        }
+
+        .provider-info {
+          flex: 1;
+          min-width: 0; // 防止文本溢出
+
+          .provider-title {
+            margin: 0;
+            font-size: $font-size-lg;
+            font-weight: 500;
+            line-height: $line-height-tight;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .provider-tags {
+            font-size: $font-size-base;
+            color: $text-secondary;
+            line-height: $line-height-base;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .tooltip-content {
+    max-width: 200px;
+
+    .provider-name {
+      font-weight: 500;
+      font-size: $font-size-lg;
+      line-height: $line-height-base;
+    }
+
+    .provider-tags-tooltip {
+      font-size: $font-size-base;
+      opacity: $opacity-muted;
+      margin-top: $spacing-xs;
+      line-height: $line-height-base;
+      color: $text-secondary;
+    }
+  }
+} 

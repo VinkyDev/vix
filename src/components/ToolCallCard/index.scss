@@ -1,24 +1,24 @@
 .tool-call-card {
-  margin-top: 16px;
+  margin-top: $spacing-lg;
   margin-bottom: 0 !important;
   transition: all 0.3s ease;
-  border-radius: 8px;
+  border-radius: $border-radius-normal;
   &.pending {
-    border-left: 4px solid #1890ff;
+    border-left: $spacing-xs solid $primary-color;
   }
 
   &.success {
-    border-left: 4px solid #52c41a;
+    border-left: $spacing-xs solid $success-color;
   }
 
   &.error {
-    border-left: 4px solid #ff4d4f;
+    border-left: $spacing-xs solid $error-color;
   }
 
   .tool-call-result {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #f0f0f0;
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid $border-light;
     max-height: 200px;
     overflow-y: auto;
     white-space: pre-wrap;

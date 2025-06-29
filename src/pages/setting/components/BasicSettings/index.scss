@@ -1,8 +1,8 @@
 .basic-settings {
-  margin-bottom: 16px;
+  margin-bottom: $spacing-lg;
   overflow-y: auto;
 
   .settings-card {
-    margin-bottom: 12px;
+    margin-bottom: $spacing-md;
   }
 }

@@ -12,7 +12,7 @@ import {
 } from "react-router-dom";
 
 import GlobalErrorBoundary from "./components/GlobalErrorBoundary";
-import { useShortcut } from "./hooks";
+import { useDesignToken, useShortcut } from "./hooks";
 import Chat from "./pages/chat";
 import Setting from "./pages/setting";
 import { ShortcutKey, useModelStore } from "./store";
@@ -21,6 +21,9 @@ import { emitter, toggleWindow } from "./utils";
 const config: XProviderProps = {};
 
 const theme: ThemeConfig = {
+  token: {
+    colorBgContainer: "#fafafa",
+  },
   components: {
     Button: {
       defaultBg: "#fafafa",
@@ -58,6 +61,7 @@ function AppRoutes() {
 
 function App() {
   const { fetchModelList, loading } = useModelStore();
+  const token = useDesignToken();
 
   // 获取模型列表
   useEffect(() => {

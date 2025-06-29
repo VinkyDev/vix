@@ -15,40 +15,41 @@
   .server-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $spacing-lg;
 
     .server-card {
       .ant-card-head {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid $border-light;
 
         .ant-card-head-title {
-          padding: 12px 0;
+          padding: $spacing-md 0;
         }
 
         .ant-card-extra {
-          padding: 12px 0;
+          padding: $spacing-md 0;
         }
       }
 
       .ant-card-body {
-        padding: 16px;
+        padding: $spacing-lg;
       }
 
       .ant-descriptions {
         .ant-descriptions-item-label {
           font-weight: 500;
-          color: #666;
+          color: $color-gray-600;
           width: 80px;
         }
 
         .ant-descriptions-item-content {
           code {
-            background: #f6f8fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 4px;
+            background: $bg-code-light;
+            border: 1px solid $border-code;
+            border-radius: $border-radius-small;
             padding: 2px 6px;
-            font-size: 12px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: $font-size-base;
+            font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono",
+              Consolas, "Courier New", monospace;
           }
         }
       }
@@ -56,7 +57,7 @@
   }
 
   .ant-empty {
-    margin: 40px 0;
+    margin: $spacing-huge 0;
   }
 
   .ant-modal {
@@ -68,13 +69,13 @@
       .ant-input,
       .ant-input-number,
       .ant-select-selector {
-        border-radius: 6px;
+        border-radius: $border-radius-small;
       }
 
       .env-item {
         display: flex;
-        gap: 8px;
-        margin-bottom: 8px;
+        gap: $spacing-sm;
+        margin-bottom: $spacing-sm;
 
         .ant-input {
           flex: 1;
@@ -88,18 +89,19 @@
       .add-env-btn {
         width: 100%;
         border-style: dashed;
-        margin-top: 8px;
+        margin-top: $spacing-sm;
       }
     }
 
     .log-viewer {
-      background: #1e1e1e;
-      color: #d4d4d4;
-      border-radius: 6px;
-      padding: 12px;
-      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-      font-size: 12px;
-      line-height: 1.4;
+      background: $code-bg-dark;
+      color: $code-text-light;
+      border-radius: $border-radius-small;
+      padding: $spacing-md;
+      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+        "Courier New", monospace;
+      font-size: $font-size-base;
+      line-height: $line-height-base;
       max-height: 400px;
       overflow-y: auto;
       white-space: pre-wrap;
@@ -109,20 +111,20 @@
         margin-bottom: 2px;
 
         &.log-stdout {
-          color: #4ec9b0;
+          color: $code-success;
         }
 
         &.log-stderr {
-          color: #f44747;
+          color: $code-error;
         }
 
         &.log-error {
-          color: #f44747;
+          color: $code-error;
           font-weight: 600;
         }
 
         &.log-info {
-          color: #569cd6;
+          color: $code-info;
         }
       }
 
@@ -131,79 +133,68 @@
       }
 
       &::-webkit-scrollbar-track {
-        background: #2d2d2d;
+        background: $code-scrollbar-track;
         border-radius: 3px;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #555;
+        background: $code-scrollbar-thumb;
         border-radius: 3px;
 
         &:hover {
-          background: #777;
+          background: $code-scrollbar-thumb-hover;
         }
       }
     }
   }
-}
 
-// 全局样式覆盖
-.ant-badge {
-  .ant-badge-status-text {
-    font-size: 12px;
-    margin-left: 4px;
-  }
+  .ant-badge {
+    .ant-badge-status-text {
+      font-size: $font-size-base;
+      margin-left: $spacing-xs;
+    }
 
-  .ant-badge-count {
-    min-width: 16px;
-    height: 16px;
-    font-size: 10px;
-    line-height: 16px;
-    border-radius: 8px;
-  }
-}
-
-.ant-tag {
-  border-radius: 4px;
-  font-size: 11px;
-  line-height: 18px;
-  padding: 0 6px;
-}
-
-.service-card {
-  .ant-card-body {
-    padding: 20px;
-  }
-
-  .ant-card-extra {
-    padding: 0;
-    margin: 0;
-  }
-}
-
-.tool-list-item {
-  &:hover {
-    background-color: #f5f5f5 !important;
-  }
-
-  &.selected {
-    background-color: #f0f9ff !important;
-    border-color: #1890ff !important;
-  }
-}
-
-// 响应式布局优化
-@media (max-width: 768px) {
-  .service-card {
-    .ant-card-body {
-      padding: 16px;
+    .ant-badge-count {
+      min-width: $spacing-lg;
+      height: $spacing-lg;
+      font-size: $font-size-xs;
+      line-height: $spacing-lg;
+      border-radius: $spacing-sm;
     }
   }
-}
 
-// 工具抽屉样式
-.ant-drawer-body {
-  .ant-row {
-    height: 100%;
+  .ant-tag {
+    border-radius: $border-radius-small;
+    font-size: $font-size-sm;
+    line-height: $line-height-loose;
+    padding: 0 6px;
+  }
+
+  .service-card {
+    .ant-card-body {
+      padding: $spacing-xl;
+    }
+
+    .ant-card-extra {
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .tool-list-item {
+    &:hover {
+      background-color: $color-gray-100 !important;
+    }
+
+    &.selected {
+      background-color: $bg-selected !important;
+      border-color: $primary-color !important;
+    }
+  }
+
+  .ant-drawer-body {
+    .ant-row {
+      height: 100%;
+    }
   }
 }

@@ -3,6 +3,7 @@ import { groupBy } from "lodash-es";
 import { motion } from "motion/react";
 import React, { useState } from "react";
 
+import { useDesignToken } from "@/hooks";
 import { useModelStore } from "@/store";
 
 import ProviderDetail from "./ProviderDetail";
@@ -16,6 +17,7 @@ const ModelSelector: React.FC = () => {
   const { modelList, loading } = useModelStore();
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
   const [collapsed, setCollapsed] = useState(true);
+  const token = useDesignToken();
 
   const modelsByProvider = groupBy(modelList, "providerId");
   const providers = Object.keys(modelsByProvider);
@@ -40,7 +42,7 @@ const ModelSelector: React.FC = () => {
         vertical
       >
         <Spin size="large" />
-        <Text style={{ marginTop: 16 }} type="secondary">
+        <Text style={{ marginTop: token.margin }} type="secondary">
           正在加载模型列表...
         </Text>
       </Flex>
@@ -74,7 +76,7 @@ const ModelSelector: React.FC = () => {
         style={{
           height: "100%",
           background: "transparent",
-          gap: 16,
+          gap: token.margin,
         }}
       >
         {/* 左侧供应商列表 */}
@@ -84,7 +86,7 @@ const ModelSelector: React.FC = () => {
           collapsedWidth={64}
           style={{
             background: "transparent",
-            borderRadius: 8,
+            borderRadius: token.borderRadius,
             overflow: "hidden",
           }}
           width={150}

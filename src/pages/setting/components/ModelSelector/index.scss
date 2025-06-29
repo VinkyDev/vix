@@ -7,7 +7,7 @@
 
   .model-selector-layout {
     height: 100%;
-    gap: 24px;
+    gap: $spacing-xxl;
 
     .provider-sidebar {
       flex: 0 0 200px;
@@ -21,7 +21,7 @@
           overflow-y: auto;
 
           .provider-item {
-            margin-bottom: 8px;
+            margin-bottom: $spacing-sm;
 
             &.selected .provider-name {
               font-weight: 500;
@@ -38,11 +38,11 @@
 
       .provider-detail {
         .provider-header {
-          margin-bottom: 24px;
+          margin-bottom: $spacing-xxl;
         }
 
         .api-section {
-          margin-bottom: 24px;
+          margin-bottom: $spacing-xxl;
         }
 
         .models-section {
@@ -50,7 +50,7 @@
             transition: all 0.2s ease;
 
             &:hover {
-              background: #f8f9fa;
+              background: $bg-hover;
             }
           }
         }

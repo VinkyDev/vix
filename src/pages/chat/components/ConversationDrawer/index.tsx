@@ -5,10 +5,14 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { App, Button, Drawer, Flex, Input, List, Modal } from "antd";
+import clsx from "clsx";
 import { Fragment, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useMessageStore } from "@/store";
+
+import "./index.scss";
+
 export const ConversationDrawer = ({
   open,
   setOpen,
@@ -105,24 +109,16 @@ export const ConversationDrawer = ({
         mask={false}
         open={open}
         placement="left"
-        rootStyle={{
-          borderTopLeftRadius: 16,
-          borderBottomLeftRadius: 16,
-          overflow: "hidden",
-        }}
         styles={{
           body: { padding: 0 },
         }}
         width={300}
       >
-        <Flex style={{ height: "100%" }} vertical>
+        <Flex className="drawer-container" vertical>
           <Flex
             align="center"
+            className="header"
             justify="space-between"
-            style={{
-              padding: "10px 20px",
-              borderBottom: "1px solid #f0f0f0",
-            }}
           >
             <Button
               icon={<PlusOutlined />}
@@ -139,62 +135,43 @@ export const ConversationDrawer = ({
             />
           </Flex>
 
-          <Flex style={{ flex: 1, padding: "0 20px 20px", overflow: "auto" }}>
+          <Flex className="content">
             {conversationItems.length > 0 ? (
               <List
+                className="conversation-list"
                 dataSource={conversationItems}
                 renderItem={(item) => (
                   <List.Item
+                    className={clsx(
+                      "conversation-item",
+                      item.id === currentConversationId && "active"
+                    )}
                     onClick={() => handleSwitchConversation(item.id)}
-                    style={{
-                      padding: "8px 12px",
-                      borderRadius: "8px",
-                      margin: "4px 0",
-                      backgroundColor:
-                        item.id === currentConversationId
-                          ? "#e6f4ff"
-                          : "transparent",
-                      border:
-                        item.id === currentConversationId
-                          ? "1px solid #91caff"
-                          : "1px solid transparent",
-                    }}
                   >
                     <Flex
                       align="center"
+                      className={clsx(
+                        "conversation-content",
+                        item.id === currentConversationId && "active"
+                      )}
                       justify="space-between"
-                      style={{ width: "100%" }}
                     >
-                      <div
-                        style={{
-                          flex: 1,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          fontSize: "14px",
-                          color:
-                            item.id === currentConversationId
-                              ? "#1677ff"
-                              : "#262626",
-                        }}
-                      >
+                      <div className="conversation-title">
                         {item.title}
                       </div>
-                      <Flex gap={4}>
+                      <Flex className="conversation-actions" gap={4}>
                         <Button
+                          className="action-btn"
                           icon={<EditOutlined />}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleRename(item.id, item.title);
                           }}
                           size="small"
-                          style={{
-                            opacity: 0.6,
-                            fontSize: "12px",
-                          }}
                           type="text"
                         />
                         <Button
+                          className="action-btn"
                           danger
                           icon={<DeleteOutlined />}
                           onClick={(e) => {
@@ -202,27 +179,18 @@ export const ConversationDrawer = ({
                             handleDelete(item.id, item.title);
                           }}
                           size="small"
-                          style={{
-                            opacity: 0.6,
-                            fontSize: "12px",
-                          }}
                           type="text"
                         />
                       </Flex>
                     </Flex>
                   </List.Item>
                 )}
-                style={{ width: "100%" }}
               />
             ) : (
               <Flex
                 align="center"
+                className="empty-state"
                 justify="center"
-                style={{
-                  height: "200px",
-                  color: "#999",
-                  fontSize: "14px",
-                }}
               >
                 暂无对话
               </Flex>

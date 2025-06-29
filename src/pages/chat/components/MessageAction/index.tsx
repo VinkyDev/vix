@@ -40,4 +40,4 @@ const MessageAction = ({ content }: { content: string }) => {
   );
 };
 
-export default MessageAction;
+export default MessageAction; 

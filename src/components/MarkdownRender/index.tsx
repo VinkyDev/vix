@@ -103,7 +103,7 @@ const renderMarkdown: BubbleProps["messageRender"] = (content) => {
   const htmlContent = md.render(parsedContent);
 
   return (
-    <Typography>
+    <Typography className="markdown-render">
       <div
         dangerouslySetInnerHTML={{
           __html: htmlContent,

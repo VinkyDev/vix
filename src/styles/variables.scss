@@ -52,3 +52,73 @@ $shadow-error: 0 2px 8px rgba(255, 77, 79, 0.3);
 $border-radius-small: 6px;
 $border-radius-normal: 8px;
 $border-radius-large: 12px;
+$border-radius-xlarge: 16px;
+
+// 间距
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-xxl: 24px;
+$spacing-xxxl: 32px;
+$spacing-huge: 40px;
+
+// 字体大小
+$font-size-xs: 10px;
+$font-size-sm: 11px;
+$font-size-base: 12px;
+$font-size-md: 13px;
+$font-size-lg: 14px;
+$font-size-xl: 16px;
+$font-size-xxl: 18px;
+
+// 行高
+$line-height-tight: 1.2;
+$line-height-base: 1.4;
+$line-height-relaxed: 1.6;
+$line-height-loose: 1.8;
+
+// 透明度
+$opacity-disabled: 0.6;
+$opacity-muted: 0.8;
+
+// 特定颜色（常用的具体颜色值）
+$color-gray-100: #f5f5f5;
+$color-gray-200: #e8e8e8;
+$color-gray-300: #d9d9d9;
+$color-gray-400: #bfbfbf;
+$color-gray-500: #8c8c8c;
+$color-gray-600: #666;
+$color-gray-700: #262626;
+$color-gray-800: #1f2937;
+$color-gray-900: #0d0d0d;
+
+$color-blue-50: #f0f8ff;
+$color-blue-100: #e6f4ff;
+$color-blue-200: #bae0ff;
+$color-blue-300: #91caff;
+$color-blue-400: #69b1ff;
+$color-blue-500: #40a9ff;
+$color-blue-600: #1677ff;
+$color-blue-700: #0958d9;
+$color-blue-800: #003eb3;
+$color-blue-900: #002c8c;
+
+// 代码编辑器主题色
+$code-bg-dark: #1e1e1e;
+$code-text-light: #d4d4d4;
+$code-scrollbar-track: #2d2d2d;
+$code-scrollbar-thumb: #555;
+$code-scrollbar-thumb-hover: #777;
+$code-success: #4ec9b0;
+$code-error: #f44747;
+$code-info: #569cd6;
+
+// 特殊背景色
+$bg-code-light: #f6f8fa;
+$bg-hover: #f8f9fa;
+$bg-selected: #f0f9ff;
+
+// 特殊边框色
+$border-code: #e1e4e8;

@@ -3,8 +3,11 @@ import { Avatar, Button, Flex, List, Tooltip, Typography } from "antd";
 import { motion } from "motion/react";
 import React from "react";
 
+import { useDesignToken } from "@/hooks";
 import { useApiKeyStore } from "@/store/apiKeyStore";
 import { type Model } from "@/store/modelStore";
+
+import "./ProviderList.scss";
 
 const { Text, Title } = Typography;
 
@@ -26,6 +29,7 @@ const ProviderList: React.FC<ProviderListProps> = ({
   onCollapsedChange,
 }) => {
   const { getApiKey } = useApiKeyStore();
+  const token = useDesignToken();
 
   const listData = providers.map((providerId) => {
     const providerModels = modelsByProvider[providerId];
@@ -42,13 +46,9 @@ const ProviderList: React.FC<ProviderListProps> = ({
   return (
     <div className="provider-list-container">
       <Button
+        className="collapse-toggle-btn"
         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         onClick={() => onCollapsedChange(!collapsed)}
-        style={{
-          width: "100%",
-          marginBottom: 8,
-          height: 32,
-        }}
         type="text"
       >
         {!collapsed && "收起"}
@@ -63,6 +63,7 @@ const ProviderList: React.FC<ProviderListProps> = ({
           return (
             <motion.div
               animate={{ opacity: 1, x: 0 }}
+              className="motion-item"
               initial={{ opacity: 0, x: -20 }}
               transition={{
                 duration: 0.2,
@@ -73,10 +74,10 @@ const ProviderList: React.FC<ProviderListProps> = ({
                 <Tooltip
                   placement="right"
                   title={
-                    <div>
-                      <div>{item.providerInfo.providerName}</div>
+                    <div className="tooltip-content">
+                      <div className="provider-name">{item.providerInfo.providerName}</div>
                       {item.providerInfo.providerTags && (
-                        <div style={{ fontSize: 12, opacity: 0.8 }}>
+                        <div className="provider-tags-tooltip">
                           {item.providerInfo.providerTags.join(", ")}
                         </div>
                       )}
@@ -86,46 +87,27 @@ const ProviderList: React.FC<ProviderListProps> = ({
                   <div
                     className={`provider-item-collapsed ${isSelected ? "selected" : ""}`}
                     onClick={() => onProviderSelect(item.providerId)}
-                    style={{
-                      cursor: "pointer",
-                      padding: "8px",
-                      marginBottom: 8,
-                      borderRadius: 8,
-                      border: isSelected
-                        ? "2px solid #1890ff"
-                        : "2px solid transparent",
-                      background: isSelected ? "#f0f8ff" : "transparent",
-                      transition: "all 0.2s ease",
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
                   >
-                    <Avatar size={24} src={item.providerInfo.icon} />
+                    <Avatar 
+                      className="avatar-collapsed"
+                      size={token.fontSize * 1.5} 
+                      src={item.providerInfo.icon} 
+                    />
                   </div>
                 </Tooltip>
               ) : (
                 <List.Item
                   className={`provider-item ${isSelected ? "selected" : ""}`}
                   onClick={() => onProviderSelect(item.providerId)}
-                  style={{
-                    padding: "12px 16px",
-                    marginBottom: 8,
-                    borderRadius: 8,
-                    border: isSelected
-                      ? "1px solid #1890ff"
-                      : "1px solid transparent",
-                    background: isSelected ? "#f0f8ff" : "transparent",
-                    transition: "all 0.2s ease",
-                  }}
                 >
-                  <Flex align="center" gap={8}>
-                    <Avatar size={32} src={item.providerInfo.icon} />
-                    <Flex gap={4} vertical>
-                      <Title level={5} style={{ margin: 0, fontSize: 14 }}>
+                  <Flex align="center" gap={token.marginXS}>
+                    <Avatar size={token.controlHeight} src={item.providerInfo.icon} />
+                    <Flex className="provider-info" gap={token.marginXXS} vertical>
+                      <Title className="provider-title" level={5}>
                         {item.providerInfo.providerName}
                       </Title>
                       {item.providerInfo.providerTags && (
-                        <Text style={{ fontSize: 12, color: "#666" }}>
+                        <Text className="provider-tags">
                           {item.providerInfo.providerTags.join(", ")}
                         </Text>
                       )}
@@ -137,11 +119,6 @@ const ProviderList: React.FC<ProviderListProps> = ({
           );
         }}
         size="small"
-        style={{
-          height: "100%",
-          overflow: "auto",
-          background: "transparent",
-        }}
       />
     </div>
   );

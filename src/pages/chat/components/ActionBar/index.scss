@@ -1,0 +1,117 @@
+.action-bar {
+  display: flex;
+  gap: $spacing-sm;
+
+  .active {
+    background-color: $color-blue-100;
+    border: 1px solid $color-blue-300;
+    color: $primary-dark;
+    &:hover {
+      background-color: $color-blue-100 !important;
+    }
+  }
+
+  .action-button {
+    padding: 0 $spacing-sm;
+  }
+}
+
+.mcp-services-popover {
+  .popover-content {
+    width: 280px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .actions-header {
+    padding: $spacing-sm $spacing-md;
+    border-bottom: 1px solid $border-light;
+    margin-bottom: $spacing-sm;
+
+    .select-all-btn {
+      padding: 0;
+      height: auto;
+      color: $color-blue-600;
+      font-size: $font-size-base;
+    }
+  }
+
+  .services-list {
+    padding: 0 $spacing-xs;
+  }
+
+  .service-item {
+    padding: $spacing-sm;
+    border-radius: $border-radius-small;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: $spacing-xs;
+
+    &:hover {
+      background-color: $color-gray-100;
+    }
+
+    .service-icon {
+      font-size: $font-size-base;
+      color: $color-blue-600;
+    }
+
+    .service-name {
+      font-size: $font-size-lg;
+    }
+
+    .tool-count {
+      font-size: $font-size-sm;
+      color: $text-secondary;
+      background: $color-gray-100;
+      padding: 2px 6px;
+      border-radius: $spacing-sm;
+    }
+  }
+
+  .services-footer {
+    padding: $spacing-sm $spacing-md;
+    border-top: 1px solid $border-light;
+    margin-top: $spacing-sm;
+    background: $bg-tertiary;
+    font-size: $font-size-base;
+    color: $color-gray-600;
+
+    .selected-count {
+      margin-left: $spacing-sm;
+      color: $color-blue-600;
+    }
+  }
+}
+
+.model-selector {
+  min-width: 150px;
+
+  .model-summary {
+    padding: $spacing-sm $spacing-md;
+    border-top: 1px solid $border-light;
+    font-size: $font-size-base;
+    color: $color-gray-600;
+  }
+
+  .model-option {
+    .model-name {
+      font-family: monospace;
+      font-size: $font-size-md;
+    }
+  }
+}
+
+.mcp-badge {
+  .badge-button {
+    &.selected {
+      background: $color-blue-100;
+      border-color: $color-blue-300;
+      color: $color-blue-800;
+    }
+  }
+
+  .ant-badge-count {
+    background-color: $color-blue-600;
+  }
+} 

@@ -1,18 +1,18 @@
 .json-editor {
   position: relative;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
+  border: 1px solid $border-normal;
+  border-radius: $border-radius-small;
   overflow: hidden;
-  background: #fff;
+  background: $bg-primary;
   transition: border-color 0.2s ease-in-out;
   height: 100%;
 
   &:hover {
-    border-color: #40a9ff;
+    border-color: $color-blue-500;
   }
 
   &:focus-within {
-    border-color: #1890ff;
+    border-color: $primary-color;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
   }
 
@@ -24,26 +24,26 @@
 
     // 行号样式
     .margin {
-      background-color: #f8f9fa;
+      background-color: $bg-hover;
     }
 
     .line-numbers {
-      color: #999;
+      color: $text-secondary;
     }
 
     // 滚动条样式
     .monaco-scrollable-element > .scrollbar {
       &.horizontal {
-        height: 8px;
+        height: $spacing-sm;
       }
 
       &.vertical {
-        width: 8px;
+        width: $spacing-sm;
       }
 
       .slider {
         background: rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
+        border-radius: $border-radius-small;
 
         &:hover {
           background: rgba(0, 0, 0, 0.4);
@@ -54,7 +54,7 @@
     // 括号匹配高亮
     .bracket-match {
       background-color: rgba(24, 144, 255, 0.1);
-      border: 1px solid #1890ff;
+      border: 1px solid $primary-color;
     }
 
     // 选中文本样式
@@ -69,11 +69,11 @@
 
     // 错误装饰器样式
     .squiggly-error {
-      border-bottom: 2px solid #ff4d4f;
+      border-bottom: 2px solid $error-color;
     }
 
     .squiggly-warning {
-      border-bottom: 2px solid #faad14;
+      border-bottom: 2px solid $warning-color;
     }
 
     // 代码折叠样式
@@ -82,42 +82,42 @@
     }
 
     .cldr {
-      color: #999;
+      color: $text-secondary;
     }
   }
 
   // 只读模式样式
   &.readonly {
-    background-color: #f5f5f5;
-    border-color: #d9d9d9;
+    background-color: $color-gray-100;
+    border-color: $border-normal;
 
     &:hover {
-      border-color: #d9d9d9;
+      border-color: $border-normal;
     }
 
     .monaco-editor {
       .monaco-editor-background {
-        background-color: #f5f5f5 !important;
+        background-color: $color-gray-100 !important;
       }
     }
   }
 
   // 错误状态样式
   &.error {
-    border-color: #ff4d4f;
+    border-color: $error-color;
 
     &:focus-within {
-      border-color: #ff4d4f;
+      border-color: $error-color;
       box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
     }
   }
 
   // 成功状态样式
   &.success {
-    border-color: #52c41a;
+    border-color: $success-color;
 
     &:focus-within {
-      border-color: #52c41a;
+      border-color: $success-color;
       box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
     }
   }
@@ -130,7 +130,7 @@
       }
 
       .line-numbers {
-        font-size: 12px;
+        font-size: $font-size-base;
       }
     }
   }
@@ -156,22 +156,22 @@
 
     &::before {
       content: '';
-      width: 20px;
-      height: 20px;
+      width: $spacing-xl;
+      height: $spacing-xl;
       border: 2px solid #f3f3f3;
-      border-top: 2px solid #1890ff;
+      border-top: 2px solid $primary-color;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: json-editor-spin 1s linear infinite;
     }
   }
-}
 
-// 加载动画
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+  // 加载动画
+  @keyframes json-editor-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

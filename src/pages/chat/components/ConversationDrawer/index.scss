@@ -1,0 +1,72 @@
+.conversation-drawer {
+  background-color: $primary-bg;
+
+  .ant-drawer-content {
+    border-top-left-radius: $border-radius-xlarge;
+    border-bottom-left-radius: $border-radius-xlarge;
+    overflow: hidden;
+  }
+
+  .drawer-container {
+    height: 100%;
+
+    .header {
+      padding: $spacing-sm $spacing-xl;
+      border-bottom: 1px solid $border-light;
+    }
+
+    .content {
+      flex: 1;
+      padding: 0 $spacing-xl $spacing-xl;
+      overflow: auto;
+
+      .conversation-list {
+        width: 100%;
+      }
+
+      .conversation-item {
+        padding: $spacing-sm $spacing-md;
+        border-radius: $border-radius-normal;
+        margin: $spacing-xs 0;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.active {
+          background-color: $color-blue-100;
+          border-color: $color-blue-300;
+        }
+
+        .conversation-content {
+          width: 100%;
+
+          .conversation-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: $font-size-lg;
+            color: $color-gray-700;
+          }
+
+          &.active .conversation-title {
+            color: $color-blue-600;
+          }
+
+          .conversation-actions {
+            .action-btn {
+              opacity: $opacity-disabled;
+              font-size: $font-size-base;
+            }
+          }
+        }
+      }
+
+      .empty-state {
+        height: 200px;
+        color: $text-secondary;
+        font-size: $font-size-lg;
+      }
+    }
+  }
+} 

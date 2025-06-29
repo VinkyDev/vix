@@ -13,6 +13,7 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { useDesignToken } from "@/hooks";
 import { useApiKeyStore } from "@/store/apiKeyStore";
 import { type Model, useModelStore } from "@/store/modelStore";
 
@@ -30,6 +31,7 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
   const { getApiKey, setApiKey } = useApiKeyStore();
   const { toggleModel, isModelEnabled } = useModelStore();
   const [tempApiKey, setTempApiKey] = useState("");
+  const token = useDesignToken();
 
   const currentApiKey = getApiKey(providerId);
   const providerInfo = models[0];
@@ -67,7 +69,7 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
   return (
     <div className="provider-detail">
       <Flex align="center" className="provider-header" justify="space-between">
-        <Title level={4} style={{ margin: 0, fontSize: 18 }}>
+        <Title level={4} style={{ margin: 0, fontSize: token.fontSizeLG }}>
           {providerInfo.providerName}
         </Title>
         <Tag color={currentApiKey ? "success" : "warning"}>
@@ -79,15 +81,20 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
         className="api-section"
         size="small"
         styles={{
-          header: { padding: "12px 16px", minHeight: "auto" },
-          body: { padding: "12px 16px" },
+          header: {
+            padding: `${token.paddingSM}px ${token.padding}px`,
+            minHeight: "auto",
+          },
+          body: { padding: `${token.paddingSM}px ${token.padding}px` },
         }}
         title={
-          <Flex align="center" gap={8}>
-            <Text style={{ fontSize: 14, fontWeight: 500 }}>API Key</Text>
+          <Flex align="center" gap={token.marginXS}>
+            <Text style={{ fontSize: token.fontSize, fontWeight: 500 }}>
+              API Key
+            </Text>
             {providerInfo.getApiKeyUrl && (
               <Button
-                icon={<LinkOutlined style={{ fontSize: 12 }} />}
+                icon={<LinkOutlined style={{ fontSize: token.fontSizeSM }} />}
                 onClick={handleOpenApiKeyUrl}
                 size="small"
                 style={{ padding: 0, height: "auto" }}
@@ -103,7 +110,7 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
           onBlur={handleSaveApiKey}
           onChange={handleApiKeyChange}
           placeholder="请输入API Key"
-          style={{ fontSize: 13 }}
+          style={{ fontSize: token.fontSizeSM }}
           value={tempApiKey}
         />
       </Card>
@@ -112,13 +119,18 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
         className="models-section"
         size="small"
         styles={{
-          header: { padding: "12px 16px", minHeight: "auto" },
+          header: {
+            padding: `${token.paddingSM}px ${token.padding}px`,
+            minHeight: "auto",
+          },
           body: { padding: 0 },
         }}
         title={
           <Flex align="center" justify="space-between">
-            <Text style={{ fontSize: 14, fontWeight: 500 }}>模型列表</Text>
-            <Text style={{ fontSize: 12 }} type="secondary">
+            <Text style={{ fontSize: token.fontSize, fontWeight: 500 }}>
+              模型列表
+            </Text>
+            <Text style={{ fontSize: token.fontSizeSM }} type="secondary">
               已启用 {enabledCount}/{models.length}
             </Text>
           </Flex>
@@ -134,38 +146,33 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
                 className="model-item"
                 onClick={() => handleModelToggle(model, !isEnabled)}
                 style={{
-                  padding: "12px 16px",
-                  borderBottom: "1px solid #f0f0f0",
+                  padding: `${token.paddingSM}px ${token.padding}px`,
+                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
                   cursor: "pointer",
                 }}
               >
                 <List.Item.Meta
                   description={
-                    <Text style={{ fontSize: 12 }} type="secondary">
+                    <Text
+                      style={{ fontSize: token.fontSizeSM }}
+                      type="secondary"
+                    >
                       {model.description}
                     </Text>
                   }
                   title={
-                    <Flex align="center" gap={8}>
+                    <Flex align="center" gap={token.marginXS}>
                       <Text
                         style={{
                           fontFamily: "monospace",
-                          fontSize: 13,
-                          color: isEnabled ? "#1890ff" : undefined,
+                          fontSize: token.fontSize,
+                          color: isEnabled ? token.colorPrimary : undefined,
                         }}
                       >
                         {model.name}
                       </Text>
-                      {model.thinking && (
-                        <Tag color="purple" style={{ fontSize: 10, margin: 0 }}>
-                          推理
-                        </Tag>
-                      )}
-                      {model.search && (
-                        <Tag color="cyan" style={{ fontSize: 10, margin: 0 }}>
-                          联网
-                        </Tag>
-                      )}
+                      {model.thinking && <Tag color="purple">推理</Tag>}
+                      {model.search && <Tag color="cyan">联网</Tag>}
                     </Flex>
                   }
                 />
@@ -180,7 +187,7 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
             );
           }}
           style={{
-            maxHeight: 400,
+            maxHeight: token.controlHeightLG * 10,
             overflow: "auto",
           }}
         />

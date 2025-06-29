@@ -2,6 +2,8 @@ import { MenuFoldOutlined, SettingOutlined } from "@ant-design/icons";
 import { Button, Flex, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 
+import "./index.scss";
+
 const { Title } = Typography;
 
 export const TitleBar = ({
@@ -16,10 +18,8 @@ export const TitleBar = ({
   return (
     <Flex
       align="center"
+      className="title-bar"
       justify="space-between"
-      style={{
-        marginBottom: 5,
-      }}
     >
       <Button
         icon={<MenuFoldOutlined />}
@@ -28,15 +28,8 @@ export const TitleBar = ({
         type="text"
       />
       <Title
+        className="title"
         level={5}
-        style={{
-          marginBottom: 0,
-          width: "60%",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          textAlign: "center",
-        }}
       >
         {name}
       </Title>
