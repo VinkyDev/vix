@@ -3,6 +3,7 @@ export const keyIcons: Record<string, string> = {
   Control: "⌃",
   Alt: "⌥",
   Option: "⌥",
+  Win: "⊞",
   Shift: "⇧",
   Space: "␣",
   Enter: "↵",

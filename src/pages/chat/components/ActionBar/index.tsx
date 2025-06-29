@@ -89,14 +89,6 @@ const ActionBar = () => {
               className="model-selector"
               onChange={setCurrentModelId}
               placeholder="选择模型"
-              popupRender={(menu) => (
-                <div>
-                  {menu}
-                  <div className="model-summary">
-                    <span>共 {enabledModels.length} 个模型可用</span>
-                  </div>
-                </div>
-              )}
               value={currentModel?.modelId}
             >
               {enabledModels.map((model) => (
@@ -114,40 +106,35 @@ const ActionBar = () => {
       {
         key: "mcp-services",
         render: () => {
-          if (availableMCPServices.length === 0) {
-            return (
-              <Button disabled icon={<ApiOutlined />}>
-                无可用工具
-              </Button>
-            );
-          }
-
           const popoverContent = (
             <div className="mcp-services-popover">
               <div className="popover-content">
-                <div className="actions-header">
-                  <Button
-                    className="select-all-btn"
-                    onClick={() => {
-                      if (
-                        selectedMCPServices.length ===
-                        availableMCPServices.length
-                      ) {
-                        setSelectedMCPServices([]);
-                      } else {
-                        setSelectedMCPServices(
-                          availableMCPServices.map((s) => s.value)
-                        );
-                      }
-                    }}
-                    size="small"
-                    type="link"
-                  >
-                    {selectedMCPServices.length === availableMCPServices.length
-                      ? "清空选择"
-                      : "全选"}
-                  </Button>
-                </div>
+                {availableMCPServices.length > 0 && (
+                  <div className="actions-header">
+                    <Button
+                      className="select-all-btn"
+                      onClick={() => {
+                        if (
+                          selectedMCPServices.length ===
+                          availableMCPServices.length
+                        ) {
+                          setSelectedMCPServices([]);
+                        } else {
+                          setSelectedMCPServices(
+                            availableMCPServices.map((s) => s.value)
+                          );
+                        }
+                      }}
+                      size="small"
+                      type="link"
+                    >
+                      {selectedMCPServices.length ===
+                      availableMCPServices.length
+                        ? "清空选择"
+                        : "全选"}
+                    </Button>
+                  </div>
+                )}
 
                 <div className="services-list">
                   {availableMCPServices.map((service) => {
@@ -195,10 +182,17 @@ const ActionBar = () => {
                 </div>
 
                 <div className="services-footer">
-                  共 {availableMCPServices.length} 个服务可用
-                  {selectedMCPServices.length > 0 && (
-                    <span className="selected-count">
-                      • 已选 {selectedMCPServices.length} 个
+                  {availableMCPServices.length === 0 && (
+                    <span>无可用MCP服务, 请在设置中启动MCP服务</span>
+                  )}
+                  {availableMCPServices.length > 0 && (
+                    <span>
+                      已选 {selectedMCPServices.length} 个MCP服务, 可用工具{" "}
+                      {selectedMCPServices.reduce(
+                        (acc, service) => acc + services[service].tools.length,
+                        0
+                      )}{" "}
+                      个
                     </span>
                   )}
                 </div>

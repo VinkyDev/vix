@@ -31,6 +31,7 @@ const theme: ThemeConfig = {
     Select: {
       selectorBg: "#fafafa",
     },
+    Drawer: {},
   },
 };
 

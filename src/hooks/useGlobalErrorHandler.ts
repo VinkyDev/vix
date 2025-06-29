@@ -24,7 +24,10 @@ let globalErrorHandler:
   | null = null;
 
 // 豁免的错误
-const exemptErrors = ["BodyStreamBuffer was aborted"];
+const exemptErrors = [
+  "BodyStreamBuffer was aborted",
+  "HotKey already registered",
+];
 
 export const useGlobalErrorHandler = (
   options: GlobalErrorHandlerOptions = {}

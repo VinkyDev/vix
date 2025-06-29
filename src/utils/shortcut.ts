@@ -1,5 +1,4 @@
 import { register, unregister } from "@tauri-apps/plugin-global-shortcut";
-import { platform as getPlatform } from "@tauri-apps/plugin-os";
 
 export interface ShortcutHandle {
   register: (callback: () => unknown) => Promise<void>;
@@ -23,8 +22,7 @@ export function createShortcutHandler(shortcut: string): ShortcutHandle {
 
 // 快捷键默认配置
 export function getDefaultShortcuts() {
-  const currentPlatform = getPlatform();
   return {
-    toggleWindow: currentPlatform === "macos" ? "Option+Space" : "Alt+Space",
+    toggleWindow: "Shift+Space",
   };
 }

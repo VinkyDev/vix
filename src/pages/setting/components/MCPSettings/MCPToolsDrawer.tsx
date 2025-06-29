@@ -317,7 +317,7 @@ export default function MCPToolsDrawer({
       }
       width="80%"
     >
-      <Row>
+      <Row style={{ height: "100%" }}>
         <Col
           span={8}
           style={{ borderRight: "1px solid #f0f0f0", height: "100%" }}

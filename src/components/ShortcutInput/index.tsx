@@ -2,6 +2,7 @@ import { Input, InputProps, InputRef, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 
 import "./index.scss";
+import { PlatformUtils } from "../../utils/platform";
 import { codeToKeyMap, keyIcons } from "./constants";
 
 interface ShortcutInputProps
@@ -47,9 +48,15 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({
     const keys: string[] = [];
 
     // 收集修饰键
-    if (e.metaKey) keys.push("Command");
+    if (e.metaKey) {
+      // 根据平台显示不同的键名
+      keys.push(PlatformUtils.isWindows() ? "Win" : "Command");
+    }
     if (e.ctrlKey) keys.push("Control");
-    if (e.altKey) keys.push("Alt");
+    if (e.altKey) {
+      // 根据平台显示不同的键名
+      keys.push(PlatformUtils.isWindows() ? "Alt" : "Option");
+    }
     if (e.shiftKey) keys.push("Shift");
 
     updateCurrentKeys(keys);
@@ -76,9 +83,13 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({
     if (!isRecording) return;
 
     const keys: string[] = [];
-    if (e.metaKey) keys.push("Command");
+    if (e.metaKey) {
+      keys.push(PlatformUtils.isWindows() ? "Win" : "Command");
+    }
     if (e.ctrlKey) keys.push("Control");
-    if (e.altKey) keys.push("Alt");
+    if (e.altKey) {
+      keys.push(PlatformUtils.isWindows() ? "Alt" : "Option");
+    }
     if (e.shiftKey) keys.push("Shift");
 
     updateCurrentKeys(keys);
@@ -114,7 +125,12 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({
   );
 
   const displayShortcut = (shortcut: string) => {
-    const keys = shortcut.replace(/Alt/g, "Option").split("+");
+    let processedShortcut = shortcut;
+    if (!PlatformUtils.isWindows()) {
+      processedShortcut = shortcut.replace(/Alt/g, "Option");
+    }
+
+    const keys = processedShortcut.split("+");
     return (
       <div className="shortcut-display">
         {keys.map((key, index) => (
@@ -136,7 +152,7 @@ const ShortcutInput: React.FC<ShortcutInputProps> = ({
       <div className="shortcut-display recording">
         {currentKeys.map((key, index) => (
           <React.Fragment key={index}>
-            {renderKey(key.replace(/Alt/g, "Option"), index)}
+            {renderKey(key, index)}
             {index < currentKeys.length - 1 && renderPlus(index)}
           </React.Fragment>
         ))}
