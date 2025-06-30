@@ -1,12 +1,6 @@
 .conversation-drawer {
   background-color: $primary-bg;
 
-  .ant-drawer-content {
-    border-top-left-radius: $border-radius-xlarge;
-    border-bottom-left-radius: $border-radius-xlarge;
-    overflow: hidden;
-  }
-
   .drawer-container {
     height: 100%;
 

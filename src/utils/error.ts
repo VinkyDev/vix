@@ -12,7 +12,7 @@ export const getErrorMessage = (error: Error) => {
     case 422:
       return "输入语义错误，请调整内容，确保格式正确！";
     case 429:
-      return "调用频率超限，请延迟或退避重试！";
+      return "额度已用尽！";
     case 409:
       return "资源冲突，请等待或修改请求逻辑！";
     case 500:

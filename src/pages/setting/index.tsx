@@ -63,7 +63,6 @@ const Setting: React.FC = () => {
         type="text"
       />
       <Tabs
-        centered
         className="setting-tabs"
         defaultActiveKey="models"
         items={tabItems}

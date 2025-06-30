@@ -19,12 +19,6 @@ const containerConfigs = [
     closeTag: "</think>",
   },
   {
-    name: "divider",
-    className: "divider",
-    openTag: "<divider>",
-    closeTag: "</divider>",
-  },
-  {
     name: "toolcall",
     className: "toolcall",
     openTag: "<toolcall>",

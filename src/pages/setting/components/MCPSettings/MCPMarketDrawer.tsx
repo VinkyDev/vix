@@ -29,7 +29,7 @@ import {
   Typography,
 } from "antd";
 import { Rule } from "antd/es/form";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import {
   getPopularTemplates,
@@ -71,7 +71,6 @@ const ServiceConfigModal: React.FC<ServiceConfigModalProps> = ({
       setLoading(true);
       const values = await form.validateFields();
 
-      // 构建环境变量和参数
       const env = { ...template.template.env };
       const args = [...template.template.args];
 
@@ -79,12 +78,9 @@ const ServiceConfigModal: React.FC<ServiceConfigModalProps> = ({
         const value = values[param.key];
         if (value !== undefined && value !== "") {
           if (param.position === "env") {
-            // 环境变量
             env[param.key] = value;
           } else if (param.position === "args") {
-            // 命令行参数
             if (param.multiple) {
-              // 多个值，按分隔符分割
               const separator = param.separator || ",";
               const multipleValues = value
                 .split(separator)
@@ -92,19 +88,16 @@ const ServiceConfigModal: React.FC<ServiceConfigModalProps> = ({
                 .filter((v: string) => v);
               args.push(...multipleValues);
             } else {
-              // 单个值
               args.push(value);
             }
           }
         }
       });
 
-      // 生成唯一的服务名称
       const baseName = template.name;
       let serviceName = baseName;
       let counter = 1;
 
-      // 检查名称冲突并生成新名称
       const { services } = useMCPStore.getState();
       while (services[serviceName]) {
         serviceName = `${baseName}-${counter}`;
@@ -113,6 +106,8 @@ const ServiceConfigModal: React.FC<ServiceConfigModalProps> = ({
 
       const config: MCPServerConfig = {
         name: serviceName,
+        displayName: template.displayName,
+        icon: template.icon || "🔧",
         command: template.template.command,
         args,
         env,
@@ -122,7 +117,7 @@ const ServiceConfigModal: React.FC<ServiceConfigModalProps> = ({
       onAdd(config);
       form.resetFields();
       onClose();
-      message.success(`已添加 ${template.displayName} 服务`);
+      message.success(`已添加 ${template.displayName}`);
     } catch {
       message.error("添加服务失败，请检查配置");
     } finally {
@@ -150,7 +145,7 @@ const ServiceConfigModal: React.FC<ServiceConfigModalProps> = ({
           <span>配置 {template?.displayName}</span>
         </Space>
       }
-      width={600}
+      width="100%"
     >
       {template && (
         <div style={{ marginBottom: "24px" }}>
@@ -549,79 +544,70 @@ const MCPMarketDrawer: React.FC<MCPMarketDrawerProps> = ({
   const filteredTemplates = getFilteredTemplates();
 
   return (
-    <>
-      <Drawer
-        onClose={onClose}
-        open={visible}
-        styles={{ body: { padding: 0 } }}
-        title={null}
-        width={1000}
-      >
-        <div style={{ padding: "24px" }}>
-          <div style={{ marginBottom: "24px" }}>
-            <Input
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜索 MCP 服务..."
-              prefix={<SearchOutlined />}
-              size="large"
-              style={{ borderRadius: "8px" }}
-              value={searchQuery}
-            />
-          </div>
-
-          {/* 分类标签页 */}
-          <Tabs
-            activeKey={selectedCategory}
-            items={tabItems}
-            onChange={setSelectedCategory}
-            style={{ marginBottom: "24px" }}
+    <Fragment>
+      <Drawer onClose={onClose} open={visible} title={null} width="100%">
+        <div style={{ marginBottom: "24px" }}>
+          <Input
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="搜索 MCP 服务..."
+            prefix={<SearchOutlined />}
+            size="large"
+            style={{ borderRadius: "8px" }}
+            value={searchQuery}
           />
-
-          {/* 服务列表 */}
-          {filteredTemplates.length === 0 ? (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "60px 0",
-                color: "#999",
-              }}
-            >
-              <SearchOutlined
-                style={{ fontSize: "48px", marginBottom: "16px" }}
-              />
-              <div>没有找到符合条件的服务</div>
-              <Text type="secondary">尝试使用其他关键词或分类</Text>
-            </div>
-          ) : (
-            <>
-              <div style={{ marginBottom: "16px" }}>
-                <Text type="secondary">
-                  找到 {filteredTemplates.length} 个服务
-                </Text>
-              </div>
-              <Row gutter={[16, 16]}>
-                {filteredTemplates.map((template) => {
-                  const isAdded = Object.values(
-                    useMCPStore.getState().services
-                  ).some(
-                    (service) =>
-                      service.config.name === template.name ||
-                      service.config.name.startsWith(`${template.name}-`)
-                  );
-                  return (
-                    <Col key={template.id} lg={8} md={12} sm={24} xs={24}>
-                      <ServiceCard
-                        isAdded={isAdded}
-                        onConfigure={handleConfigure}
-                        template={template}
-                      />
-                    </Col>
-                  );
-                })}
-              </Row>
-            </>
-          )}
         </div>
+
+        <Tabs
+          activeKey={selectedCategory}
+          items={tabItems}
+          onChange={setSelectedCategory}
+        />
+
+        {/* 服务列表 */}
+        {filteredTemplates.length === 0 ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "60px 0",
+              color: "#999",
+            }}
+          >
+            <SearchOutlined
+              style={{ fontSize: "48px", marginBottom: "16px" }}
+            />
+            <div>没有找到符合条件的服务</div>
+            <Text type="secondary">尝试使用其他关键词或分类</Text>
+          </div>
+        ) : (
+          <Fragment>
+            <div style={{ marginBottom: "16px" }}>
+              <Text type="secondary">
+                找到 {filteredTemplates.length} 个服务
+              </Text>
+            </div>
+            <Row gutter={[16, 16]}>
+              {filteredTemplates.map((template) => {
+                const isAdded = Object.values(
+                  useMCPStore.getState().services
+                ).some(
+                  (service) =>
+                    service.config?.name === template.name ||
+                    (service.config?.name &&
+                      service.config.name.startsWith(`${template.name}-`))
+                );
+                return (
+                  <Col key={template.id} lg={6} md={8} sm={12} xs={24}>
+                    <ServiceCard
+                      isAdded={isAdded}
+                      onConfigure={handleConfigure}
+                      template={template}
+                    />
+                  </Col>
+                );
+              })}
+            </Row>
+          </Fragment>
+        )}
       </Drawer>
 
       <ServiceConfigModal
@@ -633,7 +619,7 @@ const MCPMarketDrawer: React.FC<MCPMarketDrawerProps> = ({
         template={selectedTemplate}
         visible={configModalVisible}
       />
-    </>
+    </Fragment>
   );
 };
 

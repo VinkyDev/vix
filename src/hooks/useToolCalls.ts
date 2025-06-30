@@ -48,13 +48,22 @@ export function useToolCalls(
       });
 
       try {
-        // 并行执行所有工具调用
+        // 执行所有工具调用
         const toolResults = await Promise.all(
           toolCalls.map(async (toolCall): Promise<ToolCallResult> => {
             try {
               // 检查是否已取消
               if (abortControllerRef.current?.signal.aborted) {
                 throw new Error("Tool call was cancelled");
+              }
+
+              // 处理 moonshot 内置联网搜索
+              if (toolCall.function.name === "$web_search") {
+                return {
+                  role: "tool" as const,
+                  content: "联网搜索已完成",
+                  tool_call_id: toolCall.id,
+                };
               }
 
               const { serviceName, toolName } = parseToolName(

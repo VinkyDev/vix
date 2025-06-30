@@ -1,59 +1,15 @@
-import {
-  ClearOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-  MessageOutlined,
-  ReloadOutlined,
-  ThunderboltOutlined,
-} from "@ant-design/icons";
-import { Button, Card, Flex, InputNumber, message, Space, Tooltip } from "antd";
+import { ReloadOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { Button, Card, message, Space, Tooltip } from "antd";
 import { motion } from "motion/react";
 import React from "react";
 
 import ShortcutInput from "@/components/ShortcutInput";
-import { ShortcutKey, useMessageStore, useUserSettingsStore } from "@/store";
+import { ShortcutKey, useUserSettingsStore } from "@/store";
 
 import "./index.scss";
 
 const BasicSettings: React.FC = () => {
-  const {
-    contextWindowSize,
-    setContextWindowSize,
-    shortcuts,
-    setShortcut,
-    resetShortcuts,
-  } = useUserSettingsStore();
-  const {
-    addContextDivider,
-    messages,
-    maxMessages,
-    setMaxMessages,
-    setMessages,
-  } = useMessageStore();
-
-  const handleContextWindowSizeChange = (value: number | null) => {
-    if (value && value >= 1 && value <= 100) {
-      setContextWindowSize(value);
-      message.success(`设置成功`);
-    }
-  };
-
-  const handleMaxMessagesChange = (value: number | null) => {
-    if (value && value >= 1 && value <= 100) {
-      setMaxMessages(value);
-      message.success(`设置成功`);
-    }
-  };
-
-  const handleClearContext = () => {
-    addContextDivider();
-    message.success("已清除当前上下文");
-  };
-
-  const handleClearHistory = () => {
-    setMessages([]);
-    message.success("已清除历史记录");
-  };
+  const { shortcuts, setShortcut, resetShortcuts } = useUserSettingsStore();
 
   const handleShortcutChange = (key: ShortcutKey, value: string) => {
     setShortcut(key, value);
@@ -64,24 +20,6 @@ const BasicSettings: React.FC = () => {
     resetShortcuts();
     message.success("快捷键已重置为默认值");
   };
-
-  const getContextStats = () => {
-    const totalMessages = messages.length;
-    const lastDividerIndex = messages.reduce((acc, msg, index) => {
-      if (msg.message.content.includes("<divider>")) {
-        return index;
-      }
-      return acc;
-    }, -1);
-    const currentContextSize =
-      lastDividerIndex === -1
-        ? totalMessages
-        : totalMessages - lastDividerIndex - 1;
-
-    return { currentContextSize };
-  };
-
-  const { currentContextSize } = getContextStats();
 
   return (
     <motion.div
@@ -120,80 +58,6 @@ const BasicSettings: React.FC = () => {
               type="text"
             />
           </Tooltip>
-        </Space>
-      </Card>
-
-      {/* 消息配置 */}
-      <Card
-        className="settings-card"
-        size="small"
-        title={
-          <Space>
-            <MessageOutlined />
-            消息配置
-          </Space>
-        }
-      >
-        <Space direction="vertical" size={12} style={{ width: "100%" }}>
-          <Flex align="center" justify="space-between">
-            <Space>
-              <span>上下文窗口</span>
-              <Tooltip title="设置AI在回复时能够参考的历史消息数量">
-                <InfoCircleOutlined className="info-icon" />
-              </Tooltip>
-            </Space>
-            <Space align="center">
-              <InputNumber
-                addonAfter="条"
-                max={100}
-                min={1}
-                onChange={handleContextWindowSizeChange}
-                size="small"
-                style={{ width: 100 }}
-                value={contextWindowSize}
-              />
-              <Tooltip title="清除上下文">
-                <Button
-                  danger
-                  disabled={currentContextSize === 0}
-                  icon={<ClearOutlined />}
-                  onClick={handleClearContext}
-                  size="small"
-                  type="text"
-                />
-              </Tooltip>
-            </Space>
-          </Flex>
-
-          <Flex align="center" justify="space-between">
-            <Space>
-              <span>保存条数</span>
-              <Tooltip title="设置历史记录保存条数">
-                <InfoCircleOutlined className="info-icon" />
-              </Tooltip>
-            </Space>
-            <Space align="center">
-              <InputNumber
-                addonAfter="条"
-                max={100}
-                min={1}
-                onChange={handleMaxMessagesChange}
-                size="small"
-                style={{ width: 100 }}
-                value={maxMessages}
-              />
-              <Tooltip title="清除历史记录">
-                <Button
-                  danger
-                  disabled={messages.length === 0}
-                  icon={<DeleteOutlined />}
-                  onClick={handleClearHistory}
-                  size="small"
-                  type="text"
-                />
-              </Tooltip>
-            </Space>
-          </Flex>
         </Space>
       </Card>
     </motion.div>

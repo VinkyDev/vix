@@ -4,6 +4,9 @@ import { MCPServerConfig } from "@/types";
 // 命令选项
 export const commandOptions = [
   { label: "npx", value: "npx", description: "Node.js 包执行器" },
+  { label: "npm", value: "npm", description: "Node.js 包管理器" },
+  { label: "node", value: "node", description: "Node.js 运行环境" },
+  { label: "uvx", value: "uvx", description: "Python 包 CLI 工具" },
 ];
 
 // 将表单数据转换为JSON格式（符合MCP规范）
@@ -14,6 +17,8 @@ export const formToJson = (
 ): string => {
   const currentServerName = formData.name || (isEdit ? serverName : "");
   const config: Omit<MCPServerConfig, "name"> = {
+    displayName: formData.displayName || undefined,
+    icon: formData.icon || undefined,
     command: formData.command || "",
     args: formData.args ? formData.args.split(/\s+/).filter(Boolean) : [],
     env: {},
@@ -76,6 +81,8 @@ export const jsonToForm = (jsonString: string) => {
 
     return {
       name: configName,
+      displayName: config.displayName || "",
+      icon: config.icon || "",
       command: config.command || "",
       args: config.args ? config.args.join(" ") : "",
       cwd: config.cwd || "",
@@ -100,6 +107,8 @@ export const parseJsonConfig = (jsonValue: string): MCPServerConfig => {
 
       return {
         name: serviceName,
+        displayName: serviceConfig.displayName,
+        icon: serviceConfig.icon,
         command: serviceConfig.command || "",
         args: serviceConfig.args || [],
         env: serviceConfig.env,
@@ -124,8 +133,11 @@ export const validateConfig = (config: MCPServerConfig): boolean => {
 };
 
 // 从表单数据创建服务配置
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createConfigFromForm = (values: any): MCPServerConfig => {
+
+export const createConfigFromForm = (
+  values: any,
+  defaultName?: string
+): MCPServerConfig => {
   // 处理环境变量
   const env: Record<string, string> = {};
   if (values.envVars && values.envVars.length > 0) {
@@ -137,7 +149,9 @@ export const createConfigFromForm = (values: any): MCPServerConfig => {
   }
 
   return {
-    name: values.name,
+    name: values.name || defaultName || "",
+    displayName: values.displayName || undefined,
+    icon: values.icon || "🔧",
     command: values.command,
     args: values.args ? values.args.split(/\s+/).filter(Boolean) : [],
     env: Object.keys(env).length > 0 ? env : undefined,

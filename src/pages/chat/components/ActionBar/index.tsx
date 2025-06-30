@@ -167,9 +167,12 @@ const ActionBar = () => {
                               checked={isSelected}
                               onChange={() => {}} // 由外层点击事件处理
                             />
-                            <ApiOutlined className="service-icon" />
+                            <span style={{ fontSize: 22 }}>
+                              {services[service.value].config.icon || "🔧"}
+                            </span>
                             <span className="service-name">
-                              {service.label}
+                              {services[service.value].config.displayName ||
+                                service.label}
                             </span>
                           </Flex>
                           <span className="tool-count">

@@ -6,31 +6,6 @@
     font-size: $font-size-lg;
   }
 
-  .divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    color: $text-secondary;
-    font-size: $font-size-lg;
-    width: 60vw;
-    text-align: center;
-    &::before,
-    &::after {
-      content: "";
-      flex: 1;
-      border-top: 1px solid $border-normal;
-    }
-
-    &::before {
-      margin-right: 0.75em;
-    }
-
-    &::after {
-      margin-left: 0.75em;
-    }
-  }
-
   .toolcall {
     width: 100%;
   }

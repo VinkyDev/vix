@@ -4,6 +4,10 @@ import { JSONSchema7 } from "./schema";
 export interface MCPServerConfig {
   /** 服务名称 */
   name: string;
+  /** 服务显示名称 */
+  displayName?: string;
+  /** 服务图标 */
+  icon?: string;
   /** 命令 */
   command: string;
   /** 参数 */
@@ -155,10 +159,6 @@ export interface MCPMarketTemplate {
   category: string;
   /** 服务标签 */
   tags: string[];
-  /** 服务版本 */
-  version: string;
-  /** 作者 */
-  author: string;
   /** 仓库地址 */
   repository?: string;
   /** 文档地址 */
@@ -172,8 +172,6 @@ export interface MCPMarketTemplate {
   };
   /** 需要用户配置的参数 */
   params: MCPMarketParam[];
-  /** 服务特性 */
-  features: string[];
   /** 是否为热门服务 */
   popular?: boolean;
   /** 是否为官方服务 */

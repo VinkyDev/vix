@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 
 interface GlobalErrorHandlerOptions {
@@ -15,19 +16,6 @@ interface ErrorState {
     source?: string;
   } | null;
 }
-
-let globalErrorHandler:
-  | ((
-      error: Error,
-      errorInfo: { type: "promise" | "window" | "component"; source?: string }
-    ) => void)
-  | null = null;
-
-// 豁免的错误
-const exemptErrors = [
-  "BodyStreamBuffer was aborted",
-  "HotKey already registered",
-];
 
 export const useGlobalErrorHandler = (
   options: GlobalErrorHandlerOptions = {}
@@ -72,21 +60,12 @@ export const useGlobalErrorHandler = (
   // 处理未捕获的 Promise 错误
   const handleUnhandledRejection = useCallback(
     (event: PromiseRejectionEvent) => {
-      event.preventDefault(); // 阻止默认的错误处理
-
       const error =
         event.reason instanceof Error
           ? event.reason
           : new Error(String(event.reason));
 
-      if (exemptErrors.includes(error.message)) {
-        return;
-      }
-
-      globalErrorHandler?.(error, {
-        type: "promise",
-        source: "unhandledrejection",
-      });
+      message.error(error.message);
     },
     []
   );
@@ -96,21 +75,11 @@ export const useGlobalErrorHandler = (
     const error =
       event.error instanceof Error ? event.error : new Error(event.message);
 
-    if (exemptErrors.includes(error.message)) {
-      return;
-    }
-
-    globalErrorHandler?.(error, {
-      type: "window",
-      source: `${event.filename}:${event.lineno}:${event.colno}`,
-    });
+    message.error(error.message);
   }, []);
 
   // 设置全局错误监听器
   useEffect(() => {
-    // 设置全局错误处理器
-    globalErrorHandler = handleError;
-
     // 监听未处理的 Promise 错误
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
@@ -118,14 +87,13 @@ export const useGlobalErrorHandler = (
     window.addEventListener("error", handleWindowError);
 
     return () => {
-      globalErrorHandler = null;
       window.removeEventListener(
         "unhandledrejection",
         handleUnhandledRejection
       );
       window.removeEventListener("error", handleWindowError);
     };
-  }, [handleError, handleUnhandledRejection, handleWindowError]);
+  }, [handleWindowError]);
 
   return {
     errorState,

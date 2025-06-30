@@ -23,11 +23,6 @@ interface UserSettingsStore {
   /** 设置选中的MCP服务列表 */
   setSelectedMCPServices: (services: string[]) => void;
 
-  /** 上下文窗口长度 */
-  contextWindowSize: number;
-  /** 设置上下文窗口长度 */
-  setContextWindowSize: (size: number) => void;
-
   /** 快捷键配置 */
   shortcuts: {
     [ShortcutKey.ToggleWindow]: string;
@@ -52,9 +47,6 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
       setSelectedMCPServices: (selectedMCPServices) =>
         set({ selectedMCPServices }),
 
-      contextWindowSize: 4,
-      setContextWindowSize: (size) => set({ contextWindowSize: size }),
-
       shortcuts: getDefaultShortcuts(),
       setShortcut: (key, value) =>
         set((state) => ({
@@ -71,7 +63,6 @@ export const useUserSettingsStore = create<UserSettingsStore>()(
         useThinking: state.useThinking,
         useSearch: state.useSearch,
         selectedMCPServices: state.selectedMCPServices,
-        contextWindowSize: state.contextWindowSize,
         shortcuts: state.shortcuts,
       }),
     }

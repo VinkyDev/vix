@@ -6,6 +6,7 @@ import {
   useXChat,
 } from "@ant-design/x";
 import { MessageInfo } from "@ant-design/x/es/use-x-chat";
+import { useDebounceEffect } from "ahooks";
 import { Flex, GetRef } from "antd";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -24,8 +25,8 @@ import { emitter } from "@/utils";
 import { getErrorMessage } from "@/utils/error";
 
 import ActionBar from "./components/ActionBar";
-import { ConversationDrawer } from "./components/ConversationDrawer";
 import "./index.scss";
+import { ConversationDrawer } from "./components/ConversationDrawer";
 import { TitleBar } from "./components/TitleBar";
 import { Welcome } from "./components/Welcome";
 import {
@@ -40,7 +41,7 @@ const ChatComponent = () => {
   const [content, setContent] = useState("");
   const { getCurrentModel } = useModelStore();
   const { getApiKey } = useApiKeyStore();
-  const { useThinking, contextWindowSize, useSearch } = useUserSettingsStore();
+  const { useThinking, useSearch } = useUserSettingsStore();
   const { tools: mcpTools, hasTools } = useMCPTools();
 
   const { baseURL, modelId, providerId, thinkingId } = getCurrentModel();
@@ -231,15 +232,8 @@ const ChatComponent = () => {
     },
   });
 
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
-
   const sendMessage = (message: MessageType) => {
-    const currentMessages = calculateMessagesToSend(
-      messagesRef.current,
-      contextWindowSize
-    );
+    const currentMessages = calculateMessagesToSend(messagesRef.current);
 
     const requestParams: ChatRequestParams = {
       enable_thinking: useThinking,
@@ -256,18 +250,30 @@ const ChatComponent = () => {
 
     if (hasTools && mcpTools.length > 0) {
       requestParams.tools = mcpTools;
-      requestParams.tool_choice = "auto";
     }
 
     onRequest(requestParams);
   };
 
+  // 更新消息引用, 防止闭包问题
   useEffect(() => {
-    if (shouldUpdateMessages(messages, messageStoreMessages)) {
-      setMessageStoreMessages(messages);
-    }
-  }, [messages, messageStoreMessages, setMessageStoreMessages]);
+    messagesRef.current = messages;
+  }, [messages]);
 
+  // 自动保存消息
+  useDebounceEffect(
+    () => {
+      if (shouldUpdateMessages(messages, messageStoreMessages)) {
+        setMessageStoreMessages(messages);
+      }
+    },
+    [messages, messageStoreMessages, setMessageStoreMessages],
+    {
+      wait: 1000,
+    }
+  );
+
+  // 切换对话时清除状态
   useEffect(() => {
     return () => {
       clearMessageTransformState(sessionId);
@@ -277,6 +283,7 @@ const ChatComponent = () => {
     };
   }, [sessionId, clearToolCallState]);
 
+  // 自动聚焦
   useEffect(() => {
     emitter.on("toggle-window", (visible) => {
       if (senderRef?.current && visible) {

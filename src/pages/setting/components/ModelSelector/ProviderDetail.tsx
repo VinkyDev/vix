@@ -106,7 +106,7 @@ const ProviderDetail: React.FC<ProviderDetailProps> = ({
           </Flex>
         }
       >
-        <Input
+        <Input.Password
           onBlur={handleSaveApiKey}
           onChange={handleApiKeyChange}
           placeholder="请输入API Key"

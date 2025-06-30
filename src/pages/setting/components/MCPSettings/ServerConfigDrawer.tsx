@@ -13,6 +13,7 @@ import {
   Form,
   Input,
   message,
+  Popover,
   Select,
   Space,
   Switch,
@@ -35,6 +36,108 @@ import {
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+
+// 常用emoji列表
+const commonEmojis = [
+  "🔧",
+  "⚡",
+  "🚀",
+  "💻",
+  "📁",
+  "🐙",
+  "🌐",
+  "📈",
+  "🧩",
+  "🧠",
+  "📦",
+  "🔍",
+  "🐘",
+  "🤖",
+  "🔗",
+  "📊",
+  "🎯",
+  "⭐",
+  "🎨",
+  "🛡️",
+  "🔥",
+  "💡",
+  "🎮",
+  "📝",
+  "🌟",
+  "⚙️",
+  "🎵",
+  "📷",
+  "💰",
+  "🏆",
+];
+
+// Emoji选择器组件
+const EmojiPicker: React.FC<{
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+}> = ({ value, onChange, placeholder }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleEmojiSelect = (emoji: string) => {
+    onChange?.(emoji);
+    setOpen(false);
+  };
+
+  const content = (
+    <div style={{ width: 240 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(6, 1fr)",
+          gap: "8px",
+          padding: "8px",
+        }}
+      >
+        {commonEmojis.map((emoji) => (
+          <Button
+            key={emoji}
+            onClick={() => handleEmojiSelect(emoji)}
+            size="small"
+            style={{
+              width: "32px",
+              height: "32px",
+              padding: 0,
+              fontSize: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            type={value === emoji ? "primary" : "default"}
+          >
+            {emoji}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <Popover
+      content={content}
+      onOpenChange={setOpen}
+      open={open}
+      placement="bottomLeft"
+      title="选择图标"
+      trigger="click"
+    >
+      <Input
+        placeholder={placeholder}
+        readOnly
+        style={{
+          borderRadius: "8px",
+          cursor: "pointer",
+        }}
+        value={value}
+      />
+    </Popover>
+  );
+};
 
 interface ServerConfigDrawerProps {
   visible: boolean;
@@ -100,6 +203,8 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
 
         const formData = {
           name: service.config.name,
+          displayName: service.config.displayName || "",
+          icon: service.config.icon || "",
           command: service.config.command,
           args: service.config.args.join(" "),
           cwd: service.config.cwd || "",
@@ -112,6 +217,8 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
         // 添加模式：初始化空表单
         const initialData = {
           name: "",
+          displayName: "",
+          icon: "",
           command: "npx",
           args: "",
           cwd: "",
@@ -152,7 +259,7 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
       } else {
         // 表单模式：从表单获取数据
         const values = await form.validateFields();
-        config = createConfigFromForm(values);
+        config = createConfigFromForm(values, isEdit ? serverName : undefined);
       }
 
       // 检查服务名是否已存在（仅添加模式）
@@ -162,18 +269,10 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
       }
 
       if (isEdit && serverName) {
-        // 编辑模式
-        const configUpdate = {
-          command: config.command,
-          args: config.args,
-          env: config.env,
-          cwd: config.cwd,
-        };
-
-        updateService(serverName, configUpdate);
+        const updateConfig = { ...config, name: serverName };
+        updateService(serverName, updateConfig);
         message.success(`服务 ${serverName} 更新成功`);
       } else {
-        // 添加模式
         addService(config);
         message.success(`服务 ${config.name} 添加成功`);
       }
@@ -284,6 +383,37 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
               <Form.Item
                 label={
                   <Space>
+                    <Text>显示名称</Text>
+                    <Text style={{ fontSize: "12px" }} type="secondary">
+                      可选，留空则与服务名称相同
+                    </Text>
+                  </Space>
+                }
+                name="displayName"
+              >
+                <Input
+                  placeholder="例如: GitHub 集成服务"
+                  style={{ borderRadius: "8px" }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <Space>
+                    <Text>服务图标</Text>
+                    <Text style={{ fontSize: "12px" }} type="secondary">
+                      可选，留空则使用默认图标
+                    </Text>
+                  </Space>
+                }
+                name="icon"
+              >
+                <EmojiPicker placeholder="点击选择图标" />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <Space>
                     <Text>命令</Text>
                     <Text style={{ fontSize: "12px" }} type="secondary">
                       选择要执行的命令
@@ -377,7 +507,7 @@ const ServerConfigDrawer: React.FC<ServerConfigDrawerProps> = ({
                             rules={[{ required: true, message: "变量值" }]}
                             style={{ margin: 0, flex: 2 }}
                           >
-                            <Input.Password
+                            <Input
                               placeholder="变量值"
                               style={{ borderRadius: "6px" }}
                             />

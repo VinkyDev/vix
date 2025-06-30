@@ -31,7 +31,6 @@
   user-select: none;
   border-radius: $border-radius-large;
   background: $primary-bg;
-  border-radius: 16px;
 
   cursor: grab;
   padding: 10px 20px 20px;
@@ -46,6 +45,19 @@
 .ant-modal-mask {
   border-radius: $border-radius-large;
   overflow: hidden;
+}
+
+.ant-drawer-mask {
+  border-radius: $border-radius-large;
+  overflow: hidden;
+}
+
+.ant-drawer {
+  border-radius: $border-radius-large;
+  .ant-drawer-content {
+    border-radius: $border-radius-large;
+    overflow: hidden;
+  }
 }
 
 .ant-drawer-content-wrapper {

@@ -16,10 +16,10 @@ import {
   Col,
   Dropdown,
   Empty,
+  Flex,
   message,
   Modal,
   Row,
-  Space,
   Typography,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -41,6 +41,7 @@ export default function MCPSettings() {
     services,
     startService,
     stopService,
+    restartService,
     removeService,
     initializeStateCallbacks,
   } = useMCPStore();
@@ -64,10 +65,21 @@ export default function MCPSettings() {
   const handleStartService = async (name: string) => {
     setLoadingServices((prev) => new Set(prev).add(name));
     try {
-      await startService(name);
-      message.success(`服务 ${name} 启动成功`);
+      const service = services[name];
+      const isErrorStatus = service?.status === MCPServerStatus.Error;
+
+      if (isErrorStatus) {
+        await restartService(name);
+        message.success(`服务 ${name} 重启成功`);
+      } else {
+        await startService(name);
+        message.success(`服务 ${name} 启动成功`);
+      }
     } catch (error) {
-      message.error(`服务 ${name} 启动失败: ${error}`);
+      const service = services[name];
+      const isErrorStatus = service?.status === MCPServerStatus.Error;
+      const actionText = isErrorStatus ? "重启" : "启动";
+      message.error(`服务 ${name} ${actionText}失败: ${error}`);
     } finally {
       setLoadingServices((prev) => {
         const newSet = new Set(prev);
@@ -159,6 +171,7 @@ export default function MCPSettings() {
 
     const isLoading = loadingServices.has(serviceName);
     const isRunning = service.status === MCPServerStatus.Running;
+    const isError = service.status === MCPServerStatus.Error;
     const toolCount = service.tools.length;
 
     // 下拉菜单项
@@ -188,7 +201,14 @@ export default function MCPSettings() {
     ];
 
     return (
-      <Col key={serviceName} lg={8} sm={12} xl={6} xs={24}>
+      <Col
+        key={serviceName}
+        lg={8}
+        sm={12}
+        style={{ height: "fit-content" }}
+        xl={6}
+        xs={24}
+      >
         <Card
           className="service-card"
           hoverable
@@ -198,148 +218,132 @@ export default function MCPSettings() {
             transition: "all 0.3s ease",
           }}
         >
-          {/* 卡片头部 */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              marginBottom: "20px",
-            }}
-          >
-            <Title level={5} style={{ margin: 0, flex: 1 }}>
-              {service.config.name}
-            </Title>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              <Text style={{ fontSize: "12px" }} type="secondary">
-                {getStatusText(service.status)}
-              </Text>
-              <div
-                style={{
-                  width: "8px",
-                  height: "8px",
-                  borderRadius: "50%",
-                  backgroundColor: getStatusColor(service.status),
+          <Flex gap={20} vertical>
+            <Flex justify="space-between">
+              <Flex align="center" gap={8}>
+                <span style={{ fontSize: 22 }}>
+                  {service.config.icon || "🔧"}
+                </span>
+                <Flex vertical>
+                  <Title ellipsis level={5} style={{ margin: 0, width: 150 }}>
+                    {service.config.displayName || service.config.name}
+                  </Title>
+                  {service.config.displayName && (
+                    <Text
+                      ellipsis
+                      style={{ fontSize: "12px" }}
+                      type="secondary"
+                    >
+                      {service.config.name}
+                    </Text>
+                  )}
+                </Flex>
+              </Flex>
+              <Flex align="center" gap={6}>
+                <Text style={{ fontSize: "12px" }} type="secondary">
+                  {getStatusText(service.status)}
+                </Text>
+                <div
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: getStatusColor(service.status),
+                  }}
+                />
+              </Flex>
+            </Flex>
+            <Flex align="center" gap={8} justify="space-between">
+              {isRunning ? (
+                <Button
+                  danger
+                  icon={<StopOutlined />}
+                  loading={isLoading}
+                  onClick={() => handleStopService(serviceName)}
+                  size="small"
+                  type="text"
+                >
+                  停止
+                </Button>
+              ) : (
+                <Button
+                  icon={<PlayCircleOutlined />}
+                  loading={isLoading}
+                  onClick={() => handleStartService(serviceName)}
+                  size="small"
+                  style={{ color: "#1890ff" }}
+                  type="text"
+                >
+                  {isError ? "重启" : "启动"}
+                </Button>
+              )}
+
+              {/* 工具管理按钮 */}
+              <Badge color="#1890ff" count={toolCount} size="small">
+                <Button
+                  disabled={!isRunning}
+                  icon={<ToolOutlined />}
+                  onClick={() => handleViewTools(serviceName)}
+                  size="small"
+                  type="text"
+                >
+                  工具
+                </Button>
+              </Badge>
+
+              {/* 更多操作下拉菜单 */}
+              <Dropdown
+                menu={{
+                  items: menuItems,
                 }}
-              />
-            </div>
-          </div>
-
-          {/* 操作按钮区域 - 单行布局 */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            {/* 启动/停止按钮 */}
-            {isRunning ? (
-              <Button
-                danger
-                icon={<StopOutlined />}
-                loading={isLoading}
-                onClick={() => handleStopService(serviceName)}
-                size="small"
-                type="text"
+                placement="bottomRight"
+                trigger={["hover"]}
               >
-                停止
-              </Button>
-            ) : (
-              <Button
-                icon={<PlayCircleOutlined />}
-                loading={isLoading}
-                onClick={() => handleStartService(serviceName)}
-                size="small"
-                style={{ color: "#1890ff" }}
-                type="text"
-              >
-                启动
-              </Button>
-            )}
-
-            {/* 工具管理按钮 */}
-            <Badge color="#1890ff" count={toolCount} size="small">
-              <Button
-                disabled={!isRunning}
-                icon={<ToolOutlined />}
-                onClick={() => handleViewTools(serviceName)}
-                size="small"
-                type="text"
-              >
-                工具
-              </Button>
-            </Badge>
-
-            {/* 更多操作下拉菜单 */}
-            <Dropdown
-              menu={{
-                items: menuItems,
-              }}
-              placement="bottomRight"
-              trigger={["hover"]}
-            >
-              <Button icon={<MoreOutlined />} size="small" type="text">
-                更多
-              </Button>
-            </Dropdown>
-          </div>
+                <Button icon={<MoreOutlined />} size="small" type="text">
+                  更多
+                </Button>
+              </Dropdown>
+            </Flex>
+          </Flex>
         </Card>
       </Col>
     );
   };
 
   return (
-    <div style={{ padding: "24px" }}>
-      {/* 页面标题和操作按钮 */}
-      <div
-        style={{
-          marginBottom: "24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Title level={3} style={{ margin: 0 }}>
-          MCP 服务管理
-        </Title>
-        <Space>
-          <Button
-            icon={<ShopOutlined />}
-            onClick={() => setMarketDrawerVisible(true)}
-          >
-            MCP 市场
-          </Button>
-          <Button
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setConfigDrawerMode("add");
-              setConfigDrawerVisible(true);
-            }}
-            type="primary"
-          >
-            添加服务
-          </Button>
-        </Space>
-      </div>
+    <Flex style={{ height: "100%" }} vertical>
+      <Flex align="center" justify="space-between" style={{ marginBottom: 24 }}>
+        <Button
+          icon={<ShopOutlined />}
+          onClick={() => setMarketDrawerVisible(true)}
+        >
+          MCP 市场
+        </Button>
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setConfigDrawerMode("add");
+            setConfigDrawerVisible(true);
+          }}
+          type="primary"
+        >
+          添加服务
+        </Button>
+      </Flex>
 
-      {/* 服务卡片列表 */}
       {Object.keys(services).length === 0 ? (
         <Empty description="暂无 MCP 服务" style={{ margin: "60px 0" }} />
       ) : (
-        <Row gutter={[16, 16]}>
+        <Row
+          gutter={[16, 16]}
+          style={{
+            overflow: "auto",
+          }}
+        >
           {Object.keys(services).map(renderServiceCard)}
         </Row>
       )}
 
-      {/* 模态框和抽屉 */}
       <ServerConfigDrawer
         mode={configDrawerMode}
         onClose={() => {
@@ -373,6 +377,6 @@ export default function MCPSettings() {
         onClose={() => setMarketDrawerVisible(false)}
         visible={marketDrawerVisible}
       />
-    </div>
+    </Flex>
   );
 }

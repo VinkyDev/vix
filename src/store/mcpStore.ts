@@ -199,7 +199,7 @@ export const useMCPStore = create<MCPStore>()(
         removeService: (name) => {
           const service = get().services[name];
           if (service) {
-            stopServiceIfRunning(service).catch(console.error);
+            stopServiceIfRunning(service);
           }
 
           set((state) => {
@@ -213,7 +213,7 @@ export const useMCPStore = create<MCPStore>()(
           const serviceInstance = get().services[name];
           if (!serviceInstance) return;
 
-          stopServiceIfRunning(serviceInstance).catch(console.error);
+          stopServiceIfRunning(serviceInstance);
 
           const newConfig = { ...serviceInstance.config, ...configUpdate };
 

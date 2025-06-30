@@ -76,6 +76,8 @@
     background: $bg-tertiary;
     font-size: $font-size-base;
     color: $color-gray-600;
+    position: sticky;
+    bottom: 0;
 
     .selected-count {
       margin-left: $spacing-sm;

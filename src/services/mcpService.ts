@@ -292,7 +292,6 @@ export class MCPService {
   private log(message: string): void {
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] ${message}`;
-    console.log(`[MCP:${this.config.name}] ${message}`);
     this.events.onLog?.(logMessage);
   }
 

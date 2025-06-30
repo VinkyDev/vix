@@ -80,7 +80,11 @@ function App() {
         <ConfigProvider theme={theme}>
           <AliveScope>
             <Router>
-              <div className="app-container" data-tauri-drag-region>
+              <div
+                className="app-container"
+                data-tauri-drag-region
+                id="app-container"
+              >
                 <AntdApp style={{ height: "100%" }}>
                   {loading ? (
                     <Flex

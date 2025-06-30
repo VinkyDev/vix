@@ -38,6 +38,11 @@
           "args": true
         },
         {
+          "name": "uvx",
+          "cmd": "uvx",
+          "args": true
+        },
+        {
           "name": "cmd.exe",
           "cmd": "cmd.exe",
           "args": true
